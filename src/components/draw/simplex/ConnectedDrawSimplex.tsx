@@ -1,4 +1,4 @@
-import DrawSimplex from './DrawSimplex1';
+import DrawSimplex from './DrawSimplex';
 
 import { connect } from 'react-redux';
 import { StateType } from 'appRedux/store';

@@ -34,7 +34,9 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         );
     }
     renderTexts() {
-        return [0, 1, 2].map(i => this.renderEdgeText(i));
+        return <g key='edge-texts'>
+            {[0, 1, 2].map(i => this.renderEdgeText(i))}
+        </g>;
     }
     renderEdgeText(i: number) {
         let oSimplex = this._simplexObject;
@@ -51,14 +53,14 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         let oFVert = aVerts[nFirst];
         let oSVert = aVerts[nSecond];
 
-        let oTangent = [oSVert[0]-oFVert[0], oSVert[1]-oFVert[1]];
-        let nTangentLength = Math.sqrt(oTangent[0]**2+ oTangent[1]**2);
-        let oUnionTangent = [oTangent[0]/nTangentLength,oTangent[1]/nTangentLength];
+        let oTangent = [oSVert[0] - oFVert[0], oSVert[1] - oFVert[1]];
+        let nTangentLength = Math.sqrt(oTangent[0] ** 2 + oTangent[1] ** 2);
+        let oUnionTangent = [oTangent[0] / nTangentLength, oTangent[1] / nTangentLength];
 
         let oOrt = [oUnionTangent[1], -oUnionTangent[0]];
 
-        let nX = oFVert[0] + oTangent[0]/2 + 10*oOrt[0] -19*oUnionTangent[0];
-        let nY = oFVert[1] + oTangent[1]/2+ 10*oOrt[1]-19*oUnionTangent[1];
+        let nX = oFVert[0] + oTangent[0] / 2 + 10 * oOrt[0] - 19 * oUnionTangent[0];
+        let nY = oFVert[1] + oTangent[1] / 2 + 10 * oOrt[1] - 19 * oUnionTangent[1];
 
         let iAngle = 0;
         switch (i) {
@@ -73,21 +75,21 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         }
 
         return (
-            <text x={nX} y={nY} fontSize='1.2rem' transform={`rotate(${iAngle} ${nX}, ${nY})`} textLength={'38px'}>
-                z<tspan baseline-shift="sub" fontSize='0.6rem'>{i+1}</tspan>=0
+            <text key={i} x={nX} y={nY} fontSize='1.2rem' transform={`rotate(${iAngle} ${nX}, ${nY})`} textLength={'38px'}>
+                z<tspan baselineShift="sub" fontSize='0.6rem'>{i + 1}</tspan>=0
             </text>
         );
     }
     renderEdges() {
         return (
-            <g stroke-width='2'>
+            <g strokeWidth='2' key='edges'>
                 {[0, 1, 2].map(i => this._drawTriangleEdge(i))}
             </g>
         );
     }
     renderVertices() {
         return (
-            <g>
+            <g key='verts'>
                 {[0, 1, 2].map(i => this._drawTriangleVertices(i))}
             </g>
         );
@@ -99,7 +101,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         let aVerts = oSimplex.getVertices();
         if (oSimplex.checkVerticeInKSet(i)) {
             return (
-                <circle cx={aVerts[i][0]} cy={aVerts[i][1]} r="5" fill='blue' />
+                <circle key={i} cx={aVerts[i][0]} cy={aVerts[i][1]} r="5" fill='blue' />
             );
         }
         return null;
@@ -116,7 +118,10 @@ class DrawSimplex extends React.Component<MyProps, {}> {
 
         let sStroke = oSimplex.checkEdgeInKSet(i) ? CanvasColors.kSet : CanvasColors.simplex;
         return (
-            <line x1={oFVert[0]} y1={oFVert[1]} x2={oSVert[0]} y2={oSVert[1]} stroke={sStroke} />
+            <line key={i}
+                x1={oFVert[0]} y1={oFVert[1]}
+                x2={oSVert[0]} y2={oSVert[1]}
+                stroke={sStroke} />
         );
     }
     renderTripleLine() {
@@ -134,7 +139,8 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         let oFVert = aPoints[0];
         let oSVert = aPoints[1];
         return (
-            <line x1={oFVert[0]} y1={oFVert[1]} x2={oSVert[0]} y2={oSVert[1]}
+            <line key='triple-line' x1={oFVert[0]} y1={oFVert[1]}
+                x2={oSVert[0]} y2={oSVert[1]}
                 stroke={CanvasColors.tripleCycles}
                 strokeWidth={2} />
         );
