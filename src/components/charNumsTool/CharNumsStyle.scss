@@ -1,0 +1,61 @@
+@use 'src/styles/colors.scss';
+
+.char-nums-rools-popover {
+    background-color: white;
+    padding: 1rem;
+    border: 2px solid colors.$header-color;
+    color: colors.$text-color-dark;
+}
+
+.char-nums-tool {
+    display: flex;
+    align-items: center;
+
+    .char-nums-rools-icon {
+        margin-right: 0.4rem;
+        cursor: pointer;
+    }
+
+    .char-nums-cnt {
+        margin: 0px 0.8rem;
+        position: relative;
+
+        .char-nums-help-text {
+            position: absolute;
+            color: colors.$error-color;
+            padding: 10px 0px;
+            font-size: 0.9rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .char-nums-inputs-cnt {
+            &>:nth-child(2) {
+                margin: 0px 0.5rem;
+            }
+            .MuiTextField-root {
+                input {
+                    width: 60px;
+                }
+            }
+            .char-num-input-wrapper {
+                position: relative;
+                display: inline-block;
+
+                .char-num-input-help {
+                    position: absolute;
+                    padding: 0px;
+                    z-index: 2;
+                    color: colors.$header-color;
+                    top: -0.2rem;
+                    right: -0.2rem;
+                    font-size: 1.1rem;
+
+                    &:hover {
+                        color: colors.$btn-hover-color;
+                    }
+                }
+            }
+        }
+    }
+}

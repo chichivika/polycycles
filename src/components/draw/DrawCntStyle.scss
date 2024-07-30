@@ -1,0 +1,12 @@
+@use 'src/styles/colors.scss';
+
+.draw-container{
+    .draw-simplex{
+        border: 3px solid colors.$header-color;
+    }
+}
+.draw-info{
+    padding: 1rem 2rem;
+    color: colors.$text-color-dark;
+    background-color: #ffffffba;
+}

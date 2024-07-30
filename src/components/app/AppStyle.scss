@@ -1,0 +1,38 @@
+@use 'src/styles/colors.scss';
+
+.App {
+  height: 100%;
+  background-color: #fdfdfd;
+  background-image:
+    linear-gradient(colors.$app-bg-color 1px, transparent 1px),
+    linear-gradient(90deg, colors.$app-bg-color 1px, transparent 1px);
+  background-size: 25px 25px, 25px 25px;
+
+  //Select styles
+  .MuiSelect-select {
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    color: colors.$btn-color;
+  }
+}
+
+.MuiPopover-root.MuiMenu-root .MuiList-root.MuiMenu-list {
+  color: colors.$text-color-dark;
+
+  .MuiButtonBase-root.MuiMenuItem-root.Mui-selected {
+    background-color: colors.$menu-selected-bg-color;
+
+    &:hover {
+      background-color: colors.$menu-selected-bg-hover-color;
+    }
+  }
+}
+.MuiPopper-root.MuiTooltip-popper{
+  .MuiTooltip-tooltip{
+    background-color: white;
+    color: colors.$text-color-dark;
+    border: 1px solid colors.$text-color-dark;
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+}

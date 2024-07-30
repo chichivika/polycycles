@@ -1,0 +1,23 @@
+@use 'src/styles/colors.scss';
+
+.header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+    padding: 0.9rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: colors.$header-color;
+    border-bottom: 3px solid colors.$border-color;
+    .title{
+      grid-column-start: 2;
+      text-align: center;
+    }
+    .lang-select{
+      justify-self: end;
+      grid-column-start: 3;
+      width: 80px;
+      font-weight: 600;
+      margin: 0px 15px;
+    }
+  }

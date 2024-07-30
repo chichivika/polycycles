@@ -1,0 +1,19 @@
+@use 'src/styles/colors.scss';
+
+.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary:not(.Mui-error) {
+    fieldset {
+        border-color: colors.$btn-border-color;
+    }
+}
+.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.Mui-error {
+    fieldset {
+        border-width: 2px;
+    }
+}
+
+.MuiInputBase-root {
+    input {
+        padding: 5px;
+        background-color: colors.$input-bg-color;
+    }
+}

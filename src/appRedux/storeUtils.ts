@@ -1,0 +1,1 @@
+export const aInitialCharNums = ['0.5','3','4'];

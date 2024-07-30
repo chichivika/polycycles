@@ -1,0 +1,7 @@
+@use 'src/styles/colors';
+
+.app-btn.MuiButtonBase-root.MuiButton-root.MuiButton-contained{
+    background-color: colors.$header-color;
+    font-weight: 600;
+    height: 38px;
+  }

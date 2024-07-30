@@ -1,0 +1,44 @@
+import React from 'react';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { SelectChangeEvent } from "@mui/material";
+
+import { setLanguage, getLanguage, getAllLanguages } from '../../locales/i18n';
+
+import './HeaderStyle.scss';
+
+type MyProps = {};
+type MyState = {
+    value: string
+};
+class LangSelect extends React.Component<MyProps, MyState> {
+    constructor(oProps: MyProps) {
+        super(oProps);
+        this.state = {
+            value: getLanguage()
+        };
+    }
+    render() {
+        return (
+            <Select
+                value={this.state.value}
+                className='lang-select'
+                onChange={this.onValueChange.bind(this)}
+            >
+                {
+                    getAllLanguages().map(sKey => {
+                        return (
+                            <MenuItem key={sKey} value={sKey}>{sKey}</MenuItem>
+                        );
+                    })}
+            </Select>
+        );
+    }
+    onValueChange(oEvent: SelectChangeEvent<string>) {
+        let sNewValue = oEvent.target.value;
+        this.setState({ value: sNewValue });
+        setLanguage(sNewValue);
+    }
+}
+
+export default LangSelect;
