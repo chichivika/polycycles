@@ -70,3 +70,18 @@ export function calcTriangleVertsBySizeAndPadding(nSize: number, nVertPad:number
         window:  mapAllDescartToWindow(aDescVerts, nSize)
     };
 }
+export function getVectorLength(aVector: Point){
+    return Math.sqrt(aVector[0]**2+aVector[1]**2);
+}
+export function getDeltaPoints(aFPoint:Point, aSPoint:Point):Point{
+    return [aSPoint[0]-aFPoint[0], aSPoint[1]-aFPoint[1]];
+}
+export function getOrtDeltaPoints(aFPoint:Point, aSPoint:Point):Point{
+    let aDelta = getDeltaPoints(aFPoint,aSPoint);
+    let nLength = getVectorLength(aDelta);
+    if(nLength === 0){
+        return [0,0];
+    }
+
+    return [aDelta[0]/nLength,aDelta[1]/nLength];
+}

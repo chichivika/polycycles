@@ -1,6 +1,7 @@
 import React from "react";
 import createUnfoldObject from "utils/unfold/unfoldUtils";
 import { renderPolygon, renderLines } from "utils/svgUtils";
+import { Points } from "utils/drawUtils";
 
 type MyProps = {
     charNums: number[],
@@ -31,6 +32,7 @@ class Unfold extends React.Component<MyProps, MyState> {
                 height={this.size}>
                 {this._renderOuterTriangle()}
                 {this._renderInnerLines()}
+                {this._renderKLine()}
             </svg>
         );
     }
@@ -52,6 +54,17 @@ class Unfold extends React.Component<MyProps, MyState> {
         let aLines = oUnfold.getInnerLines();
         return (
             <g key='inner-triangle' stroke='black' strokeWidth='2'>
+                {renderLines(aLines)}
+            </g>
+        );
+    }
+    _renderKLine(){
+        let oUnfold = this._unfoldObject;
+        if(oUnfold === null) return;
+
+        let aLines = oUnfold.getKLineSegments() as Points[];
+        return (
+            <g key='k-line' stroke='blue' strokeWidth='2'>
                 {renderLines(aLines)}
             </g>
         );
