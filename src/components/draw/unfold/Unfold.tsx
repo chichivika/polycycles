@@ -11,7 +11,6 @@ type MyState = {
 }
 class Unfold extends React.Component<MyProps, MyState> {
     size: number = 400;
-    paddingTop = 40;
     innerPadding = 60;
     _unfoldObject: (ReturnType<typeof createUnfoldObject> | null) = null;
     render() {
@@ -20,7 +19,7 @@ class Unfold extends React.Component<MyProps, MyState> {
             isMonodromic: this.props.isMonodromic,
             drawSetting: {
                 size: this.size,
-                paddingTop: this.paddingTop,
+                paddingTop: this.size/10,
                 innerPadTop: this.innerPadding,
                 charNums: this.props.charNums
             }
