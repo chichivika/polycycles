@@ -1,31 +1,33 @@
 import React from "react";
-import ClassSimplex from 'utils/simplexUtils';
+import createSimplexObject from "utils/simplex/simplexUtils";
 import { Points } from "utils/drawUtils";
 import { CanvasColors } from "utils/drawUtils";
 
 type MyProps = {
-    charNums: number[]
+    charNums: number[],
+    isMonodromic: boolean
 };
 
 class DrawSimplex extends React.Component<MyProps, {}> {
-    mySVG = React.createRef<SVGSVGElement>();
     size: number = 300;
     paddingTop = 30;
-    _simplexObject: ClassSimplex | null = null;
+    _simplexObject: (ReturnType<typeof createSimplexObject> | null) = null;
 
     render() {
 
-        this._simplexObject = new ClassSimplex({
-            size: this.size,
-            paddingTop: this.paddingTop,
-            charNums: this.props.charNums
+        this._simplexObject = createSimplexObject({
+            isMonodromic: this.props.isMonodromic,
+            drawSetting: {
+                size: this.size,
+                paddingTop: this.paddingTop,
+                charNums: this.props.charNums
+            }
         });
 
         return (
             <svg className='draw-simplex'
                 width={this.size}
-                height={this.size}
-                ref={this.mySVG}>
+                height={this.size}>
                 {this.renderEdges()}
                 {this.renderVertices()}
                 {this.renderTripleLine()}

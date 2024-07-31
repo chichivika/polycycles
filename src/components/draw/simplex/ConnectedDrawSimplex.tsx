@@ -7,7 +7,8 @@ import { selectCharNumbers } from 'appRedux/drawSlice';
 
 const mapStateToProps = (oState: StateType) => {
     return {
-        charNums: selectCharNumbers(oState)
+        charNums: selectCharNumbers(oState),
+        isMonodromic: oState.draw.isMonodromic
     };
 };
 const mapDispatchToProps = {};

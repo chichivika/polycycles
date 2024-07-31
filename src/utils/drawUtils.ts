@@ -1,6 +1,8 @@
 export type Point = [number, number];
 export type Points = Point[];
 export type ProjectivePoint = [number, number, number];
+export type Coordinate = {x: number, y: number};
+export type Coordinates = Coordinate[];
 
 export const CanvasColors = {
     simplex: 'black',
@@ -18,7 +20,14 @@ export function mapAllDescartToWindow(aPoints: Points, nSize: number): Points {
     }));
 }
 //Projective coordinates of a point to descart coordinates
-export function mapProjectiveToDescart(aZets: ProjectivePoint, aVerts: Points): Point {
+export function mapProjectiveToDescart(aZets: ProjectivePoint, aVerts: Points, isMonodromic: boolean): Point {
+    if(isMonodromic){
+        return mapProjectiveToDescartMonodromic(aZets, aVerts);
+    }
+
+    return mapProjectiveToDescartNotMonodromic(aZets, aVerts);
+}
+export function mapProjectiveToDescartMonodromic(aZets: ProjectivePoint, aVerts: Points): Point {
 
     let nSum = aZets.reduce((acc, item) => acc + item, 0);
     if (nSum === 0) {
@@ -34,4 +43,30 @@ export function mapProjectiveToDescart(aZets: ProjectivePoint, aVerts: Points): 
     }
 
     return [nX / nSum, nY / nSum]
+}
+export function mapProjectiveToDescartNotMonodromic(aZets: ProjectivePoint, aVerts: Points): Point {
+    aZets = [-aZets[0], aZets[1], aZets[2]];
+    return mapProjectiveToDescartMonodromic(aZets, aVerts);
+}
+export function calcTriangleVertsBySizeAndPadding(nSize: number, nVertPad:number) {
+
+    let nHeight = nSize - 2 * nVertPad;
+    let nEdgeSize = (2 / Math.sqrt(3)) * nHeight;
+
+    //in the standard Descartes coordinates
+    let aDescVerts = [[
+        nSize / 2 + nEdgeSize / 2,
+        nSize - nVertPad - nHeight
+    ], [
+        nSize / 2 - nEdgeSize / 2,
+        nSize - nVertPad - nHeight
+    ], [
+        nSize / 2,
+        nSize - nVertPad
+    ]] as Points;
+
+    return {
+        descart: aDescVerts,
+        window:  mapAllDescartToWindow(aDescVerts, nSize)
+    };
 }

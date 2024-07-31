@@ -1,5 +1,6 @@
 import React from 'react';
-import DrawSimplex2 from './simplex/ConnectedDrawSimplex';
+import DrawSimplex from './simplex/ConnectedDrawSimplex';
+import Unfold from './unfold/ConnectedUnfold';
 
 import './DrawCntStyle.scss';
 
@@ -7,7 +8,8 @@ class DrawCnt extends React.Component<{}, {}>{
     render() {
         return (
             <div className='draw-container'>
-                <DrawSimplex2/>
+                <DrawSimplex/>
+                <Unfold/>
             </div>
         )
     }

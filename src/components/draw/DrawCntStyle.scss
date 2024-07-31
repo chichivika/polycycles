@@ -1,8 +1,10 @@
 @use 'src/styles/colors.scss';
 
 .draw-container{
-    .draw-simplex{
+    display: flex;
+    & > *{
         border: 3px solid colors.$header-color;
+        margin: 0px 1rem;
     }
 }
 .draw-info{

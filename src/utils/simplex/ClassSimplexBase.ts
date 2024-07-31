@@ -1,13 +1,13 @@
-import { Points, ProjectivePoint } from './drawUtils';
-import { mapAllDescartToWindow, mapProjectiveToDescart } from './drawUtils';
+import { Points, ProjectivePoint } from 'utils/drawUtils';
+import { mapProjectiveToDescartMonodromic, calcTriangleVertsBySizeAndPadding } from 'utils/drawUtils';
 
-type ClassParam = {
+export type ClassParam = {
     size: number,
     paddingTop: number,
     charNums: number[]
 }
 
-class SimplexUtils {
+class ClassSimplexBase {
     size: number;
     paddingTop: number;
     charNums: number[];
@@ -20,7 +20,7 @@ class SimplexUtils {
         this.paddingTop = paddingTop;
         this.charNums = charNums;
         
-        let oVerts = this._findTriangleVerticies();
+        let oVerts = calcTriangleVertsBySizeAndPadding(this.size, this.paddingTop);
         this._descartVerts = oVerts.descart;
         this._vertices = oVerts.window;
     }
@@ -49,24 +49,18 @@ class SimplexUtils {
         return false;
     }
     getTripleCycleLineSegment() {
-        let aNums = this.charNums;
         let aVerts = this._vertices;
 
         //In projective coordinates
-        let aZets: ProjectivePoint[] = [];
-        if(aNums[0] !== aNums[2]){
-            aZets.push([aNums[2] - 1, 0, 1 - aNums[0]]);
-        }
-        if(aNums[1] !== aNums[2]){
-            aZets.push([0, aNums[2] - 1, 1 - aNums[1]]);
-        }
+        let aZets = this._getTripleLineProjectivePoints();
         if(aZets.length < 2){
-            aZets.push([aNums[2] - 1, aNums[2] - 1, 2 - aNums[0] - aNums[1]]);
+            throw(new Error('simplex object: can`t draw a triple line'));
         }
+
         let [aZets1, aZets2] = aZets;
 
-        let aPoint1 = mapProjectiveToDescart(aZets1, aVerts);
-        let aPoint2 = mapProjectiveToDescart(aZets2, aVerts);
+        let aPoint1 = this._mapProjectiveToDescart(aZets1, aVerts);
+        let aPoint2 = this._mapProjectiveToDescart(aZets2, aVerts);
         if (aPoint1[0] === aPoint2[0]) {
             return [
                 [aPoint1[0],0],
@@ -82,30 +76,23 @@ class SimplexUtils {
 
         return [aWindowPoint1, aWindowPoint2];
     }
-    _findTriangleVerticies() {
-        let nSize = this.size;
-        let nVertPad = this.paddingTop;
+    _getTripleLineProjectivePoints(){
+        let aNums = this.charNums;
 
-        let nHeight = nSize - 2 * nVertPad;
-        let nEdgeSize = (2 / Math.sqrt(3)) * nHeight;
-
-        //in the standard Descartes coordinates
-        let aDescVerts = [[
-            nSize / 2 + nEdgeSize / 2,
-            nSize - nVertPad - nHeight
-        ], [
-            nSize / 2 - nEdgeSize / 2,
-            nSize - nVertPad - nHeight
-        ], [
-            nSize / 2,
-            nSize - nVertPad
-        ]] as Points;
-
-        return {
-            descart: aDescVerts,
-            window:  mapAllDescartToWindow(aDescVerts, nSize)
-        };
+        let aZets: ProjectivePoint[] = [];
+        if(aNums[0] !== aNums[2]){
+            aZets.push([aNums[2] - 1, 0, 1 - aNums[0]]);
+        }
+        if(aNums[1] !== aNums[2]){
+            aZets.push([0, aNums[2] - 1, 1 - aNums[1]]);
+        }
+        if(aZets.length < 2){
+            aZets.push([aNums[2] - 1, aNums[2] - 1, 2 - aNums[0] - aNums[1]]);
+        }
+        return aZets;
+    }
+    _mapProjectiveToDescart(aZets1:ProjectivePoint, aVerts:Points){
+        return mapProjectiveToDescartMonodromic(aZets1, aVerts);
     }
 }
-
-export default SimplexUtils;
+export default ClassSimplexBase;
