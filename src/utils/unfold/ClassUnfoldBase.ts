@@ -1,6 +1,6 @@
 import { mapAllDescartToWindow, Points, Point, ProjectivePoint } from 'utils/drawUtils';
 import { mapProjectiveToDescartMonodromic, calcTriangleVertsBySizeAndPadding, getDeltaPoints } from 'utils/drawUtils';
-import {productNumsFromTo} from 'utils/appUtils';
+import { productNumsFromTo } from 'utils/appUtils';
 
 export type ClassParam = {
     size: number,
@@ -8,7 +8,7 @@ export type ClassParam = {
     innerPadTop: number,
     charNums: number[]
 }
-export type SegmentInfo = Point | null;
+export type SegmentInfo = Points | null;
 export type SegmentsInfo = SegmentInfo[];
 
 class ClassUnfoldBase {
@@ -90,32 +90,109 @@ class ClassUnfoldBase {
         }
     }
     getKLineSegments() {
-        return this._getAllTrapezesInfo().filter(aInfo => aInfo !== null);
+        let aTrapezeInfo = this._getAllTrapezesInfo() as SegmentsInfo;
+        let aRombusSegments = this._getAllRombusKSegments(aTrapezeInfo) as Points[];
+
+        let aTrapezeSegments = aTrapezeInfo.filter(aInfo => aInfo !== null);
+
+        return aTrapezeSegments.concat(aRombusSegments);
     }
-    _getAllTrapezesInfo() {
+    _getAllRombusKSegments(aTrapezeInfo: SegmentsInfo): Points[] {
+        let aSegments: Points[] = [];
+
+        for (let i = 0; i < 3; ++i) {
+            let aSegment = this._getRombusKInfo(aTrapezeInfo, i) as Points;
+            if (aSegment !== null) {
+                aSegments.push(aSegment);
+            }
+        }
+
+        return aSegments;
+    }
+    _getRombusKInfo(aTrapezeInfo: SegmentsInfo, i: number): SegmentInfo {
+        let nRIndex = (i + 1) % 3;
+        let nLIndex = (i + 2) % 3;
+
+        let aSegments: Points = [];
+        let aRTrapeze = aTrapezeInfo[nRIndex];
+        let aLTrapeze = aTrapezeInfo[nLIndex];
+
+        if (aRTrapeze !== null) {
+            aSegments.push(aRTrapeze[0]);
+        }
+        if (aLTrapeze !== null) {
+            aSegments.push(aLTrapeze[1]);
+        }
+        if (aSegments.length === 2) {
+            return aSegments;
+        }
+
+        let aLSegments = this._checkRombSideInKSet(i, 0);
+        if (aLSegments !== null) {
+            aSegments.push(aLSegments);
+        }
+        if (aSegments.length === 2) {
+            return aSegments;
+        }
+
+        let aRSegments = this._checkRombSideInKSet(i, 1);
+        if (aRSegments !== null) {
+            aSegments.push(aRSegments);
+        }
+
+        if (aSegments.length === 2) {
+            return aSegments;
+        }
+
+        return null;
+    }
+    _checkRombSideInKSet(nRombIndex: number, nSideIndex: number): (Point | null) {
+        let nRIndex = (nRombIndex + 1) % 3;
+        let nLIndex = (nRombIndex + 2) % 3;
+
+        let nTrapezeIndex = nSideIndex === 0 ? nLIndex : nRIndex;
+
+        let aPoints = this._getKTriplePoints(nTrapezeIndex, [nRIndex, nLIndex]);
+        if (!this._checkTripleIsOrdered(aPoints)) {
+            return null;
+        }
+
+        let aOuterVert = this._outerVerts[nRombIndex];
+        let aRombHip = this._rombusHips[nRombIndex][nSideIndex];
+
+        let aDeltaVect = getDeltaPoints(aOuterVert, aRombHip);
+        let nRatio = this._getPointsRatio(aPoints);
+
+        return [
+            aOuterVert[0] + nRatio * aDeltaVect[0],
+            aOuterVert[1] + nRatio * aDeltaVect[1]
+        ];
+
+    }
+    _getAllTrapezesInfo(): SegmentsInfo {
         return [0, 1, 2].map(i => this._getTrapezeInfo(i));
     }
-    _getTrapezeInfo(i: number){
+    _getTrapezeInfo(i: number): SegmentInfo {
         let nRatio = this._getTrapezeRatio(i);
 
-        if(nRatio === null){return null;}
+        if (nRatio === null) { return null; }
 
         let oTrapezeVerts = this._getTrapezeCoordinates(i);
         let oROrt = getDeltaPoints(oTrapezeVerts.baseR, oTrapezeVerts.topR);
         let oLOrt = getDeltaPoints(oTrapezeVerts.baseL, oTrapezeVerts.topL);
 
         return [
-            [oTrapezeVerts.baseR[0]+oROrt[0]*nRatio,oTrapezeVerts.baseR[1]+oROrt[1]*nRatio],
-            [oTrapezeVerts.baseL[0]+oLOrt[0]*nRatio,oTrapezeVerts.baseL[1]+oLOrt[1]*nRatio]
+            [oTrapezeVerts.baseL[0] + oLOrt[0] * nRatio, oTrapezeVerts.baseL[1] + oLOrt[1] * nRatio],
+            [oTrapezeVerts.baseR[0] + oROrt[0] * nRatio, oTrapezeVerts.baseR[1] + oROrt[1] * nRatio]
         ];
 
     }
-    _getTrapezeCoordinates(i: number){
+    _getTrapezeCoordinates(i: number) {
         let aRombHips = this._rombusHips;
         let aInnerVerts = this._innerVerts;
 
-        let nRIndex = (i+1)%3;
-        let nLIndex = (i+2)%3;
+        let nRIndex = (i + 1) % 3;
+        let nLIndex = (i + 2) % 3;
 
         let aRightRomb = aRombHips[nRIndex];
         let aLeftRomb = aRombHips[nLIndex];
@@ -128,21 +205,31 @@ class ClassUnfoldBase {
         }
     }
     _getTrapezeRatio(i: number): number | null {
-        let aNums = this.charNums;
+        let aPoints = this._getKTriplePoints(i, [i]);
 
-        let fnMul = this._productNumsFromTo.bind(this);
-        let aExcept = [i];
-
-        let aPoints = [0,
-            (1-fnMul(0,2, aExcept))/(fnMul(i,2,aExcept)*(aNums[i]-1)),
-            fnMul(0,i,aExcept)
-        ];
-
-        if(aPoints[0] >= aPoints[1] || aPoints[1] >= aPoints[2]){
+        if (!this._checkTripleIsOrdered(aPoints)) {
             return null;
         }
 
-        return (aPoints[1]-aPoints[0])/(aPoints[2]-aPoints[0]);
+        return this._getPointsRatio(aPoints);
+    }
+    _getPointsRatio(aPoints: number[]) {
+        return (aPoints[1] - aPoints[0]) / (aPoints[2] - aPoints[0]);
+    }
+    _checkTripleIsOrdered(aPoints: number[]) {
+        if (aPoints[0] < aPoints[1] && aPoints[1] < aPoints[2]) {
+            return true;
+        }
+        return false;
+    }
+    _getKTriplePoints(i: number, aExcept: number[]) {
+        let fnMul = this._productNumsFromTo.bind(this);
+        let aNums = this.charNums;
+
+        return [0,
+            (1 - fnMul(0, 2, aExcept)) / (fnMul(i, 2, aExcept) * (aNums[i] - 1)),
+            fnMul(0, i, aExcept)
+        ];
     }
     _productNumsFromTo(nFrom: number, nTo: number, aExcept?: number[]) {
         return productNumsFromTo(this.charNums, nFrom, nTo, aExcept);

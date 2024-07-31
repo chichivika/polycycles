@@ -1,1 +1,1 @@
-export const aInitialCharNums = ['0.25','0.7','3'];
+export const aInitialCharNums = ['0.25','2','2.6'];

@@ -2,6 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 import { aInitialCharNums } from './storeUtils';
 import { StateType } from './store';
 
+type CharNumSettings = {
+    value: string,
+    error: boolean
+};
 //Redux Toolkit's createSlice function lets you
 //mutates the store data
 const drawSlice = createSlice({
@@ -22,11 +26,27 @@ const drawSlice = createSlice({
         updateCharNumber: (oState, oAction) => {
             let oUpdate = oAction.payload;
             let aNums = oState.charNums;
-            aNums.splice(oUpdate.i,1,oUpdate.charNumSetting);
+            let nIndex = oUpdate.i;
+            let oSettings = oUpdate.charNumSetting;
+
+            if(checkNumbersEqual(aNums[nIndex], oSettings)){
+                return;
+            }
+
+            aNums.splice(nIndex,1,oSettings);
             oState.charNums = aNums;
         }
     }
 })
+function checkNumbersEqual(oCurrNum: CharNumSettings, oNewNum: CharNumSettings){
+    if(oCurrNum.value !== oNewNum.value){
+        return false;
+    }
+    if(oCurrNum.error !== oNewNum.error){
+        return false;
+    }
+    return true;
+}
 // selectors 
 export function selectCharNumbers(oState: StateType){
     let aNums = oState.draw.charNums;
