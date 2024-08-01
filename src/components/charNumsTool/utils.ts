@@ -5,5 +5,5 @@ export type CharNumsChangeEvent = {
 export type CharNumsChangeFunction = (oParam: CharNumsChangeEvent) => void;
 export type CharNumInputState = {
     value: string,
-    error?: boolean
+    error: boolean
 };

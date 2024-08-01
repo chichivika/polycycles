@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { aInitialCharNums } from './storeUtils';
 import { StateType } from './store';
+import { charNumberIsValid } from 'utils/appUtils';
 
 type CharNumSettings = {
     value: string,
@@ -52,7 +53,16 @@ export function selectCharNumbers(oState: StateType){
     let aNums = oState.draw.charNums;
     return aNums.map(oNum=>+oNum.value); 
 }
-export function selectIsError(oState: StateType) {
+export function selectIsFormError(oState: StateType) {
+    let aNums = oState.draw.charNums;
+    for (let oNumSet of aNums) {
+        if (!charNumberIsValid(oNumSet.value)) {
+            return true;
+        }
+    }
+    return false;
+}
+export function selectIsInputErrorState(oState: StateType) {
     let aNums = oState.draw.charNums;
     for (let oNumSet of aNums) {
         if (oNumSet.error) {

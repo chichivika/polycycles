@@ -5,7 +5,8 @@ import { Points } from "utils/drawUtils";
 
 type MyProps = {
     charNums: number[],
-    isMonodromic: boolean
+    isMonodromic: boolean,
+    isFormError: boolean
 };
 type MyState = {
 
@@ -20,14 +21,17 @@ class Unfold extends React.Component<MyProps, MyState> {
             isMonodromic: this.props.isMonodromic,
             drawSetting: {
                 size: this.size,
-                paddingTop: this.size/10,
+                paddingTop: this.size / 10,
                 innerPadTop: this.innerPadding,
                 charNums: this.props.charNums
             }
         });
+        if (this.props.isFormError) {
+            return this._renderEmpty();
+        }
 
         return (
-            <svg className='draw-simplex'
+            <svg className='draw-unfold'
                 width={this.size}
                 height={this.size}>
                 {this._renderOuterTriangle()}
@@ -36,9 +40,22 @@ class Unfold extends React.Component<MyProps, MyState> {
             </svg>
         );
     }
-    _renderOuterTriangle(){
+    _renderEmpty() {
+        return (
+            <svg className='draw-unfold draw-form-error'
+                width={this.size}
+                height={this.size}>
+                {this._renderOuterTriangle()}
+                {this._renderInnerLines()}
+                <rect className='draw-form-error-lid'
+                    width={this.size}
+                    height={this.size} />
+            </svg>
+        );
+    }
+    _renderOuterTriangle() {
         let oUnfold = this._unfoldObject;
-        if(oUnfold === null) return;
+        if (oUnfold === null) return;
 
         let aVerts = oUnfold.getOuterVerts();
         return (
@@ -47,9 +64,9 @@ class Unfold extends React.Component<MyProps, MyState> {
             </g>
         );
     }
-    _renderInnerLines(){
+    _renderInnerLines() {
         let oUnfold = this._unfoldObject;
-        if(oUnfold === null) return;
+        if (oUnfold === null) return;
 
         let aLines = oUnfold.getInnerLines();
         return (
@@ -58,9 +75,9 @@ class Unfold extends React.Component<MyProps, MyState> {
             </g>
         );
     }
-    _renderKLine(){
+    _renderKLine() {
         let oUnfold = this._unfoldObject;
-        if(oUnfold === null) return;
+        if (oUnfold === null) return;
 
         let aLines = oUnfold.getKLineSegments() as Points[];
         return (

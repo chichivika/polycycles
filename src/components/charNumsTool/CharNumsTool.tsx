@@ -5,7 +5,7 @@ import CharNumInput from './CharNumInput';
 import { Translation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { StateType } from 'appRedux/store';
-import { selectIsError } from 'appRedux/drawSlice';
+import { selectIsInputErrorState } from 'appRedux/drawSlice';
 
 type MyProps = {
     isError?: boolean
@@ -62,7 +62,7 @@ class CharacterNumsTool extends React.Component<MyProps, {}> {
 }
 
 const mapStateToProps = (oState: StateType) => ({
-    isError: selectIsError(oState)
+    isError: selectIsInputErrorState(oState)
 });
 const mapDispatchToProps = {};
 

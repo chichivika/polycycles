@@ -1,6 +1,6 @@
 import { mapAllDescartToWindow, Points, Point, ProjectivePoint } from 'utils/drawUtils';
 import { mapProjectiveToDescartMonodromic, calcTriangleVertsBySizeAndPadding, getDeltaPoints } from 'utils/drawUtils';
-import { productNumsFromTo } from 'utils/appUtils';
+import { productNumsFromTo } from 'utils/jsUtils';
 
 export type ClassParam = {
     size: number,

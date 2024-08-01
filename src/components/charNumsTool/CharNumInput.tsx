@@ -6,7 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { Translation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { StateType } from 'appRedux/store';
-import { selectInputSetting, selectIsError } from 'appRedux/drawSlice';
+import { selectInputSetting } from 'appRedux/drawSlice';
 import { updateCharNumber } from 'appRedux/drawSlice';
 import { CharNumInputState } from './utils';
 
@@ -17,7 +17,6 @@ type MyProps = OwnProps & {
     isMonodromic: boolean,
     value: string,
     error: boolean,
-    isFormError: boolean,
     dispatchUpdateInput: typeof updateCharNumber
 }
 type MyState = {
@@ -152,8 +151,7 @@ const mapStateToProps = (oState: StateType, oProps: OwnProps) => {
     return {
         isMonodromic: oState.draw.isMonodromic,
         error: oCharNumSetting.error,
-        value: oCharNumSetting.value,
-        isFormError: selectIsError(oState)
+        value: oCharNumSetting.value
     };
 };
 const mapDispatchToProps = {

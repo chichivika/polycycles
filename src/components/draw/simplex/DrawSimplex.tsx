@@ -2,10 +2,12 @@ import React from "react";
 import createSimplexObject from "utils/simplex/simplexUtils";
 import { Points } from "utils/drawUtils";
 import { CanvasColors } from "utils/drawUtils";
+import { renderPolygon } from "utils/svgUtils";
 
 type MyProps = {
     charNums: number[],
-    isMonodromic: boolean
+    isMonodromic: boolean,
+    isFormError: boolean
 };
 
 class DrawSimplex extends React.Component<MyProps, {}> {
@@ -23,6 +25,9 @@ class DrawSimplex extends React.Component<MyProps, {}> {
                 charNums: this.props.charNums
             }
         });
+        if (this.props.isFormError) {
+            return this._renderEmpty();
+        }
 
         return (
             <svg className='draw-simplex'
@@ -35,10 +40,32 @@ class DrawSimplex extends React.Component<MyProps, {}> {
             </svg>
         );
     }
+    _renderEmpty() {
+        return (
+            <svg className='draw-simplex draw-form-error'
+                width={this.size}
+                height={this.size}
+                stroke={CanvasColors.simplex}
+            >
+                {this._renderSimpleTriangle()}
+                {this.renderTexts()}
+                <rect className='draw-form-error-lid'
+                    width={this.size}
+                    height={this.size} />
+            </svg>
+        );
+    }
     renderTexts() {
-        return <g key='edge-texts'>
+        return <g key='edge-texts' fontWeight='normal' stroke='none'>
             {[0, 1, 2].map(i => this.renderEdgeText(i))}
         </g>;
+    }
+    _renderSimpleTriangle() {
+        let oSimplex = this._simplexObject;
+        if (oSimplex === null) return;
+
+        let aVerts = oSimplex.getVertices();
+        return renderPolygon(aVerts, { strokeWidth: '2' });
     }
     renderEdgeText(i: number) {
         let oSimplex = this._simplexObject;
@@ -77,8 +104,14 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         }
 
         return (
-            <text key={i} x={nX} y={nY} fontSize='1.2rem' transform={`rotate(${iAngle} ${nX}, ${nY})`} textLength={'38px'}>
-                z<tspan baselineShift="sub" fontSize='0.6rem'>{i + 1}</tspan>=0
+            <text key={i} x={nX} y={nY}
+                fontSize='1.2rem'
+                transform={`rotate(${iAngle} ${nX}, ${nY})`}
+                textLength={'38px'}
+            >
+                z<tspan baselineShift="sub"
+                    fontSize='0.6rem'
+                >{i + 1}</tspan>=0
             </text>
         );
     }
