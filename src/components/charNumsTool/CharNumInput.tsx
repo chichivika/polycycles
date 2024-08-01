@@ -9,6 +9,7 @@ import { StateType } from 'appRedux/store';
 import { selectInputSetting } from 'appRedux/drawSlice';
 import { updateCharNumber } from 'appRedux/drawSlice';
 import { CharNumInputState } from './utils';
+import { charNumberIsValid } from 'utils/appUtils';
 
 type OwnProps = {
     i: number
@@ -34,7 +35,7 @@ class CharNumInput extends React.Component<MyProps, MyState> {
     render() {
         let oInput = this.renderInput();
 
-        if (this.props.i !== 0 || this.props.isMonodromic) {
+        if (this.props.i !== 2 || this.props.isMonodromic) {
             return oInput;
         }
 
@@ -46,7 +47,7 @@ class CharNumInput extends React.Component<MyProps, MyState> {
         );
     }
     componentDidUpdate(oPrevProps: Readonly<MyProps>, oPrevState: Readonly<MyState>): void {
-        if(oPrevProps.value !== this.props.value){
+        if (oPrevProps.value !== this.props.value) {
             this.setState({
                 value: this.props.value
             });
@@ -76,11 +77,18 @@ class CharNumInput extends React.Component<MyProps, MyState> {
             </Translation>
         );
     }
-    onKeyUp(oEvent: React.KeyboardEvent){
-        if(oEvent.code !== 'Enter'){
-            return;
+    onKeyUp(oEvent: React.KeyboardEvent) {
+        switch (oEvent.code) {
+            case 'Enter':
+                this._checkValueAndUpdate(this.state.value);
+                break;
+            case 'ArrowUp':
+                this._increaseValue();
+                break;
+            case 'ArrowDown':
+                this._decreaseValue();
+                break;
         }
-        this._checkValueAndUpdate(this.state.value);
     }
     onChange(oEvent: React.ChangeEvent<HTMLInputElement>) {
         let sNewValue = oEvent.target.value;
@@ -94,13 +102,28 @@ class CharNumInput extends React.Component<MyProps, MyState> {
 
         this._checkValueAndUpdate(sNumber);
     }
-    onFocus() {
+    onFocus(oEvent: React.FocusEvent<HTMLInputElement>) {
         this._updateInputSetting({
             value: this.state.value,
             error: false
         });
+        oEvent.preventDefault();
     }
-    _checkValueAndUpdate(sNumber: string){
+    _increaseValue(){
+        let sValue = this.state.value;
+        let nNewValue = Number(sValue) + 0.1;
+        if(isNaN(nNewValue)){return;}
+
+        this._checkValueAndUpdate(nNewValue.toFixed(1));
+    }
+    _decreaseValue(){
+        let sValue = this.state.value;
+        let nNewValue = Number(sValue) - 0.1;
+        if(isNaN(nNewValue) || nNewValue<=0){return;}
+
+        this._checkValueAndUpdate(nNewValue.toFixed(1));
+    }
+    _checkValueAndUpdate(sNumber: string) {
         if (sNumber === '.') {
             this._updateInputSetting({
                 value: '',
@@ -110,16 +133,16 @@ class CharNumInput extends React.Component<MyProps, MyState> {
         }
 
         let bError = false;
-        let nNumber = Number(sNumber);
-        if(nNumber === 0){
+        if (!charNumberIsValid(sNumber)) {
             bError = true;
         }
+        let nNumber = Number(sNumber);
         this._updateInputSetting({
             value: String(nNumber),
             error: bError
         });
     }
-    _updateInputSetting(oSetting: CharNumInputState){
+    _updateInputSetting(oSetting: CharNumInputState) {
         this.props.dispatchUpdateInput({
             charNumSetting: oSetting,
             i: this.props.i

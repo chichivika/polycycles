@@ -23,10 +23,10 @@ class Toolbar extends React.Component<MyProps, MyState> {
                     checked={this.props.isMonodromic}
                     onChange={this.onChange.bind(this)}
                 />
-                <img src={this._getIconSrc()} 
+                {/* <img src={this._getIconSrc()} 
                 alt='monodromial_polycycle' 
                 height='30px' 
-                width='30px' />
+                width='30px' /> */}
             </div>
         )
     }
