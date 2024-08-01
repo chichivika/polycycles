@@ -2,13 +2,14 @@
 
 .draw-container{
     display: flex;
-    margin: 2rem 1rem;
+    flex-wrap: wrap;
+    margin: 1rem;
     .draw-form-error-lid{
         fill: colors.$draw-error-lid-bg-color;
     }
     & > *{
         border: 3px solid colors.$header-color;
-        margin: 0px 1rem;
+        margin: 1rem;
     }
 }
 .draw-info{

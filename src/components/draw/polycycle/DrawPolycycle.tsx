@@ -59,12 +59,12 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
         switch (i) {
             case 0:
                 return {
-                    x: this.size - 50,
+                    x: this.size - 60,
                     y: this.size - 10
                 };
             case 1:
                 return  {
-                    x:20,
+                    x:30,
                     y: this.size - 10
                 };
             default:

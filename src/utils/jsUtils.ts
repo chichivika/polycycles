@@ -16,3 +16,6 @@ export function productNumsFromTo(aNums:number[], nFrom: number, nTo: number, aE
 
     return nProduct;
 }
+export function getNumsSum(aNums:number[]){
+    return aNums.reduce((nSum,nNum)=>nSum+nNum,0);
+}

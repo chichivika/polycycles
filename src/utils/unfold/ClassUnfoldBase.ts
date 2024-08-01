@@ -1,12 +1,17 @@
 import { mapAllDescartToWindow, Points, Point, ProjectivePoint } from 'utils/drawUtils';
-import { mapProjectiveToDescartMonodromic, calcTriangleVertsBySizeAndPadding, getDeltaPoints } from 'utils/drawUtils';
+import {
+    mapProjectiveToDescart,
+    calcTriangleVertsBySizeAndPadding,
+    getDeltaPoints
+} from 'utils/drawUtils';
 import { productNumsFromTo } from 'utils/jsUtils';
 
 export type ClassParam = {
     size: number,
     paddingTop: number,
     innerPadTop: number,
-    charNums: number[]
+    charNums: number[],
+    isMonodromic: boolean
 }
 export type SegmentInfo = Points | null;
 export type SegmentsInfo = SegmentInfo[];
@@ -16,17 +21,19 @@ class ClassUnfoldBase {
     paddingTop: number;
     innerPadding: number;
     charNums: number[];
+    isMonodromic: boolean;
     _outerVerts: Points;
     _innerVerts: Points;
     _rombusSide: number;
     _rombusHips: Points[];
 
-    constructor({ size, paddingTop, charNums, innerPadTop }: ClassParam) {
+    constructor({ size, paddingTop, charNums, innerPadTop, isMonodromic }: ClassParam) {
 
         this.size = size;
         this.paddingTop = paddingTop;
         this.innerPadding = innerPadTop;
         this.charNums = charNums;
+        this.isMonodromic = isMonodromic;
 
         let oOuterVerts = calcTriangleVertsBySizeAndPadding(this.size, this.paddingTop);
         this._outerVerts = oOuterVerts.window;
@@ -235,7 +242,7 @@ class ClassUnfoldBase {
         return productNumsFromTo(this.charNums, nFrom, nTo, aExcept);
     }
     _mapProjectiveToDescart(aZets1: ProjectivePoint, aVerts: Points) {
-        return mapProjectiveToDescartMonodromic(aZets1, aVerts);
+        return mapProjectiveToDescart(aZets1, aVerts, this.isMonodromic);
     }
 }
 export default ClassUnfoldBase;

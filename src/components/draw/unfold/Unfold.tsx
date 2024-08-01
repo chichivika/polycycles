@@ -19,12 +19,10 @@ class Unfold extends React.Component<MyProps, MyState> {
 
         this._unfoldObject = createUnfoldObject({
             isMonodromic: this.props.isMonodromic,
-            drawSetting: {
-                size: this.size,
-                paddingTop: this.size / 10,
-                innerPadTop: this.innerPadding,
-                charNums: this.props.charNums
-            }
+            size: this.size,
+            paddingTop: this.size / 10,
+            innerPadTop: this.innerPadding,
+            charNums: this.props.charNums
         });
         if (this.props.isFormError) {
             return this._renderEmpty();

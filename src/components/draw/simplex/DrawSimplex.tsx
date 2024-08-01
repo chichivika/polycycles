@@ -2,7 +2,7 @@ import React from "react";
 import createSimplexObject from "utils/simplex/simplexUtils";
 import { Points } from "utils/drawUtils";
 import { CanvasColors } from "utils/drawUtils";
-import { renderPolygon } from "utils/svgUtils";
+import { renderPolygon, renderLine } from "utils/svgUtils";
 
 type MyProps = {
     charNums: number[],
@@ -19,11 +19,9 @@ class DrawSimplex extends React.Component<MyProps, {}> {
 
         this._simplexObject = createSimplexObject({
             isMonodromic: this.props.isMonodromic,
-            drawSetting: {
-                size: this.size,
-                paddingTop: this.paddingTop,
-                charNums: this.props.charNums
-            }
+            size: this.size,
+            paddingTop: this.paddingTop,
+            charNums: this.props.charNums
         });
         if (this.props.isFormError) {
             return this._renderEmpty();
@@ -32,12 +30,12 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         return (
             <svg className='draw-simplex'
                 width={this.size}
-                height={this.size}>
-                {this.renderEdges()}
-                {this.renderVertices()}
-                {this.renderTripleLine()}
-                {this.renderTexts()}
-            </svg>
+                height={this.size} >
+                {this._renderEdges()}
+                {this._renderVertices()}
+                {this._renderTripleLine()}
+                {this._renderTexts()}
+            </svg >
         );
     }
     _renderEmpty() {
@@ -48,17 +46,19 @@ class DrawSimplex extends React.Component<MyProps, {}> {
                 stroke={CanvasColors.simplex}
             >
                 {this._renderSimpleTriangle()}
-                {this.renderTexts()}
+                {this._renderTexts()}
                 <rect className='draw-form-error-lid'
                     width={this.size}
                     height={this.size} />
             </svg>
         );
     }
-    renderTexts() {
-        return <g key='edge-texts' fontWeight='normal' stroke='none'>
-            {[0, 1, 2].map(i => this.renderEdgeText(i))}
-        </g>;
+    _renderTexts() {
+        return (
+            <g key='edge-texts' fontWeight='normal' stroke='none'>
+                {[0, 1, 2].map(i => this._renderEdgeText(i))}
+            </g>
+        );
     }
     _renderSimpleTriangle() {
         let oSimplex = this._simplexObject;
@@ -67,7 +67,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         let aVerts = oSimplex.getVertices();
         return renderPolygon(aVerts, { strokeWidth: '2' });
     }
-    renderEdgeText(i: number) {
+    _renderEdgeText(i: number) {
         let oSimplex = this._simplexObject;
         if (oSimplex === null) return;
 
@@ -115,19 +115,39 @@ class DrawSimplex extends React.Component<MyProps, {}> {
             </text>
         );
     }
-    renderEdges() {
+    _renderEdges() {
         return (
             <g strokeWidth='2' key='edges'>
                 {[0, 1, 2].map(i => this._drawTriangleEdge(i))}
             </g>
         );
     }
-    renderVertices() {
+    _renderVertices() {
         return (
             <g key='verts'>
                 {[0, 1, 2].map(i => this._drawTriangleVertices(i))}
             </g>
         );
+    }
+    _renderTripleLine() {
+        let oSimplex = this._simplexObject;
+        if (oSimplex === null) return;
+
+        let aPoints: Points;
+        try {
+            aPoints = oSimplex.getTripleCycleLineSegment() as Points;
+        }
+        catch (sErr) {
+            return null;
+        }
+
+        if(aPoints === null) return null;
+
+        let aFVert = aPoints[0];
+        let aSVert = aPoints[1];
+        return renderLine([aFVert, aSVert],
+            { stroke: CanvasColors.tripleCycles, strokeWidth: '2' },
+            `triple-line`);
     }
     _drawTriangleVertices(i: number) {
         let oSimplex = this._simplexObject;
@@ -148,37 +168,11 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         let nFirst = (i + 1) % 3;
         let nSecond = (i + 2) % 3;
         let aVerts = oSimplex.getVertices();
-        let oFVert = aVerts[nFirst];
-        let oSVert = aVerts[nSecond];
+        let aFVert = aVerts[nFirst];
+        let aSVert = aVerts[nSecond];
 
         let sStroke = oSimplex.checkEdgeInKSet(i) ? CanvasColors.kSet : CanvasColors.simplex;
-        return (
-            <line key={i}
-                x1={oFVert[0]} y1={oFVert[1]}
-                x2={oSVert[0]} y2={oSVert[1]}
-                stroke={sStroke} />
-        );
-    }
-    renderTripleLine() {
-        let oSimplex = this._simplexObject;
-        if (oSimplex === null) return;
-
-        let aPoints: Points;
-        try {
-            aPoints = oSimplex.getTripleCycleLineSegment() as Points;
-        }
-        catch (sErr) {
-            return null;
-        }
-
-        let oFVert = aPoints[0];
-        let oSVert = aPoints[1];
-        return (
-            <line key='triple-line' x1={oFVert[0]} y1={oFVert[1]}
-                x2={oSVert[0]} y2={oSVert[1]}
-                stroke={CanvasColors.tripleCycles}
-                strokeWidth={2} />
-        );
+        return renderLine([aFVert, aSVert], { stroke: sStroke }, `${i}`);
     }
 }
 
