@@ -17,7 +17,7 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
         }
 
         return (
-            <svg className='draw-polycycle'
+            <svg className='draw-graph draw-polycycle'
                 width={this.size}
                 height={this.size}>
                 {this._renderPolycycle()}
@@ -27,7 +27,7 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
     }
     _renderEmpty() {
         return (
-            <svg className='draw-polycycle'
+            <svg className='draw-graph draw-polycycle'
                 width={this.size}
                 height={this.size}>
                 {this._renderPolycycle()}

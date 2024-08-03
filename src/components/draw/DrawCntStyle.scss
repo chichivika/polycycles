@@ -2,10 +2,12 @@
 
 .draw-container {
     display: flex;
+    width: 100%;
     flex-wrap: wrap;
-    margin: 1rem;
+    justify-content: space-evenly;
 
-    .draw-simplex {
+    .draw-graph {
+        border: 3px solid colors.$header-color;
         stroke-width: 2;
         stroke: colors.$draw-base;
 
@@ -40,8 +42,7 @@
     }
 
     &>* {
-        border: 3px solid colors.$header-color;
-        margin: 1rem;
+        margin-top: 1rem;
     }
 }
 

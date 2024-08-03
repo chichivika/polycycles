@@ -1,21 +1,20 @@
 import React from 'react';
-import ShowRools from 'components/charNumsTool/ShowRools';
 import CharNumInput from './CharNumInput';
 
 import { Translation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { StateType } from 'appRedux/store';
 import { selectIsInputErrorState } from 'appRedux/drawSlice';
+import './CharNumsStyle.scss';
 
 type MyProps = {
     isError?: boolean
 }
-
 class CharacterNumsTool extends React.Component<MyProps, {}> {
     render() {
         return (
             <div className='char-nums-tool'>
-                <ShowRools />
+                {/* <ShowRools /> */}
                 {this.renderLabel()}
                 <div className='char-nums-cnt'>
                     {this.renderInputs()}

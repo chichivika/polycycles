@@ -8,7 +8,8 @@ import './UnfoldStyle.scss';
 type MyProps = {
     charNums: number[],
     isMonodromic: boolean,
-    isFormError: boolean
+    isFormError: boolean,
+    size: number | null
 };
 type MyState = {
 
@@ -18,7 +19,9 @@ class Unfold extends React.Component<MyProps, MyState> {
     innerPadding = 60;
     _unfoldObject: (ReturnType<typeof createUnfoldObject> | null) = null;
     render() {
+        if(this.props.size === null) return null;
 
+        this.size = this.props.size;
         this._unfoldObject = createUnfoldObject({
             isMonodromic: this.props.isMonodromic,
             size: this.size,
@@ -45,7 +48,7 @@ class Unfold extends React.Component<MyProps, MyState> {
         );
     }
     _getSVGClassName() {
-        let sClassName = 'draw-simplex draw-unfold';
+        let sClassName = 'draw-graph draw-unfold';
 
         let oUnfold = this._unfoldObject;
         if (oUnfold === null) return sClassName;

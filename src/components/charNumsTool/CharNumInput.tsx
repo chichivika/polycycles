@@ -57,6 +57,7 @@ class CharNumInput extends React.Component<MyProps, MyState> {
 
         return (
             <Input value={this.state.value}
+                autoComplete={'off'}
                 error={this.props.error}
                 onKeyUp={this.onKeyUp.bind(this)}
                 onChange={this.onChange.bind(this)}
@@ -107,7 +108,6 @@ class CharNumInput extends React.Component<MyProps, MyState> {
             value: this.state.value,
             error: false
         });
-        oEvent.preventDefault();
     }
     _increaseValue(){
         let sValue = this.state.value;

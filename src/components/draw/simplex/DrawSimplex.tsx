@@ -28,7 +28,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         }
 
         return (
-            <svg className='draw-simplex'
+            <svg className='draw-graph draw-simplex'
                 width={this.size}
                 height={this.size} >
                 {this._renderKSetArea()}
@@ -54,7 +54,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
     }
     _renderEmpty() {
         return (
-            <svg className='draw-simplex draw-form-error'
+            <svg className='draw-graph draw-simplex draw-form-error'
                 width={this.size}
                 height={this.size}
             >
