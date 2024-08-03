@@ -1,8 +1,12 @@
+@use './colors.scss';
+
 :root{
   height: 100%;
-}
-#root{
-  height: 100%;
+  background-color: #fdfdfd;
+  background-image:
+    linear-gradient(colors.$app-bg-color 1px, transparent 1px),
+    linear-gradient(90deg, colors.$app-bg-color 1px, transparent 1px);
+  background-size: 25px 25px, 25px 25px;
 }
 body {
   margin: 0;

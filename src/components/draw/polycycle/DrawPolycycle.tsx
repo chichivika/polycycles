@@ -10,13 +10,7 @@ type MyState = {
 }
 class DrawPolycycle extends React.Component<MyProps, MyState> {
     size: number = 300;
-    paddingTop: number;
-    textPadding:number;
-    constructor(oProps: MyProps) {
-        super(oProps);
-        this.paddingTop = this.size * 0.2;
-        this.textPadding = this.size * 0.1;
-    }
+    paddingLeft:number = 10;
     render() {
         if (this.props.isFormError) {
             return this._renderEmpty();
@@ -47,40 +41,61 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
         let aNums = this.props.charNums;
 
         return aNums.map((nNum, i) => {
-            let oPos = this._getCharNumTextPosition(i);
+            let oPos = this._getCharNumTextPosition(i, nNum);
             return (
                 <text key={i} x={oPos.x} y={oPos.y}>
-                    {String(nNum)}
-                </text>
+                        {oPos.value}
+                    </text>
             );
         });
     }
-    _getCharNumTextPosition(i: number) {
+    _getCharNumTextPosition(i: number, nNum: number) {
+        let sNum = String(nNum);
+        let nLength = sNum.length;
+        let nDots = 0;
+        if(nLength > 4){
+            sNum = sNum.slice(0,4);
+            nLength = sNum.length;
+            nDots = 1;
+            if(sNum.at(-1) === '.'){
+                sNum = sNum +'..';
+            }
+            else{
+                sNum = sNum +'...';
+            }
+        }
+
         switch (i) {
             case 0:
                 return {
-                    x: this.size - 60,
-                    y: this.size - 10
+                    x: this.size  - 80 -nLength*5 - nDots*5,
+                    y: this.size -90,
+                    value: sNum
                 };
             case 1:
-                return  {
-                    x:30,
-                    y: this.size - 10
+                return {
+                    x: 65,
+                    y: this.size -90,
+                    value: sNum
                 };
             default:
-                return  {
-                    x: this.size/2 - 10,
-                    y: 22
+                return {
+                    x: this.size / 2 -nLength*5 - nDots*6,
+                    y: 45,
+                    value: sNum
                 };
         }
     }
     _renderPolycycle() {
+        let nWindt = this.size - 2*this.paddingLeft;
+        let nHeight = 3*this.size/4;
         return (
             <image href={this._getImgSrc()}
-                x={this.paddingTop / 2}
-                y={this.paddingTop / 2}
-                width={this.size - this.paddingTop}
-                height={this.size - this.paddingTop} />
+                x={this.paddingLeft}
+                y={(this.size - nHeight)/2}
+                width={nWindt}
+                height={nHeight}
+                />
         );
     }
     _getImgSrc() {

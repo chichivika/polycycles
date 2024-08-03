@@ -2,16 +2,29 @@ import { numsAreAlmostEqual} from "./jsUtils";
 
 export type Point = [number, number];
 export type Points = Point[];
+export type Segment = [Point, Point];
+export type Segments = Segment[];
 export type ProjectivePoint = [number, number, number];
 export type ProjectivePoints = ProjectivePoint[];
 export type Coordinate = { x: number, y: number };
 export type Coordinates = Coordinate[];
 
-export const CanvasColors = {
-    simplex: 'black',
-    tripleCycles: '#00ae00',
-    kSet: 'blue'
-};
+export function mapVertsToPolygonEdges(aVerts: Points):Segments{
+    let nL = aVerts.length;
+    if(nL === 0 ){
+        return [];
+    }
+    if(nL === 1 ){
+        let aVert = aVerts[0] as Point;
+        return [[aVert, aVert]];
+    }
+    let aEdges: Segments = [];
+    for(let i=0;i<nL-1;++i){
+        aEdges.push([aVerts[i], aVerts[i+1]]);
+    }
+    aEdges.push([aVerts[nL-1], aVerts[0]]);
+    return aEdges;
+}
 //Descart coordinates of a point to window coordinates
 export function mapDescartToWindow(aPoint: Point, nSize: number): Point {
     return [aPoint[0], nSize - aPoint[1]];

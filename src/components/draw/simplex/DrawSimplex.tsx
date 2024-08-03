@@ -1,8 +1,8 @@
 import React from "react";
 import createSimplexObject from "utils/simplex/simplexUtils";
 import { Points } from "utils/drawUtils";
-import { CanvasColors } from "utils/drawUtils";
-import { renderPolygon, renderLine } from "utils/svgUtils";
+import { renderClosedPath, renderPolygon, renderLine } from "utils/svgUtils";
+import { numsMulIsUnit } from "utils/appUtils";
 
 type MyProps = {
     charNums: number[],
@@ -31,6 +31,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
             <svg className='draw-simplex'
                 width={this.size}
                 height={this.size} >
+                {this._renderKSetArea()}
                 {this._renderEdges()}
                 {this._renderVertices()}
                 {this._renderTripleLine()}
@@ -38,12 +39,24 @@ class DrawSimplex extends React.Component<MyProps, {}> {
             </svg >
         );
     }
+    _renderKSetArea(){
+        let aNums = this.props.charNums;
+        if(!numsMulIsUnit(aNums)){
+            return null;
+        }
+        let oSimplex = this._simplexObject;
+        if (oSimplex === null) return;
+
+        let aVerts = oSimplex.getVertices()
+        return renderPolygon(aVerts, {
+            className: 'draw-k-area'
+        });
+    }
     _renderEmpty() {
         return (
             <svg className='draw-simplex draw-form-error'
                 width={this.size}
                 height={this.size}
-                stroke={CanvasColors.simplex}
             >
                 {this._renderSimpleTriangle()}
                 {this._renderTexts()}
@@ -55,7 +68,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
     }
     _renderTexts() {
         return (
-            <g key='edge-texts' fontWeight='normal' stroke='none'>
+            <g key='edge-texts' fontWeight='normal'>
                 {[0, 1, 2].map(i => this._renderEdgeText(i))}
             </g>
         );
@@ -65,7 +78,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         if (oSimplex === null) return;
 
         let aVerts = oSimplex.getVertices();
-        return renderPolygon(aVerts, { strokeWidth: '2' });
+        return renderClosedPath(aVerts);
     }
     _renderEdgeText(i: number) {
         let oSimplex = this._simplexObject;
@@ -117,7 +130,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
     }
     _renderEdges() {
         return (
-            <g strokeWidth='2' key='edges'>
+            <g key='edges'>
                 {[0, 1, 2].map(i => this._drawTriangleEdge(i))}
             </g>
         );
@@ -146,7 +159,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         let aFVert = aPoints[0];
         let aSVert = aPoints[1];
         return renderLine([aFVert, aSVert],
-            { stroke: CanvasColors.tripleCycles, strokeWidth: '2' },
+            {className: 'draw-triple-set'},
             `triple-line`);
     }
     _drawTriangleVertices(i: number) {
@@ -171,8 +184,8 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         let aFVert = aVerts[nFirst];
         let aSVert = aVerts[nSecond];
 
-        let sStroke = oSimplex.checkEdgeInKSet(i) ? CanvasColors.kSet : CanvasColors.simplex;
-        return renderLine([aFVert, aSVert], { stroke: sStroke }, `${i}`);
+        let sClassName = oSimplex.checkEdgeInKSet(i) ? 'draw-k-set' : 'draw-simplex';
+        return renderLine([aFVert, aSVert], { className: sClassName }, `${i}`);
     }
 }
 

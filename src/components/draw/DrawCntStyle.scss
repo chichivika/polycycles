@@ -1,18 +1,51 @@
 @use 'src/styles/colors.scss';
 
-.draw-container{
+.draw-container {
     display: flex;
     flex-wrap: wrap;
     margin: 1rem;
-    .draw-form-error-lid{
+
+    .draw-simplex {
+        stroke-width: 2;
+        stroke: colors.$draw-base;
+
+        .draw-k-set {
+            stroke: colors.$draw-k-set;
+        }
+
+        .draw-k-area {
+            stroke: none;
+            fill: colors.$draw-k-area;
+        }
+
+        .draw-triple-set {
+            stroke: colors.$draw-triple-set;
+        }
+
+        text,
+        circle {
+            stroke: none;
+        }
+    }
+
+    .draw-polycycle {
+        text {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+    }
+
+    .draw-form-error-lid {
         fill: colors.$draw-error-lid-bg-color;
     }
-    & > *{
+
+    &>* {
         border: 3px solid colors.$header-color;
         margin: 1rem;
     }
 }
-.draw-info{
+
+.draw-info {
     padding: 1rem 2rem;
     color: colors.$text-color-dark;
     background-color: #ffffffba;

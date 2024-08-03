@@ -1,13 +1,5 @@
 @use 'src/styles/colors.scss';
 
-:root {
-  background-color: #fdfdfd;
-  background-image:
-    linear-gradient(colors.$app-bg-color 1px, transparent 1px),
-    linear-gradient(90deg, colors.$app-bg-color 1px, transparent 1px);
-  background-size: 25px 25px, 25px 25px;
-}
-
 .App {
   height: 100%;
 
@@ -15,6 +7,7 @@
     padding-top: 0.3rem;
     padding-bottom: 0.3rem;
     color: colors.$btn-color;
+    background-color: white;
   }
 }
 

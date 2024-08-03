@@ -1,4 +1,4 @@
-import { numsAreAlmostEqual } from "./jsUtils";
+import { getNumsMul, numsAreAlmostEqual } from "./jsUtils";
 
 export function getClassName(sDefaultName:string, sName?: string): string {
     if (sName) {
@@ -13,4 +13,16 @@ export function charNumberIsValid(sNumber:string){
         return false;
     }
     return true;
+}
+export function numsAreDegenerated(aNums: number[]){
+    for (let nNum of aNums) {
+        if (!numsAreAlmostEqual(nNum, 1)) {
+            return false;
+        }
+    }
+    return true;
+}
+export function numsMulIsUnit(aNums: number[]){
+    let nMul = getNumsMul(aNums);
+    return numsAreAlmostEqual(nMul, 1);
 }

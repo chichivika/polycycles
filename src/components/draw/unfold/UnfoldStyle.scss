@@ -1,0 +1,5 @@
+@use 'src/styles/colors';
+
+.draw-simplex.draw-unfold.draw-unfold-degenerated{
+    stroke: colors.$draw-k-set;
+}

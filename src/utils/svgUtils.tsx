@@ -1,7 +1,17 @@
 import { SVGLineElementAttributes } from "react";
-import { Points } from "./drawUtils";
+import { Points} from "./drawUtils";
 
-export function renderPolygon(aVerts: Points, oLineAttr?: SVGLineElementAttributes<SVGLineElement>) {
+export function renderPolygon(aVerts: Points, oAttr?: SVGLineElementAttributes<SVGPolygonElement>){
+    let sVerts = '';
+    aVerts.forEach(aVert=>{
+        sVerts = sVerts.concat(' ' + aVert.join(','));
+    });
+    oAttr = oAttr ? oAttr : {};
+    return (
+        <polygon points={sVerts} {...oAttr}/>
+    );
+}
+export function renderClosedPath(aVerts: Points, oLineAttr?: SVGLineElementAttributes<SVGLineElement>) {
 
     let nLength = aVerts.length;
     if (nLength < 2) return;

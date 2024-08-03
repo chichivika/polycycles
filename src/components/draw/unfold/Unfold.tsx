@@ -1,7 +1,9 @@
 import React from "react";
 import createUnfoldObject from "utils/unfold/unfoldUtils";
-import { renderPolygon, renderLines } from "utils/svgUtils";
-import { Points } from "utils/drawUtils";
+import { renderPolygon, renderClosedPath, renderLines } from "utils/svgUtils";
+import { Points} from "utils/drawUtils";
+
+import './UnfoldStyle.scss';
 
 type MyProps = {
     charNums: number[],
@@ -28,19 +30,33 @@ class Unfold extends React.Component<MyProps, MyState> {
             return this._renderEmpty();
         }
 
+        let sClassName = this._getSVGClassName();
+
+        let oKSetInfo = this._unfoldObject.getKSetInfo();
         return (
-            <svg className='draw-unfold'
+            <svg className={sClassName}
                 width={this.size}
                 height={this.size}>
+                {this._renderKAreas(oKSetInfo.areasVerts)}
                 {this._renderOuterTriangle()}
                 {this._renderInnerLines()}
-                {this._renderKLine()}
+                {this._renderKLine(oKSetInfo.segments)}
             </svg>
         );
     }
+    _getSVGClassName() {
+        let sClassName = 'draw-simplex draw-unfold';
+
+        let oUnfold = this._unfoldObject;
+        if (oUnfold === null) return sClassName;
+
+        return sClassName;
+    }
     _renderEmpty() {
+        let sClassName = this._getSVGClassName();
+        sClassName = sClassName.concat(' draw-form-error');
         return (
-            <svg className='draw-unfold draw-form-error'
+            <svg className={sClassName}
                 width={this.size}
                 height={this.size}>
                 {this._renderOuterTriangle()}
@@ -57,8 +73,8 @@ class Unfold extends React.Component<MyProps, MyState> {
 
         let aVerts = oUnfold.getOuterVerts();
         return (
-            <g key='outer-triangle' stroke='black' strokeWidth='2'>
-                {renderPolygon(aVerts)}
+            <g key='outer-triangle'>
+                {renderClosedPath(aVerts)}
             </g>
         );
     }
@@ -68,19 +84,24 @@ class Unfold extends React.Component<MyProps, MyState> {
 
         let aLines = oUnfold.getInnerLines();
         return (
-            <g key='inner-triangle' stroke='black' strokeWidth='2'>
+            <g key='inner-triangle'>
                 {renderLines(aLines)}
             </g>
         );
     }
-    _renderKLine() {
-        let oUnfold = this._unfoldObject;
-        if (oUnfold === null) return;
-
-        let aLines = oUnfold.getKLineSegments() as Points[];
+    _renderKAreas(aPolygons: Points[]) {
+        return aPolygons.map(aPolygon => {
+            return (
+                <g key='k-area' className='draw-k-area'>
+                    {renderPolygon(aPolygon)}
+                </g>
+            );
+        });
+    }
+    _renderKLine(aSegments: Points[]) {
         return (
-            <g key='k-line' stroke='blue' strokeWidth='2'>
-                {renderLines(aLines)}
+            <g key='k-line' className='draw-k-set'>
+                {renderLines(aSegments)}
             </g>
         );
     }
