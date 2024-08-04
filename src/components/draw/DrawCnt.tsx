@@ -1,5 +1,5 @@
 import React from 'react';
-import DrawPolycycle from './polycycle/ConnectedDrawPolycycle';
+import PolycycleWrapper from './drawWrapper/PolycycleWrapper';
 import DrawSimplex from './simplex/ConnectedDrawSimplex';
 import DrawUnfold from './unfold/ConnectedUnfold';
 import Diagram from './diagram/ConnectedDiagram';
@@ -58,11 +58,8 @@ class DrawCnt extends React.Component<MyProps, MyState> {
         return (
             <div ref={this._refContainer}
                 className='draw-container'>
-                <DrawWrapper labelKey='drawInfo.polycycle.label'
-                    hoverKey='drawInfo.polycycle.hover'
-                >
-                    <DrawPolycycle />
-                </DrawWrapper>
+                    
+                <PolycycleWrapper/>
 
                 <DrawWrapper labelKey='drawInfo.simplex.label'
                     hoverKey='drawInfo.simplex.hover'

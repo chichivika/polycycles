@@ -26,3 +26,12 @@ export function numsMulIsUnit(aNums: number[]){
     let nMul = getNumsMul(aNums);
     return numsAreAlmostEqual(nMul, 1);
 }
+//Проверка, равны ли все числа нулю
+export function numsAreZeros(aNums: number[]){
+    for(let i=0;i<aNums.length;++i){
+        if(!numsAreAlmostEqual(aNums[i],0)){
+            return false;
+        }
+    }
+    return true;
+}

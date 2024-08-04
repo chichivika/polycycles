@@ -1,7 +1,7 @@
 import React from "react";
 import createUnfoldObject from "utils/unfold/unfoldUtils";
 import { renderPolygon, renderClosedPath, renderLines } from "utils/svgUtils";
-import { Points} from "utils/drawUtils";
+import { Points } from "utils/drawUtils";
 
 import './UnfoldStyle.scss';
 
@@ -19,7 +19,7 @@ class Unfold extends React.Component<MyProps, MyState> {
     innerPadding = 60;
     _unfoldObject: (ReturnType<typeof createUnfoldObject> | null) = null;
     render() {
-        if(this.props.size === null) return null;
+        if (this.props.size === null) return null;
 
         this.size = this.props.size;
         this._unfoldObject = createUnfoldObject({
@@ -36,14 +36,15 @@ class Unfold extends React.Component<MyProps, MyState> {
         let sClassName = this._getSVGClassName();
 
         let oKSetInfo = this._unfoldObject.getKSetInfo();
+        let oTripleInfo = this._unfoldObject.getTripleLineInfo();
         return (
             <svg className={sClassName}
                 width={this.size}
                 height={this.size}>
-                {this._renderKAreas(oKSetInfo.areasVerts)}
+                {this._renderAreas(oKSetInfo.areasVerts, oTripleInfo.areas)}
                 {this._renderOuterTriangle()}
                 {this._renderInnerLines()}
-                {this._renderKLine(oKSetInfo.segments)}
+                {this._renderSpecialLines(oKSetInfo.segments, oTripleInfo.segments)}
             </svg>
         );
     }
@@ -92,19 +93,29 @@ class Unfold extends React.Component<MyProps, MyState> {
             </g>
         );
     }
-    _renderKAreas(aPolygons: Points[]) {
-        return aPolygons.map(aPolygon => {
-            return (
-                <g key='k-area' className='draw-k-area'>
-                    {renderPolygon(aPolygon)}
-                </g>
-            );
-        });
-    }
-    _renderKLine(aSegments: Points[]) {
+    _renderAreas(aKVerts: Points[], aTripleVerts: Points[]) {
+        let aKAreas = aKVerts.map(aPolygon => renderPolygon(aPolygon));
+        let aTripleAreas = aTripleVerts.map(aPolygon => renderPolygon(aPolygon));
         return (
-            <g key='k-line' className='draw-k-set'>
-                {renderLines(aSegments)}
+            <g key='areas'>
+                <g key='k-area' className='draw-k-area'>
+                    {aKAreas}
+                </g>
+                <g key='triple-area' className='draw-triple-area'>
+                    {aTripleAreas}
+                </g>
+            </g>
+        );
+    }
+    _renderSpecialLines(aKSegments: Points[], aTripleSegments: Points[]) {
+        return (
+            <g key='special-lines'>
+                <g key='k-line' className='draw-k-set'>
+                    {renderLines(aKSegments)}
+                </g>
+                <g key='triple-line' className='draw-triple-set'>
+                    {renderLines(aTripleSegments)}
+                </g>
             </g>
         );
     }

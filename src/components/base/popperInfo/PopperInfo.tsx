@@ -1,4 +1,4 @@
-import React from "react";
+import React, {ReactElement} from "react";
 
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Popper from '@mui/material/Popper';
@@ -9,7 +9,8 @@ import { Translation } from 'react-i18next';
 import './PopperInfoStyle.scss'
 
 type MyProps = {
-    textKey: string
+    textKey?: string,
+    children?: ReactElement
 };
 type MyState = {
     open: boolean,
@@ -40,15 +41,29 @@ class PopperInfo extends React.Component<MyProps, MyState> {
                         placement='bottom-start'
                         open={this.state.open}
                         anchorEl={this.state.anchorEl}>
-                        <Translation>
-                            {
-                                (t) => <div>{t(this.props.textKey)}</div>
-                            }
-                        </Translation>
+                        {this._renderContent()}
                     </Popper>
                 </div>
             </ClickAwayListener>
         )
+    }
+    _renderContent() {
+        if(this.props.children){
+            let aChildren = this.props.children as ReactElement;
+            return aChildren;
+        }
+        if (typeof this.props.textKey === 'string') {
+            let sKey = this.props.textKey as string;
+            return (
+                <Translation>
+                    {
+                        (t) => <div>{t(sKey)}</div>
+                    }
+                </Translation>
+            );
+        }
+        
+        return null;
     }
     closePopper() {
         this.setState({

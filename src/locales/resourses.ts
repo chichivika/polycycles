@@ -15,11 +15,17 @@ const ruResources = {
         drawInfo: {
             polycycle: {
                 label: 'Полицикл',
-                hover: `Полицикл из трёх сёдел. Рядом с каждым седлом указано его характеристическое значение: модуль отношения собственных чисел, где отрицательное стоит в знаменателе.`
+                hover: `Рядом с каждым седлом указано его характеристическое значение: модуль отношения собственных чисел, где отрицательное стоит в знаменателе.`,
+                monodromic: {
+                    hover: 'Монодромный полицикл из трёх сёдел. '
+                },
+                notMonodromic: {
+                    hover: 'Немонодромный полицикл из трёх сёдел. '
+                }
             },
             simplex: {
                 label: 'Симплекс',
-                hover: `Изображённый треугольник — это один из четырёх симплексов на проективном пространстве RP 2, ограниченных прямыми z1 = 0, z2 = 0, z3 = 0. 
+                hover: `Изображённый симплекс — это один из четырёх симплексов на проективном пространстве RP 2, ограниченных прямыми z1 = 0, z2 = 0, z3 = 0. 
                 Синее множество соответсвует двукратным циклам. Зелёная прямая — трёхкратным.`
             },
             unfold: {
@@ -53,22 +59,29 @@ const enResources = {
         drawInfo: {
             polycycle: {
                 label: 'Polycycle',
-                hover: `Полицикл из трёх сёдел. Рядом с каждым седлом указано его характеристическое значение: модуль отношения собственных чисел, где отрицательное стоит в знаменателе.`
+                hover: `A number near every saddle is the its characteristic number, i.e. the modulo of ratio of its eigenvalues where the negative one is in the numerator.`,
+                monodromic: {
+                    hover: 'A monodromial polycycle formed by three saddles. '
+                },
+                notMonodromic: {
+                    hover: 'A non-monodromial polycycle formed by three saddles. '
+                },
             },
             simplex: {
                 label: 'Simplex',
-                hover: `Изображённый треугольник — это один из четырёх симплексов на проективном пространстве RP 2, ограниченных прямыми z1 = 0, z2 = 0, z3 = 0. 
-                Синее множество соответсвует двукратным циклам. Зелёная прямая — трёхкратным.`
+                hover: `This symplex is one of four symplexes that bounded by lines z1 = 0, z2 = 0, z3 = 0 on the projective plane RP 2. 
+                The blue set corresponds to the cycles of multiplicity two. The green line corresponds to the cycles of multiplicity three.`
             },
             unfold: {
                 label: 'Unfolding',
-                hover: `В центре развертки расположен симплекс, рёбра и вершины которого расширены до трапеций и ромбов. 
-                Синее множество, соответствующее двукратным циклам, при этом превращается в синюю ломаную. Зелёная ломаная также соответствует трёхкратным циклам.`
+                hover: `The unfolding is the same symplex but its edges and vertices are expanded by trapezoids and rhombi. 
+                At the same time the blue set, which corresponds to limit cycles of multiplicity two, turns into a blue chain line. 
+                The green line, which corresponds to limit cycles of multiplicity three, turns to a green chain line.`
             },
             diagram: {
                 label: 'Bifurcation diagram',
-                hover: `Бифуркационная диаграмма типичного трёхпараметрического семейства. 
-                Чёрные точки соответствуют рождающимся в семействе лункам, чёрные дуги окружности — петлям, синяя кривая соответствует двухкратным циклам, а её каспы — трёхкратным.`
+                hover: `A bifurcation diagram of a generic family. The black points correspond to appearing lunes, the black arcs of the circle correspond to loops. 
+                The blue line corresponds to limit cycles of multiplicity two; its cusps corresponds to limit cycles of multiplicity three.`
             }
         }
     }

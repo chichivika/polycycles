@@ -6,7 +6,8 @@ import PopperInfo from "components/base/popperInfo/PopperInfo";
 type MyProps = {
     children: ReactElement,
     labelKey?: string,
-    hoverKey?: string
+    hoverKey?: string,
+    hoverKeys?: string[]
 };
 type MyState = {
 
@@ -23,11 +24,23 @@ class DrawWrapper extends React.Component<MyProps, MyState> {
             </div>
         )
     }
-    _renderInfo(){
+    _renderInfo() {
         if (typeof this.props.hoverKey === 'string') {
             let sKey = this.props.hoverKey as string;
             return (
-                <PopperInfo textKey={sKey}/>
+                <PopperInfo textKey={sKey} />
+            );
+        }
+        if (Array.isArray(this.props.hoverKeys)) {
+            let aKeys = this.props.hoverKeys as string[];
+            return (
+                <PopperInfo>
+                    <Translation>
+                        {
+                            (t) => <div>{aKeys.map(sKey => t(sKey))}</div>
+                        }
+                    </Translation>
+                </PopperInfo>
             );
         }
         return null;
