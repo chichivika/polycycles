@@ -1,0 +1,21 @@
+@use 'src/styles/colors';
+
+.draw-graph.draw-diagram{
+    .draw-diagram-circle{
+        fill: none;
+        stroke: colors.$draw-base;
+    }
+    .draw-diagram-dot{
+        fill: colors.$draw-base;
+        stroke: none;
+    }
+    .draw-diagram-text{
+        font-size: 1.2rem;
+        &.draw-diagram-L-text{
+            font-weight: bold;
+        }
+        tspan{
+            font-size: 0.8rem;
+        }
+    }
+}
