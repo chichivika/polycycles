@@ -35,16 +35,15 @@ class Unfold extends React.Component<MyProps, MyState> {
 
         let sClassName = this._getSVGClassName();
 
-        let oKSetInfo = this._unfoldObject.getKSetInfo();
-        let oTripleInfo = this._unfoldObject.getTripleLineInfo();
+        let oInfo = this._unfoldObject.getSpecialInfo();
         return (
             <svg className={sClassName}
                 width={this.size}
                 height={this.size}>
-                {this._renderAreas(oKSetInfo.areasVerts, oTripleInfo.areas)}
+                {this._renderAreas(oInfo.kSet.areas, oInfo.tripleSet.areas)}
                 {this._renderOuterTriangle()}
                 {this._renderInnerLines()}
-                {this._renderSpecialLines(oKSetInfo.segments, oTripleInfo.segments)}
+                {this._renderSpecialLines(oInfo.kSet.segments, oInfo.tripleSet.segments)}
             </svg>
         );
     }
