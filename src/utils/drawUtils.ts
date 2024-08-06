@@ -18,6 +18,14 @@ export function getVectorLength(aVector: Point) {
 export function getDeltaPoints(aFPoint: Point, aSPoint: Point): Point {
     return [aSPoint[0] - aFPoint[0], aSPoint[1] - aFPoint[1]];
 }
+//Рассчитать сумму векторов
+export function getSummPoints(aFPoint: Point, aSPoint: Point): Point {
+    return [aSPoint[0] + aFPoint[0], aSPoint[1] + aFPoint[1]];
+}
+//Рассчитать сумму векторов с коэффициентами
+export function getSummPointsWithCoeffs(aFPoint: Point, aSPoint: Point, nFCoeff:number, nSCoeff: number): Point {
+    return [nFCoeff*aFPoint[0] + nSCoeff*aSPoint[0], nFCoeff*aFPoint[1]+nSCoeff*aSPoint[1]];
+}
 //Рассчитать единичный вектор, сонаправленный с разницей двух векторов
 export function getOrtDeltaPoints(aFPoint: Point, aSPoint: Point): Point {
     let aDelta = getDeltaPoints(aFPoint, aSPoint);

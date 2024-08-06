@@ -46,20 +46,20 @@ type RombInfo = {
     outerSides: number[]
 }
 type AllRombsInfo = RombInfo[];
-
-//===== return information type ======
-type SetInfo = {
+export type SetInfo = {
     segments: Segments,
     areas: Points[]
 };
-type EdgesPath = number[]
-type SpecialInfo = {
+export type EdgePath = {
+    edgeIndex: number,
+    hasPocket: boolean
+};
+export type EdgesPath = EdgePath[]
+export type SpecialInfo = {
     kSet: SetInfo,
     tripleSet: SetInfo,
     edgesPath: EdgesPath
 }
-
-
 
 class ClassUnfoldBase {
     //Размер рисунка
@@ -147,57 +147,72 @@ class ClassUnfoldBase {
 
         return oInfo;
     }
-    getIsTypicalCase(){
-        if(this.getNumsAreDegenerated()){
+    getIsTypicalCase() {
+        if (this.getNumsAreDegenerated()) {
             return false;
         }
-        if(this.getNumsMulIsUnit()){
+        if (this.getNumsMulIsUnit()) {
             return false;
         }
-        for(let i=0;i<3;++i){
-            if(this._checkRombIsDegen(i) || this._checkTrapezeDegen(i)){
+        for (let i = 0; i < 3; ++i) {
+            if (this._checkRombIsDegen(i) || this._checkTrapezeDegen(i)) {
                 return false;
             }
         }
 
         return true;
     }
-    _getEdgePath(aAllTrapezesInfo:AllTrapezesInfo, aRombInfo: AllRombsInfo){
+    _getTripleLineIntersectSide(nSide: number) {
+        return getTripleLineIntersectSidePoint(nSide, this._innerVerts, this.charNums, this.isMonodromic);
+    }
+    _getEdgePath(aAllTrapezesInfo: AllTrapezesInfo, aRombInfo: AllRombsInfo): EdgesPath {
 
         let stPath = new Set<number>();
-        for(let i=0;i<3;++i){
+        let aPockets: boolean[] = [false, false, false];
+
+
+        for (let i = 0; i < 3; ++i) {
             let oInfo = aRombInfo[i];
-            if(oInfo.segment === null)continue;
+            if (oInfo.segment === null) continue;
 
             let [nLIndex, nRIndex] = this._getRombSideInds(i);
-            if(!oInfo.middle){
-                oInfo.outerSides.forEach(nSide=>{
+            if (!oInfo.middle) {
+                oInfo.outerSides.forEach(nSide => {
                     stPath.add(nSide);
+                    if (aAllTrapezesInfo[nSide] !== null && this._getTripleLineIntersectSide(nSide) !== null) {
+                        aPockets[nSide] = true;
+                    }
                 });
             }
-            else{
+            else {
                 stPath.add(nLIndex);
                 stPath.add(nRIndex);
             }
-            if(aAllTrapezesInfo[nRIndex] === null)continue;
+            if (aAllTrapezesInfo[nRIndex] === null) continue;
             stPath.add(nRIndex);
         }
 
-        return Array.from(stPath);
+        let aPaths: EdgesPath = Array.from(stPath).map(nSide => {
+            return {
+                edgeIndex: nSide,
+                hasPocket: aPockets[nSide]
+            }
+        });
+        return aPaths;
     }
-    _getKSetData(){
-        
+    _getKSetData() {
+
         let aAllTrapezesInfo = this._getAllTrapezesInfo();
         let aRombInfo = this._getAllRombusKInfo(aAllTrapezesInfo);
 
         let aPath: EdgesPath = [];
-        if(this.getIsTypicalCase()){
-            aPath = this._getEdgePath(aAllTrapezesInfo,aRombInfo);
+        if (this.getIsTypicalCase()) {
+            aPath = this._getEdgePath(aAllTrapezesInfo, aRombInfo);
         }
 
         let aRombSegments: Segments = [];
-        aRombInfo.forEach(oInfo=>{
-            if(oInfo.segment === null)return;
+        aRombInfo.forEach(oInfo => {
+            if (oInfo.segment === null) return;
             aRombSegments.push(oInfo.segment as Segment);
         });
 

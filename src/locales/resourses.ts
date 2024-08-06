@@ -38,6 +38,9 @@ const ruResources = {
                 hover: `Бифуркационная диаграмма типичного трёхпараметрического семейства. 
                 Чёрные точки соответствуют рождающимся в семействе лункам, чёрные дуги окружности — петлям, синяя кривая соответствует двухкратным циклам, а её каспы — трёхкратным.`
             }
+        },
+        drawDiagram:{
+            notTypicalCase: 'Не типичный случай.'
         }
 
     }
@@ -83,6 +86,9 @@ const enResources = {
                 hover: `A bifurcation diagram of a generic family. The black points correspond to appearing lunes, the black arcs of the circle correspond to loops. 
                 The blue line corresponds to limit cycles of multiplicity two; its cusps corresponds to limit cycles of multiplicity three.`
             }
+        },
+        drawDiagram:{
+            notTypicalCase: 'Not typical case.'
         }
     }
 };
