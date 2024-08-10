@@ -2,14 +2,23 @@ import DrawSimplex from './DrawSimplex';
 
 import { connect } from 'react-redux';
 import { StateType } from 'appRedux/store';
-import { selectCharNumbers, selectIsFormError } from 'appRedux/drawSlice';
+import {
+    selectIsFormError,
+    selectSimplexWidth,
+    selectSimplexData
+} from 'appRedux/drawSlice';
 
 
 const mapStateToProps = (oState: StateType) => {
+    let oSimplexData = selectSimplexData(oState);
     return {
-        charNums: selectCharNumbers(oState),
-        isMonodromic: oState.draw.isMonodromic,
-        isFormError: selectIsFormError(oState)
+        isFormError: selectIsFormError(oState),
+        size: selectSimplexWidth(),
+        vertsInfo: oSimplexData.vertsInfo,
+        verts: oSimplexData.verts,
+        edgesInfo: oSimplexData.edgesInfo,
+        kSetAreas: oSimplexData.kSetAreas,
+        tripleSegment: oSimplexData.tripleSegment
     };
 };
 const mapDispatchToProps = {};

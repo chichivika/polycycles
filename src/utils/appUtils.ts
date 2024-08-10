@@ -35,3 +35,6 @@ export function numsAreZeros(aNums: number[]){
     }
     return true;
 }
+export function getThirdIndex(i: number, j: number) {
+    return Math.round((3 - i - j) % 3);
+}

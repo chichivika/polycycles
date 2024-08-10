@@ -3,13 +3,13 @@ import React from "react";
 type MyProps = {
     charNums: number[],
     isMonodromic: boolean,
-    isFormError: boolean
+    isFormError: boolean,
+    size: number
 };
 type MyState = {
 
 }
 class DrawPolycycle extends React.Component<MyProps, MyState> {
-    size: number = 300;
     paddingLeft:number = 10;
     render() {
         if (this.props.isFormError) {
@@ -18,8 +18,8 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
 
         return (
             <svg className='draw-graph draw-polycycle'
-                width={this.size}
-                height={this.size}>
+                width={this.props.size}
+                height={this.props.size}>
                 {this._renderPolycycle()}
                 {this._renderCharNums()}
             </svg>
@@ -28,12 +28,12 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
     _renderEmpty() {
         return (
             <svg className='draw-graph draw-polycycle'
-                width={this.size}
-                height={this.size}>
+                width={this.props.size}
+                height={this.props.size}>
                 {this._renderPolycycle()}
                 <rect className="draw-form-error-lid"
-                    width={this.size}
-                    height={this.size} />
+                    width={this.props.size}
+                    height={this.props.size} />
             </svg>
         );
     }
@@ -68,31 +68,31 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
         switch (i) {
             case 0:
                 return {
-                    x: this.size  - 80 -nLength*5 - nDots*5,
-                    y: this.size -90,
+                    x: this.props.size  - 80 -nLength*5 - nDots*5,
+                    y: this.props.size -90,
                     value: sNum
                 };
             case 1:
                 return {
                     x: 65,
-                    y: this.size -90,
+                    y: this.props.size -90,
                     value: sNum
                 };
             default:
                 return {
-                    x: this.size / 2 -nLength*5 - nDots*6,
+                    x: this.props.size / 2 -nLength*5 - nDots*6,
                     y: 45,
                     value: sNum
                 };
         }
     }
     _renderPolycycle() {
-        let nWindt = this.size - 2*this.paddingLeft;
-        let nHeight = 3*this.size/4;
+        let nWindt = this.props.size - 2*this.paddingLeft;
+        let nHeight = 3*this.props.size/4;
         return (
             <image href={this._getImgSrc()}
                 x={this.paddingLeft}
-                y={(this.size - nHeight)/2}
+                y={(this.props.size - nHeight)/2}
                 width={nWindt}
                 height={nHeight}
                 />

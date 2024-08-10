@@ -34,6 +34,11 @@ export function renderLines(aLines: Points[], oAttr?: SVGLineElementAttributes<S
     });
 }
 export function renderLine(aVerts: Points, oAttr?: SVGLineElementAttributes<SVGLineElement>, sKey?: string) {
+
+    if(aVerts.length < 2){
+        return null;
+    }
+
     let aF = aVerts[0];
     let aS = aVerts[1];
     let oSettings = oAttr ? oAttr : {};

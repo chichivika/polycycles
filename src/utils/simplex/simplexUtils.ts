@@ -1,8 +1,16 @@
-import ClassSimplexBase from './ClassSimplexBase';
-import { ClassParam } from './ClassSimplexBase';
+import { Point, Points,Segment } from 'utils/drawUtils';
 
+export type SimplexVertInfo = {
+    point: Point,
+    inKSet: boolean
+};
+export type SimplexVertsInfo = SimplexVertInfo[];
 
-function createSimplexObject(oParam: ClassParam) {
-    return new ClassSimplexBase(oParam);
-}
-export default createSimplexObject;
+export type SimplexEdgeInfo = {
+    points: Segment,
+    inKSet: boolean
+};
+export type SimplexEdgesInfo = SimplexEdgeInfo[];
+
+export type SimplexKSetAreasInfo = Points[];
+export type SimplexTripleSegment = Points;

@@ -1,80 +1,62 @@
 import React from "react";
-import createUnfoldObject from "utils/unfold/unfoldUtils";
 import { renderPolygon, renderClosedPath, renderLines } from "utils/svgUtils";
-import { Points } from "utils/drawUtils";
+import { Points,Segments } from "utils/drawUtils";
+import { SetInfo } from "utils/unfold/unfoldUtils";
 
 import './UnfoldStyle.scss';
 
 type MyProps = {
-    charNums: number[],
-    isMonodromic: boolean,
     isFormError: boolean,
-    size: number | null
+    size: number,
+    outerVerts: Points,
+    innerLines: Segments,
+    kSet: SetInfo,
+    tripleSet: SetInfo
+
 };
 type MyState = {
 
 }
 class Unfold extends React.Component<MyProps, MyState> {
-    size: number = 400;
-    innerPadding = 60;
-    _unfoldObject: (ReturnType<typeof createUnfoldObject> | null) = null;
     render() {
-        if (this.props.size === null) return null;
+        if (this.props.size === 0) return null;
 
-        this.size = this.props.size;
-        this._unfoldObject = createUnfoldObject({
-            isMonodromic: this.props.isMonodromic,
-            size: this.size,
-            paddingTop: this.size / 10,
-            innerPadTop: this.innerPadding,
-            charNums: this.props.charNums
-        });
         if (this.props.isFormError) {
             return this._renderEmpty();
         }
 
         let sClassName = this._getSVGClassName();
-
-        let oInfo = this._unfoldObject.getSpecialInfo();
         return (
             <svg className={sClassName}
-                width={this.size}
-                height={this.size}>
-                {this._renderAreas(oInfo.kSet.areas, oInfo.tripleSet.areas)}
+                width={this.props.size}
+                height={this.props.size}>
+                {this._renderAreas()}
                 {this._renderOuterTriangle()}
                 {this._renderInnerLines()}
-                {this._renderSpecialLines(oInfo.kSet.segments, oInfo.tripleSet.segments)}
+                {this._renderSpecialLines()}
             </svg>
         );
     }
     _getSVGClassName() {
-        let sClassName = 'draw-graph draw-unfold';
-
-        let oUnfold = this._unfoldObject;
-        if (oUnfold === null) return sClassName;
-
-        return sClassName;
+       return 'draw-graph draw-unfold';
     }
     _renderEmpty() {
         let sClassName = this._getSVGClassName();
         sClassName = sClassName.concat(' draw-form-error');
         return (
             <svg className={sClassName}
-                width={this.size}
-                height={this.size}>
+                width={this.props.size}
+                height={this.props.size}>
                 {this._renderOuterTriangle()}
                 {this._renderInnerLines()}
                 <rect className='draw-form-error-lid'
-                    width={this.size}
-                    height={this.size} />
+                    width={this.props.size}
+                    height={this.props.size} />
             </svg>
         );
     }
     _renderOuterTriangle() {
-        let oUnfold = this._unfoldObject;
-        if (oUnfold === null) return;
-
-        let aVerts = oUnfold.getOuterVerts();
+        let aVerts = this.props.outerVerts;
         return (
             <g key='outer-triangle'>
                 {renderClosedPath(aVerts)}
@@ -82,31 +64,33 @@ class Unfold extends React.Component<MyProps, MyState> {
         );
     }
     _renderInnerLines() {
-        let oUnfold = this._unfoldObject;
-        if (oUnfold === null) return;
-
-        let aLines = oUnfold.getInnerLines();
+        let aLines = this.props.innerLines;
         return (
             <g key='inner-triangle'>
                 {renderLines(aLines)}
             </g>
         );
     }
-    _renderAreas(aKVerts: Points[], aTripleVerts: Points[]) {
-        let aKAreas = aKVerts.map(aPolygon => renderPolygon(aPolygon));
-        let aTripleAreas = aTripleVerts.map(aPolygon => renderPolygon(aPolygon));
+    _renderAreas() {
+        let aKAreas = this.props.kSet.areas;
+        let aKPolygons = aKAreas.map(aPolygon => renderPolygon(aPolygon))
+        let aTripleAreas = this.props.tripleSet.areas;
+        let aTriplePolygons = aTripleAreas.map(aPolygon => renderPolygon(aPolygon));
+
         return (
             <g key='areas'>
                 <g key='k-area' className='draw-k-area'>
-                    {aKAreas}
+                    {aKPolygons}
                 </g>
                 <g key='triple-area' className='draw-triple-area'>
-                    {aTripleAreas}
+                    {aTriplePolygons}
                 </g>
             </g>
         );
     }
-    _renderSpecialLines(aKSegments: Points[], aTripleSegments: Points[]) {
+    _renderSpecialLines() {
+        let aKSegments = this.props.kSet.segments;
+        let aTripleSegments = this.props.tripleSet.segments;
         return (
             <g key='special-lines'>
                 <g key='k-line' className='draw-k-set'>

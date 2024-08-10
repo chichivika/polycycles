@@ -1,4 +1,4 @@
-import { EdgePath, EdgesPath } from "utils/unfold/ClassUnfoldBase"
+import { EdgePath, EdgesPath } from "utils/unfold/unfoldUtils"
 import { getSummPoints, Point, Points } from "utils/drawUtils";
 import { getDeltaPoints, getSummPointsWithCoeffs } from "utils/drawUtils";
 
@@ -11,23 +11,24 @@ type MyParam = {
 const nRadiusRatio = 1 / 4;
 
 class ClassDiagram {
-    _path: EdgesPath;
-    _isInnerPath: boolean;
-    size: number;
-    cx: number;
-    cy: number;
-    radius: number;
-    _radRatio: number;
-    _pathRadius: number;
-    _lPoints: Points;
+    public readonly cx: number;
+    public readonly cy: number;
+    public readonly radius: number;
+
+    protected readonly _path: EdgesPath;
+    protected readonly _isInnerPath: boolean;
+    protected readonly _size: number;
+    protected readonly _radRatio: number;
+    protected readonly _pathRadius: number;
+    protected readonly _lPoints: Points;
 
     constructor(oParam: MyParam) {
 
-        this.size = oParam.size;
+        this._size = oParam.size;
         this.cx = oParam.size / 2;
         this.cy = oParam.size / 2;
 
-        this.radius = this.size / 3;
+        this.radius = this._size / 3;
         this._isInnerPath = oParam.isInnerPath;
 
         this._radRatio = this._getPathRadiusRatio();
@@ -42,19 +43,19 @@ class ClassDiagram {
         this._path = aPath;
     }
     //=========================== PUBLIC =======================================
-    getLPoints() {
+    public getLPoints() {
         return this._lPoints;
     }
-    getSLPoints() {
+    public getSLPoints() {
         return this._findSLPoints();
     }
-    getPathArcs() {
+    public getPathArcs() {
         if (this._path.length < 2) return [];
 
         return this._findPathArcs();
     }
     //============================= PROTECTED ==================================
-    _findPathArcs() {
+    protected _findPathArcs() {
         let aPath = this._path;
         let nLength = aPath.length;
 
@@ -90,10 +91,10 @@ class ClassDiagram {
 
         return aArcs;
     }
-    _getCenter():Point{
+    protected _getCenter():Point{
         return [this.cx,this.cy];
     }
-    _getPocketArcs(oEdgeData: EdgePath, bStart: boolean): string[] {
+    protected _getPocketArcs(oEdgeData: EdgePath, bStart: boolean): string[] {
         let nRatio = this._radRatio;
         let nEdgeIndex = oEdgeData.edgeIndex;
         let aLPoint = this._lPoints[nEdgeIndex];
@@ -114,13 +115,13 @@ class ClassDiagram {
         aArcs.push(`M ${aCaspPoint[0]} ${aCaspPoint[1]} Q ${aPerpPoint[0]} ${aPerpPoint[1]} ${aLPoint[0]} ${aLPoint[1]}`);
         return aArcs;
     }
-    _getNotPocketArcs(oEdgeData: EdgePath, bStart: boolean, aPathPoint: Point): string[] {
+    protected _getNotPocketArcs(oEdgeData: EdgePath, bStart: boolean, aPathPoint: Point): string[] {
         let nEdgeIndex = oEdgeData.edgeIndex;
         let aLPoint = this._lPoints[nEdgeIndex];
 
         return [`M${aLPoint[0]} ${aLPoint[1]} L ${aPathPoint[0]} ${aPathPoint[1]}`];
     }
-    _rotateOnAngle(aPoint: Point, nAngle: number, bPos: boolean):Point{
+    protected _rotateOnAngle(aPoint: Point, nAngle: number, bPos: boolean):Point{
         let nCos = Math.cos(nAngle);
         let nSin = Math.sin(nAngle);
         let nCoef = bPos? 1: -1;
@@ -129,7 +130,7 @@ class ClassDiagram {
             nCoef*nSin*aPoint[0]+nCos*aPoint[1]
         ];
     }
-    _findSLPoints() {
+    protected _findSLPoints() {
         let nX = this.cx;
         let nY = this.cy;
         let nR = this.radius;
@@ -142,7 +143,7 @@ class ClassDiagram {
 
         return aDots;
     }
-    _findLPoints() {
+    protected _findLPoints() {
         let nX = this.cx;
         let nY = this.cy;
         let nR = this.radius;
@@ -155,7 +156,7 @@ class ClassDiagram {
 
         return aDots;
     }
-    _getIsPosOrientation(aPath: EdgesPath) {
+    protected _getIsPosOrientation(aPath: EdgesPath) {
         if (aPath.length < 2) {
             return true;
         }
@@ -171,13 +172,13 @@ class ClassDiagram {
 
         return (aDelta[0] * aNextDelta[1] - aDelta[1] * aNextDelta[0] < 0);
     }
-    _getPathRadiusRatio() {
+    protected _getPathRadiusRatio() {
         if (!this._isInnerPath) {
             return nRadiusRatio;
         }
         return -nRadiusRatio;
     }
-    _getCirclePerpAt(aPoint: Point) {
+    protected _getCirclePerpAt(aPoint: Point) {
         let nX = this.cx;
         let nY = this.cy;
 

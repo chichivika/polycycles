@@ -19,6 +19,15 @@ import {
     numsAreAlmostEqual
 } from 'utils/jsUtils';
 import { numsAreDegenerated, numsMulIsUnit } from 'utils/appUtils';
+import {
+    TrapezeInfo, AllTrapezesInfo,
+    RombSegment,
+    RombInfo, AllRombsInfo,
+    SetInfo,
+    EdgesPath,
+    SpecialInfo,
+    RombCoordinates
+} from './unfoldUtils';
 
 export type ClassParam = {
     size: number,
@@ -27,68 +36,35 @@ export type ClassParam = {
     charNums: number[],
     isMonodromic: boolean
 }
-export type SegmentInfo = Points | null;
-export type SegmentsInfo = SegmentInfo[];
-export type RombCoordinates = {
-    bottom: Point,
-    top: Point,
-    rHip: Point,
-    lHip: Point
-}
-
-type TrapezeInfo = Segments | null;
-type AllTrapezesInfo = TrapezeInfo[];
-type RombSegment = Segment | null;
-type AllRombSegments = Segments;
-type RombInfo = {
-    segment: RombSegment,
-    middle: boolean,
-    outerSides: number[]
-}
-type AllRombsInfo = RombInfo[];
-export type SetInfo = {
-    segments: Segments,
-    areas: Points[]
-};
-export type EdgePath = {
-    edgeIndex: number,
-    hasPocket: boolean
-};
-export type EdgesPath = EdgePath[]
-export type SpecialInfo = {
-    kSet: SetInfo,
-    tripleSet: SetInfo,
-    edgesPath: EdgesPath
-}
 
 class ClassUnfoldBase {
     //Размер рисунка
-    size: number;
+    protected readonly _size: number;
     //Отступ внешнего симплекса от верха
-    paddingTop: number;
+    protected readonly _paddingTop: number;
     //Отступ внутреннего симплекса от внешнего
-    innerPadding: number;
-    charNums: number[];
-    isMonodromic: boolean;
-    _numsMulIsUnit: boolean | null = null;
-    _numsAreDegenerated: boolean | null = null;
-    _outerVerts: Points;
-    _innerVerts: Points;
-    _rombusSide: number;
-    _rombusHips: Points[];
+    protected readonly _innerPadding: number;
+    protected readonly _charNums: number[];
+    protected readonly _isMonodromic: boolean;
+    protected _numsMulIsUnit: boolean | null = null;
+    protected _numsAreDegenerated: boolean | null = null;
+    protected readonly _outerVerts: Points;
+    protected readonly _innerVerts: Points;
+    protected readonly _rombusSide: number;
+    protected readonly _rombusHips: Points[];
 
     constructor({ size, paddingTop, charNums, innerPadTop, isMonodromic }: ClassParam) {
 
-        this.size = size;
-        this.paddingTop = paddingTop;
-        this.innerPadding = innerPadTop;
-        this.charNums = charNums;
-        this.isMonodromic = isMonodromic;
+        this._size = size;
+        this._paddingTop = paddingTop;
+        this._innerPadding = innerPadTop;
+        this._charNums = charNums;
+        this._isMonodromic = isMonodromic;
 
-        let oOuterVerts = calcTriangleVertsBySizeAndPadding(this.size, this.paddingTop);
+        let oOuterVerts = calcTriangleVertsBySizeAndPadding(this._size, this._paddingTop);
         this._outerVerts = oOuterVerts.window;
 
-        this._rombusSide = (2 / Math.sqrt(3)) * this.innerPadding;
+        this._rombusSide = (2 / Math.sqrt(3)) * this._innerPadding;
 
         let oInnerVerts = this._findInnerVerts(oOuterVerts.descart);
         this._innerVerts = oInnerVerts.window;
@@ -97,13 +73,13 @@ class ClassUnfoldBase {
         this._rombusHips = oRombusHips.window;
     }
     //============================= Public =============================
-    getOuterVerts() {
+    public getOuterVerts() {
         return this._outerVerts;
     }
-    getInnerVerts() {
+    public getInnerVerts() {
         return this._innerVerts;
     }
-    getInnerLines(): Segments {
+    public getInnerLines(): Segments {
         let aRombHips = this._rombusHips;
 
         return [
@@ -112,31 +88,31 @@ class ClassUnfoldBase {
             [aRombHips[2][0], aRombHips[0][1]]
         ];
     }
-    getNumsMulIsUnit(): boolean {
+    public getNumsMulIsUnit(): boolean {
         if (typeof this._numsMulIsUnit === 'boolean') {
             return this._numsMulIsUnit;
         }
 
-        let aNums = this.charNums;
+        let aNums = this._charNums;
         this._numsMulIsUnit = numsMulIsUnit(aNums);
         return this._numsMulIsUnit;
     }
-    getNumsAreDegenerated(): boolean {
+    public getNumsAreDegenerated(): boolean {
         if (typeof this._numsAreDegenerated === 'boolean') {
             return this._numsAreDegenerated;
         }
 
-        let aNums = this.charNums;
+        let aNums = this._charNums;
         this._numsAreDegenerated = numsAreDegenerated(aNums);
         return this._numsAreDegenerated;
     }
-    getSpecialInfo(): SpecialInfo {
+    public getSpecialInfo(): SpecialInfo {
         //Если все числа равны 1
         if (this.getNumsAreDegenerated()) {
             return this._getDegenSpecialInfo();
         }
 
-        let oInfo = this._getInitialInfoObject();
+        let oInfo = ClassUnfoldBase.getInitialSpecialInfo();
 
         let oKSetData = this._getKSetData();
         oInfo.kSet.segments = oKSetData.segments;
@@ -147,7 +123,7 @@ class ClassUnfoldBase {
 
         return oInfo;
     }
-    getIsTypicalCase() {
+    public getIsTypicalCase() {
         if (this.getNumsAreDegenerated()) {
             return false;
         }
@@ -162,10 +138,13 @@ class ClassUnfoldBase {
 
         return true;
     }
-    _getTripleLineIntersectSide(nSide: number) {
-        return getTripleLineIntersectSidePoint(nSide, this._innerVerts, this.charNums, this.isMonodromic);
+
+    //=================================================================================
+
+    protected _getTripleLineIntersectSide(nSide: number) {
+        return getTripleLineIntersectSidePoint(nSide, this._innerVerts, this._charNums, this._isMonodromic);
     }
-    _getEdgePath(aAllTrapezesInfo: AllTrapezesInfo, aRombInfo: AllRombsInfo): EdgesPath {
+    protected _getEdgePath(aAllTrapezesInfo: AllTrapezesInfo, aRombInfo: AllRombsInfo): EdgesPath {
 
         let stPath = new Set<number>();
         let aPockets: boolean[] = [false, false, false];
@@ -200,7 +179,7 @@ class ClassUnfoldBase {
         });
         return aPaths;
     }
-    _getKSetData() {
+    protected _getKSetData() {
 
         let aAllTrapezesInfo = this._getAllTrapezesInfo();
         let aRombInfo = this._getAllRombusKInfo(aAllTrapezesInfo);
@@ -236,25 +215,25 @@ class ClassUnfoldBase {
             edgesPath: aPath
         }
     }
-    _getDegenSpecialInfo(): SpecialInfo {
-        let oInfo = this._getInitialInfoObject();
+    protected _getDegenSpecialInfo(): SpecialInfo {
+        let oInfo = ClassUnfoldBase.getInitialSpecialInfo();
         oInfo.kSet = {
             segments: this._getDegenKLineSegments(),
             areas: [this._outerVerts]
         };
         return oInfo;
     }
-    _getDegenKLineSegments(): Segments {
+    protected _getDegenKLineSegments(): Segments {
         let aOuters = this._outerVerts;
 
         let aSegments = mapVertsToPolygonEdges(aOuters);
         aSegments = aSegments.concat(this.getInnerLines());
         return aSegments;
     }
-    _getAllTrapezesInfo(): AllTrapezesInfo {
+    protected _getAllTrapezesInfo(): AllTrapezesInfo {
         return [0, 1, 2].map(i => this._getTrapezeInfo(i));
     }
-    _getTrapezeInfo(i: number): TrapezeInfo {
+    protected _getTrapezeInfo(i: number): TrapezeInfo {
 
         if (this._checkTrapezeDegen(i)) {
             return this._getDegenTrapezeInfo(i);
@@ -278,7 +257,7 @@ class ClassUnfoldBase {
 
         return [aSegment];
     }
-    _getDegenTrapezeInfo(i: number): Segments {
+    protected _getDegenTrapezeInfo(i: number): Segments {
         let oTrapeze = this._getTrapezeCoordinates(i);
         let aSegments = [[oTrapeze.baseL, oTrapeze.baseR]] as Segments;
 
@@ -297,7 +276,7 @@ class ClassUnfoldBase {
         return aSegments;
 
     }
-    _getAllRombusKInfo(aTrapezeInfo: AllTrapezesInfo): AllRombsInfo {
+    protected _getAllRombusKInfo(aTrapezeInfo: AllTrapezesInfo): AllRombsInfo {
         let aAllInfo: AllRombsInfo = [];
 
         for (let i = 0; i < 3; ++i) {
@@ -306,14 +285,14 @@ class ClassUnfoldBase {
         }
         return aAllInfo;
     }
-    _getRombEmptyInfo(): RombInfo {
+    protected _getRombEmptyInfo(): RombInfo {
         return {
             middle: false,
             outerSides: [],
             segment: null
         };
     }
-    _getRombusKInfo(aTrapezeInfo: AllTrapezesInfo, i: number): RombInfo {
+    protected _getRombusKInfo(aTrapezeInfo: AllTrapezesInfo, i: number): RombInfo {
 
         let oInfo = this._getRombEmptyInfo();
 
@@ -328,7 +307,7 @@ class ClassUnfoldBase {
 
         return this._getRombusBaseKInfo(aTrapezeInfo, i);
     }
-    _getDegenRombusKInfo(aTrapezeInfo: AllTrapezesInfo, i: number): RombSegment {
+    protected _getDegenRombusKInfo(aTrapezeInfo: AllTrapezesInfo, i: number): RombSegment {
         let oRomb = this._getRombCoordinates(i);
         if (this.getNumsMulIsUnit()) {
             return [oRomb.top, oRomb.bottom];
@@ -350,7 +329,7 @@ class ClassUnfoldBase {
         return null;
 
     }
-    _getRombInfoWhileMulUnit(aTrapezeInfo: AllTrapezesInfo, i: number): RombSegment {
+    protected _getRombInfoWhileMulUnit(aTrapezeInfo: AllTrapezesInfo, i: number): RombSegment {
         let aInners = this._innerVerts;
 
         let aLSegments = this._checkRombSideInKSet(i, 0);
@@ -363,7 +342,7 @@ class ClassUnfoldBase {
         }
         return null;
     }
-    _getRombusBaseKInfo(aTrapezeInfo: AllTrapezesInfo, i: number): RombInfo {
+    protected _getRombusBaseKInfo(aTrapezeInfo: AllTrapezesInfo, i: number): RombInfo {
         let oInfo = this._getRombEmptyInfo();
         oInfo.middle = true;
 
@@ -411,7 +390,7 @@ class ClassUnfoldBase {
 
         return oInfo;
     }
-    getTripleLineInfo() {
+    protected getTripleLineInfo() {
         let oInfo: SetInfo = {
             segments: [],
             areas: []
@@ -419,13 +398,13 @@ class ClassUnfoldBase {
 
         let aDegenInds = this._getAllDegenRombs();
         if (aDegenInds.length > 0) {
-            return this.getTripleInfoWhileDegen(aDegenInds);
+            return this._getTripleInfoWhileDegen(aDegenInds);
         }
 
         let aIntersections: Points = [];
         let aTrapezeSegments: Segments = [];
         [0, 1, 2].forEach(i => {
-            let aIntersect = getTripleLineIntersectSidePoint(i, this._innerVerts, this.charNums, this.isMonodromic);
+            let aIntersect = getTripleLineIntersectSidePoint(i, this._innerVerts, this._charNums, this._isMonodromic);
             if (aIntersect !== null) {
                 aIntersections.push(aIntersect);
 
@@ -446,34 +425,20 @@ class ClassUnfoldBase {
 
         return oInfo;
     }
-    //============================= Protected =============================
-    _getInitialInfoObject(): SpecialInfo {
-        return {
-            kSet: {
-                segments: [],
-                areas: []
-            },
-            tripleSet: {
-                segments: [],
-                areas: []
-            },
-            edgesPath: []
-        };
-    }
-    _findInnerVerts(aDescOuters: Points) {
+    protected _findInnerVerts(aDescOuters: Points) {
         let nRomSide = this._rombusSide;
         let aDescartInners = [
-            [aDescOuters[0][0] - nRomSide * 3 / 2, aDescOuters[0][1] + this.innerPadding],
-            [aDescOuters[1][0] + nRomSide * 3 / 2, aDescOuters[1][1] + this.innerPadding],
-            [aDescOuters[2][0], aDescOuters[2][1] - 2 * this.innerPadding]
+            [aDescOuters[0][0] - nRomSide * 3 / 2, aDescOuters[0][1] + this._innerPadding],
+            [aDescOuters[1][0] + nRomSide * 3 / 2, aDescOuters[1][1] + this._innerPadding],
+            [aDescOuters[2][0], aDescOuters[2][1] - 2 * this._innerPadding]
         ] as Points;
 
         return {
             descart: aDescartInners,
-            window: mapAllDescartToWindow(aDescartInners, this.size)
+            window: mapAllDescartToWindow(aDescartInners, this._size)
         };
     }
-    _findRombusHips(aDescOuters: Points, aDescInners: Points) {
+    protected _findRombusHips(aDescOuters: Points, aDescInners: Points) {
         let nRombSide = this._rombusSide;
         let aDesc = [
             [
@@ -485,21 +450,21 @@ class ClassUnfoldBase {
                 [aDescOuters[1][0] + nRombSide / 2, aDescInners[1][1]]
             ],
             [
-                [aDescOuters[2][0] - nRombSide / 2, aDescOuters[2][1] - this.innerPadding],
-                [aDescOuters[2][0] + nRombSide / 2, aDescOuters[2][1] - this.innerPadding]
+                [aDescOuters[2][0] - nRombSide / 2, aDescOuters[2][1] - this._innerPadding],
+                [aDescOuters[2][0] + nRombSide / 2, aDescOuters[2][1] - this._innerPadding]
             ]
         ];
 
         return {
             descart: aDesc,
-            window: aDesc.map(aRombus => mapAllDescartToWindow(aRombus as Points, this.size))
+            window: aDesc.map(aRombus => mapAllDescartToWindow(aRombus as Points, this._size))
         }
     }
-    _checkRombIsDegen(i: number) {
-        let aNums = this.charNums;
+    protected _checkRombIsDegen(i: number) {
+        let aNums = this._charNums;
         return numsAreAlmostEqual(aNums[i], 1);
     }
-    _checkAnyRombSideInKSet(i: number): Point | null {
+    protected _checkAnyRombSideInKSet(i: number): Point | null {
         let aLSegments = this._checkRombSideInKSet(i, 0);
         if (aLSegments !== null) {
             return aLSegments;
@@ -510,7 +475,7 @@ class ClassUnfoldBase {
         }
         return null;
     }
-    _checkRombSideInKSet(nRombIndex: number, nSideIndex: number): (Point | null) {
+    protected _checkRombSideInKSet(nRombIndex: number, nSideIndex: number): (Point | null) {
         let nRIndex = (nRombIndex + 1) % 3;
         let nLIndex = (nRombIndex + 2) % 3;
 
@@ -533,18 +498,18 @@ class ClassUnfoldBase {
         ];
 
     }
-    _getTrapezeSideInds(i: number) {
+    protected _getTrapezeSideInds(i: number) {
         return [(i + 1) % 3, (i + 2) % 3];
     }
-    _getTrapezeSideRombsHips(i: number) {
+    protected _getTrapezeSideRombsHips(i: number) {
         let aHips = this._rombusHips;
         let [nL, nR] = this._getTrapezeSideInds(i);
         return [aHips[nL], aHips[nR]]
     }
-    _getRombSideInds(i: number) {
+    protected _getRombSideInds(i: number) {
         return [(i + 1) % 3, (i + 2) % 3];
     }
-    _getRombCoordinates(i: number): RombCoordinates {
+    protected _getRombCoordinates(i: number): RombCoordinates {
         let aOuters = this._outerVerts;
         let aInners = this._innerVerts;
         let aHips = this._rombusHips[i];
@@ -556,21 +521,21 @@ class ClassUnfoldBase {
             lHip: aHips[0]
         };
     }
-    _getRombVerts(i: number): Points {
+    protected _getRombVerts(i: number): Points {
         let aOuters = this._outerVerts;
         let aInners = this._innerVerts;
         let aHips = this._rombusHips[i];
 
         return [aOuters[i], aHips[0], aInners[i], aHips[1]];
     }
-    _checkTrapezeDegen(i: number) {
+    protected _checkTrapezeDegen(i: number) {
         let [nFIndex, nSIndex] = this._getTrapezeSideInds(i);
-        let aNums = this.charNums;
+        let aNums = this._charNums;
         let nMul = aNums[nFIndex] * aNums[nSIndex];
 
         return numsAreAlmostEqual(nMul, 1);
     }
-    _getTrapezeCoordinates(i: number) {
+    protected _getTrapezeCoordinates(i: number) {
         let aInnerVerts = this._innerVerts;
 
         let [nLIndex, nRIndex] = this._getTrapezeSideInds(i);
@@ -583,14 +548,14 @@ class ClassUnfoldBase {
             topL: aInnerVerts[nLIndex]
         }
     }
-    _getTrapezeVerts(i: number) {
+    protected _getTrapezeVerts(i: number) {
         let aInnerVerts = this._innerVerts;
 
         let [nLIndex, nRIndex] = this._getTrapezeSideInds(i);
         let [aLeftRomb, aRightRomb] = this._getTrapezeSideRombsHips(i);
         return [aLeftRomb[1], aRightRomb[0], aInnerVerts[nRIndex], aInnerVerts[nLIndex]];
     }
-    _getTrapezeRatio(i: number): number | null {
+    protected _getTrapezeRatio(i: number): number | null {
         let aPoints = this._getKTriplePoints(i, [i]);
 
         if (!this._checkTripleIsOrdered(aPoints)) {
@@ -599,31 +564,31 @@ class ClassUnfoldBase {
 
         return this._getPointsRatio(aPoints);
     }
-    _getPointsRatio(aPoints: number[]) {
+    protected _getPointsRatio(aPoints: number[]) {
         return (aPoints[1] - aPoints[0]) / (aPoints[2] - aPoints[0]);
     }
-    _checkTripleIsOrdered(aPoints: number[]) {
+    protected _checkTripleIsOrdered(aPoints: number[]) {
         if (aPoints[0] < aPoints[1] && aPoints[1] < aPoints[2]) {
             return true;
         }
         return false;
     }
-    _getKTriplePoints(i: number, aExcept: number[]) {
+    protected _getKTriplePoints(i: number, aExcept: number[]) {
         let fnMul = this._productNumsFromTo.bind(this);
-        let aNums = this.charNums;
+        let aNums = this._charNums;
 
         return [0,
             (1 - fnMul(0, 2, aExcept)) / (fnMul(i, 2, aExcept) * (aNums[i] - 1)),
             fnMul(0, i, aExcept)
         ];
     }
-    _productNumsFromTo(nFrom: number, nTo: number, aExcept?: number[]) {
-        return productNumsFromTo(this.charNums, nFrom, nTo, aExcept);
+    protected _productNumsFromTo(nFrom: number, nTo: number, aExcept?: number[]) {
+        return productNumsFromTo(this._charNums, nFrom, nTo, aExcept);
     }
-    _mapProjectiveToDescart(aZets1: ProjectivePoint, aVerts: Points) {
-        return mapProjectiveToDescart(aZets1, aVerts, this.isMonodromic);
+    protected _mapProjectiveToDescart(aZets1: ProjectivePoint, aVerts: Points) {
+        return mapProjectiveToDescart(aZets1, aVerts, this._isMonodromic);
     }
-    _getAllDegenRombs() {
+    protected _getAllDegenRombs() {
         let aInds: number[] = [];
         [0, 1, 2].forEach(i => {
             if (this._checkRombIsDegen(i)) {
@@ -632,10 +597,10 @@ class ClassUnfoldBase {
         });
         return aInds;
     }
-    _getThirdIndex(i: number, j: number) {
+    protected _getThirdIndex(i: number, j: number) {
         return Math.round((3 - i - j) % 3);
     }
-    getTripleInfoWhileDegen(aDegenInds: number[]) {
+    protected _getTripleInfoWhileDegen(aDegenInds: number[]) {
 
         let oInfo: SetInfo = {
             segments: [],
@@ -662,7 +627,7 @@ class ClassUnfoldBase {
 
         let nInd = aDegenInds[0];
         let aPoints = this._getRombVerts(nInd);
-        let aIntersect = getTripleLineIntersectSidePoint(nInd, this._innerVerts, this.charNums, this.isMonodromic);
+        let aIntersect = getTripleLineIntersectSidePoint(nInd, this._innerVerts, this._charNums, this._isMonodromic);
         if (aIntersect !== null) {
             oInfo.segments.push([this._innerVerts[nInd], aIntersect]);
             let aTrapeze = this._getTrapezeCoordinates(nInd);
@@ -675,6 +640,19 @@ class ClassUnfoldBase {
             oInfo.areas.push(aPoints);
         }
         return oInfo;
+    }
+    static getInitialSpecialInfo(): SpecialInfo {
+        return {
+            kSet: {
+                segments: [],
+                areas: []
+            },
+            tripleSet: {
+                segments: [],
+                areas: []
+            },
+            edgesPath: []
+        };
     }
 }
 export default ClassUnfoldBase;

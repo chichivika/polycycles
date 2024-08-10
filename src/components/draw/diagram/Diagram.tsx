@@ -1,7 +1,7 @@
 import React from "react";
 import { Point, Points, getDeltaPoints } from "utils/drawUtils";
-import createUnfoldObject from "utils/unfold/unfoldUtils";
 import ClassDiagram from "utils/diagram/ClassDiagram";
+import { EdgesPath } from "utils/unfold/unfoldUtils";
 import { Translation } from "react-i18next";
 
 import './DiagramStyle.scss';
@@ -11,65 +11,56 @@ type MyProps = {
     charNums: number[],
     isMonodromic: boolean,
     isFormError: boolean,
-    size: number | null
+    size: number,
+    edgesPath: EdgesPath,
+    isTypicalCase: boolean
 };
 type MyState = {
 
 }
 class DrawDiagram extends React.Component<MyProps, MyState> {
-    size: number = 0;
     paddingLeft: number = 60;
     _radius: number = 0;
     _lPoints: Points = [];
-    _diagramObject: ClassDiagram | null = null;
     _isInnerPath: boolean = false;
+    _diagramObject: ClassDiagram | null = null;
 
     render() {
 
-        if (this.props.size === null) return null;
-
-        this.size = this.props.size;
+        if (this.props.size === 0) return null;
 
         if (this.props.isFormError) {
-            this._isInnerPath = false;
-            this._diagramObject = new ClassDiagram({
-                path: [],
-                size: this.size,
-                isInnerPath: this._isInnerPath
-            });
             return this._renderEmpty();
         }
-
-        let oUnfold = createUnfoldObject({
-            isMonodromic: this.props.isMonodromic,
-            size: this.size,
-            paddingTop: this.size / 10,
-            innerPadTop: 60,
-            charNums: this.props.charNums
-        });
-        let aPath = oUnfold.getSpecialInfo().edgesPath;
-
-        if (aPath.length < 2) {
+        if(!this.props.isTypicalCase){
             this._isInnerPath = false;
             this._diagramObject = new ClassDiagram({
                 path: [],
-                size: this.size,
+                size: this.props.size,
                 isInnerPath: this._isInnerPath
             });
             return this._renderNotTypicalCase();
         }
 
-        this._isInnerPath = this._getIsInnerPath();
+        let aPath = this.props.edgesPath;
+        if (aPath.length < 2) {
+            this._isInnerPath = false;
+            aPath = [];
+        }
+        else{
+            this._isInnerPath = this._getIsInnerPath();
+        }
+        
         this._diagramObject = new ClassDiagram({
             path: aPath,
-            size: this.size,
+            size: this.props.size,
             isInnerPath: this._isInnerPath
         });
 
         return (
             <svg className='draw-graph draw-diagram'
-                width={this.size}
-                height={this.size}>
+                width={this.props.size}
+                height={this.props.size}>
                 {this._renderCircle()}
                 {this._renderEdgesPath()}
                 {this._renderDotsAndTexts()}
@@ -202,13 +193,13 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
     _renderEmpty() {
         return (
             <svg className='draw-graph draw-diagram'
-                width={this.size}
-                height={this.size}>
+                width={this.props.size}
+                height={this.props.size}>
                 {this._renderCircle()}
                 {this._renderDotsAndTexts()}
                 <rect className="draw-form-error-lid"
-                    width={this.size}
-                    height={this.size} />
+                    width={this.props.size}
+                    height={this.props.size} />
             </svg>
         );
     }
@@ -229,8 +220,8 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
     _renderNotTypicalCase() {
         return (
             <svg className='draw-graph draw-diagram draw-diagram-not-typical'
-                width={this.size}
-                height={this.size}>
+                width={this.props.size}
+                height={this.props.size}>
                 {this._renderCircle()}
                 {this._renderDotsAndTexts()}
                 {this._renderNotTypicalText()}

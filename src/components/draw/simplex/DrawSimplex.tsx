@@ -1,36 +1,38 @@
 import React from "react";
-import createSimplexObject from "utils/simplex/simplexUtils";
-import { Points } from "utils/drawUtils";
+import {
+    SimplexVertsInfo,
+    SimplexEdgesInfo,
+    SimplexKSetAreasInfo,
+    SimplexTripleSegment,
+    SimplexEdgeInfo,
+    SimplexVertInfo
+} from "utils/simplex/simplexUtils";
+import { getDeltaPoints, getOrtDeltaPoints, Points } from "utils/drawUtils";
 import { renderClosedPath, renderPolygon, renderLine } from "utils/svgUtils";
-import { numsMulIsUnit } from "utils/appUtils";
 
 type MyProps = {
-    charNums: number[],
-    isMonodromic: boolean,
-    isFormError: boolean
+    isFormError: boolean,
+    size: number,
+    vertsInfo: SimplexVertsInfo,
+    verts: Points,
+    edgesInfo: SimplexEdgesInfo,
+    kSetAreas: SimplexKSetAreasInfo,
+    tripleSegment: SimplexTripleSegment
 };
 
 class DrawSimplex extends React.Component<MyProps, {}> {
-    size: number = 300;
     paddingTop = 30;
-    _simplexObject: (ReturnType<typeof createSimplexObject> | null) = null;
 
     render() {
 
-        this._simplexObject = createSimplexObject({
-            isMonodromic: this.props.isMonodromic,
-            size: this.size,
-            paddingTop: this.paddingTop,
-            charNums: this.props.charNums
-        });
         if (this.props.isFormError) {
             return this._renderEmpty();
         }
 
         return (
             <svg className='draw-graph draw-simplex'
-                width={this.size}
-                height={this.size} >
+                width={this.props.size}
+                height={this.props.size} >
                 {this._renderKSetArea()}
                 {this._renderEdges()}
                 {this._renderVertices()}
@@ -39,87 +41,68 @@ class DrawSimplex extends React.Component<MyProps, {}> {
             </svg >
         );
     }
-    _renderKSetArea(){
-        let aNums = this.props.charNums;
-        if(!numsMulIsUnit(aNums)){
-            return null;
-        }
-        let oSimplex = this._simplexObject;
-        if (oSimplex === null) return;
-
-        let aVerts = oSimplex.getVertices()
-        return renderPolygon(aVerts, {
-            className: 'draw-k-area'
-        });
-    }
     _renderEmpty() {
         return (
             <svg className='draw-graph draw-simplex draw-form-error'
-                width={this.size}
-                height={this.size}
+                width={this.props.size}
+                height={this.props.size}
             >
                 {this._renderSimpleTriangle()}
                 {this._renderTexts()}
                 <rect className='draw-form-error-lid'
-                    width={this.size}
-                    height={this.size} />
+                    width={this.props.size}
+                    height={this.props.size} />
             </svg>
         );
+    }
+    _renderKSetArea() {
+        let aAreas = this.props.kSetAreas;
+        return aAreas.map(aArea => renderPolygon(aArea, {
+            className: 'draw-k-area'
+        }));
     }
     _renderTexts() {
         return (
             <g key='edge-texts' fontWeight='normal'>
-                {[0, 1, 2].map(i => this._renderEdgeText(i))}
+                {this.props.edgesInfo.map((oInfo,i) => this._renderEdgeText(oInfo,i))}
             </g>
         );
     }
     _renderSimpleTriangle() {
-        let oSimplex = this._simplexObject;
-        if (oSimplex === null) return;
-
-        let aVerts = oSimplex.getVertices();
+        let aVerts = this.props.verts;
         return renderClosedPath(aVerts);
     }
-    _renderEdgeText(i: number) {
-        let oSimplex = this._simplexObject;
-        if (oSimplex === null) return;
+    _renderEdgeText(oEdgeInfo: SimplexEdgeInfo,i: number) {
+        let aVerts = oEdgeInfo.points;
 
-        let aVerts = oSimplex.getVertices();
-        let nFirst = (i + 1) % 3;
-        let nSecond = (i + 2) % 3;
-
-        if (i === 2) {
-            [nFirst, nSecond] = [nSecond, nFirst];
+        let aFVert = aVerts[0];
+        let aSVert = aVerts[1];
+        if(i === 2){
+            [aFVert,aSVert] = [aSVert,aFVert];
         }
 
-        let oFVert = aVerts[nFirst];
-        let oSVert = aVerts[nSecond];
+        let aTangent = getDeltaPoints(aFVert, aSVert);
+        let aUnionTangent = getOrtDeltaPoints(aFVert, aSVert);
 
-        let oTangent = [oSVert[0] - oFVert[0], oSVert[1] - oFVert[1]];
-        let nTangentLength = Math.sqrt(oTangent[0] ** 2 + oTangent[1] ** 2);
-        let oUnionTangent = [oTangent[0] / nTangentLength, oTangent[1] / nTangentLength];
+        let aOrt = [aUnionTangent[1], -aUnionTangent[0]];
 
-        let oOrt = [oUnionTangent[1], -oUnionTangent[0]];
+        let nX = aFVert[0] + aTangent[0] / 2 + 10 * aOrt[0] - 19 * aUnionTangent[0];
+        let nY = aFVert[1] + aTangent[1] / 2 + 10 * aOrt[1] - 19 * aUnionTangent[1];
 
-        let nX = oFVert[0] + oTangent[0] / 2 + 10 * oOrt[0] - 19 * oUnionTangent[0];
-        let nY = oFVert[1] + oTangent[1] / 2 + 10 * oOrt[1] - 19 * oUnionTangent[1];
-
-        let iAngle = 0;
+        let nAngle = 0;
         switch (i) {
             case 0:
-                iAngle = -60;
+                nAngle = -60;
                 break;
             case 1:
-                iAngle = 60;
+                nAngle = 60;
                 break;
-            case 2:
-                break
         }
 
         return (
             <text key={i} x={nX} y={nY}
                 fontSize='1.2rem'
-                transform={`rotate(${iAngle} ${nX}, ${nY})`}
+                transform={`rotate(${nAngle} ${nX}, ${nY})`}
                 textLength={'38px'}
             >
                 z<tspan baselineShift="sub"
@@ -131,61 +114,37 @@ class DrawSimplex extends React.Component<MyProps, {}> {
     _renderEdges() {
         return (
             <g key='edges'>
-                {[0, 1, 2].map(i => this._drawTriangleEdge(i))}
+                {this.props.edgesInfo.map((oEdge, i) =>
+                    this._drawTriangleEdge(oEdge, i)
+                )}
             </g>
         );
     }
     _renderVertices() {
         return (
             <g key='verts'>
-                {[0, 1, 2].map(i => this._drawTriangleVertices(i))}
+                {this.props.vertsInfo.map((oVert, i) => this._drawTriangleVert(oVert, i))}
             </g>
         );
     }
     _renderTripleLine() {
-        let oSimplex = this._simplexObject;
-        if (oSimplex === null) return;
-
-        let aPoints: Points;
-        try {
-            aPoints = oSimplex.getTripleCycleLineSegment() as Points;
-        }
-        catch (sErr) {
-            return null;
-        }
-
-        if(aPoints === null) return null;
-
-        let aFVert = aPoints[0];
-        let aSVert = aPoints[1];
-        return renderLine([aFVert, aSVert],
-            {className: 'draw-triple-set'},
+        return renderLine(this.props.tripleSegment,
+            { className: 'draw-triple-set' },
             `triple-line`);
     }
-    _drawTriangleVertices(i: number) {
-        let oSimplex = this._simplexObject;
-        if (oSimplex === null) return;
-
-        let aVerts = oSimplex.getVertices();
-        if (oSimplex.checkVerticeInKSet(i)) {
+    _drawTriangleVert(oVertInfo: SimplexVertInfo, i: number) {
+        if (oVertInfo.inKSet) {
+            let aPoint = oVertInfo.point;
             return (
-                <circle key={i} cx={aVerts[i][0]} cy={aVerts[i][1]} r="5" fill='blue' />
+                <circle key={i} cx={aPoint[0]} cy={aPoint[1]} r="5" fill='blue' />
             );
         }
         return null;
     }
-    _drawTriangleEdge(i: number) {
-        let oSimplex = this._simplexObject;
-        if (oSimplex === null) return;
-
-        let nFirst = (i + 1) % 3;
-        let nSecond = (i + 2) % 3;
-        let aVerts = oSimplex.getVertices();
-        let aFVert = aVerts[nFirst];
-        let aSVert = aVerts[nSecond];
-
-        let sClassName = oSimplex.checkEdgeInKSet(i) ? 'draw-k-set' : 'draw-simplex';
-        return renderLine([aFVert, aSVert], { className: sClassName }, `${i}`);
+    _drawTriangleEdge(oEdgeInfo: SimplexEdgeInfo, i: number) {
+        let aVerts = oEdgeInfo.points;
+        let sClassName = oEdgeInfo.inKSet ? 'draw-k-set' : 'draw-simplex';
+        return renderLine(aVerts, { className: sClassName }, `${i}`);
     }
 }
 
