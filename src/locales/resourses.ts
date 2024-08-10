@@ -40,7 +40,7 @@ const ruResources = {
             }
         },
         drawDiagram:{
-            notTypicalCase: 'Не типичный случай.'
+            notTypicalCase: 'Нетипичный случай.'
         }
 
     }
@@ -88,7 +88,7 @@ const enResources = {
             }
         },
         drawDiagram:{
-            notTypicalCase: 'Not typical case.'
+            notTypicalCase: 'Non-generic case.'
         }
     }
 };
