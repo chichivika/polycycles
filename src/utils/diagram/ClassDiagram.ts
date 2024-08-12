@@ -38,7 +38,7 @@ class ClassDiagram {
         let aPath = oParam.path;
         let bPosOrientation = this._getIsPosOrientation(aPath);
         if (!bPosOrientation) {
-            aPath = aPath.reverse();
+            aPath.reverse();
         }
         this._path = aPath;
     }
