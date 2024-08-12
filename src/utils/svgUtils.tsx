@@ -1,6 +1,11 @@
 import { SVGLineElementAttributes } from "react";
 import { Points} from "./drawUtils";
 
+//=====================================
+//Методы создания элементов svg-рисунка
+//=====================================
+
+//Нарисовать многоугольник по его вершинам
 export function renderPolygon(aVerts: Points, oAttr?: SVGLineElementAttributes<SVGPolygonElement>){
     let sVerts = '';
     aVerts.forEach(aVert=>{
@@ -11,6 +16,7 @@ export function renderPolygon(aVerts: Points, oAttr?: SVGLineElementAttributes<S
         <polygon points={sVerts} {...oAttr}/>
     );
 }
+//Нарисовать замкнутый ломаный путь из линий
 export function renderClosedPath(aVerts: Points, oLineAttr?: SVGLineElementAttributes<SVGLineElement>) {
 
     let nLength = aVerts.length;
@@ -28,11 +34,13 @@ export function renderClosedPath(aVerts: Points, oLineAttr?: SVGLineElementAttri
 
     return aLines;
 }
+//Нарисовать несколько линий
 export function renderLines(aLines: Points[], oAttr?: SVGLineElementAttributes<SVGLineElement>){
     return aLines.map((aLine, i)=>{
         return renderLine(aLine, oAttr, `${i}`)
     });
 }
+//Нарисовать одну линию
 export function renderLine(aVerts: Points, oAttr?: SVGLineElementAttributes<SVGLineElement>, sKey?: string) {
 
     if(aVerts.length < 2){

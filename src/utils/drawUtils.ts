@@ -1,13 +1,27 @@
-import {numsAreZeros, numsAreAlmostEqual} from './appUtils';
+import { numsAreZeros, numsAreAlmostEqual } from './appUtils';
 
+//===========================================================
+//Методы для действий с точками, векторами, координатами
+//Методы вычисления координат некоторых объектов для рисунков
+//===========================================================
+
+//Координаты точки на плоскости
 export type Point = [number, number];
 export type Points = Point[];
+
+//Отрезок (задается двумя точками)
 export type Segment = [Point, Point];
 export type Segments = Segment[];
+
+//Проективные координаты (три числа)
 export type ProjectivePoint = [number, number, number];
 export type ProjectivePoints = ProjectivePoint[];
+
+//Координаты точки в виде объекта
 export type Coordinate = { x: number, y: number };
 export type Coordinates = Coordinate[];
+
+
 
 //Рассчитать длину вектора
 export function getVectorLength(aVector: Point) {
@@ -22,8 +36,8 @@ export function getSummPoints(aFPoint: Point, aSPoint: Point): Point {
     return [aSPoint[0] + aFPoint[0], aSPoint[1] + aFPoint[1]];
 }
 //Рассчитать сумму векторов с коэффициентами
-export function getSummPointsWithCoeffs(aFPoint: Point, aSPoint: Point, nFCoeff:number, nSCoeff: number): Point {
-    return [nFCoeff*aFPoint[0] + nSCoeff*aSPoint[0], nFCoeff*aFPoint[1]+nSCoeff*aSPoint[1]];
+export function getSummPointsWithCoeffs(aFPoint: Point, aSPoint: Point, nFCoeff: number, nSCoeff: number): Point {
+    return [nFCoeff * aFPoint[0] + nSCoeff * aSPoint[0], nFCoeff * aFPoint[1] + nSCoeff * aSPoint[1]];
 }
 //Рассчитать единичный вектор, сонаправленный с разницей двух векторов
 export function getOrtDeltaPoints(aFPoint: Point, aSPoint: Point): Point {
@@ -65,9 +79,9 @@ export function mapAllDescartToWindow(aPoints: Points, nSize: number): Points {
 //Преобразовать проективные координаты в декартовы координаты
 export function mapProjectiveToDescart(
     //Проективные координаты
-    aZets: ProjectivePoint, 
+    aZets: ProjectivePoint,
     //вершины симплекса в стандартных декартовых, либо в window-координатах
-    aVerts: Points, 
+    aVerts: Points,
     //монодромный или нет
     isMonodromic: boolean): Point {
     if (isMonodromic) {
@@ -126,7 +140,11 @@ export function calcTriangleVertsBySizeAndPadding(nSize: number, nVertPad: numbe
 }
 //=========================== Triple Polycycle Set ===========================
 
-//Найти точки пересечения прямой со сторонами симплекса
+//Прямая трехкратных предельных циклов в проективных координатах задается уравнением
+//(lambda1-1)z1+(lambda2-1)z2+(lambda3-1)z3=0
+
+//Найти точки пересечения прямой трехкратных предельных циклов
+//со сторонами симплекса
 export function getTripleLineIntersectSidePoint(
     //индекс стороны симплекса
     nSide: number,
@@ -150,9 +168,9 @@ export function getTripleLineIntersectSidePoint(
     if (isMonodromic && !zetsAreInSimplex(aZets)) {
         return null;
     }
-    if(!isMonodromic){
+    if (!isMonodromic) {
         let aReverseZets = [aZets[0], aZets[1], -aZets[2]] as ProjectivePoint;
-        if(!zetsAreInSimplex(aReverseZets)){
+        if (!zetsAreInSimplex(aReverseZets)) {
             return null;
         }
     }
@@ -161,25 +179,26 @@ export function getTripleLineIntersectSidePoint(
     return mapProjectiveToDescart(aZets, aVerts, isMonodromic)
 
     //Проверка, лежат ли точки в симплексе z1>=0,z2>=0,z3>=0
-    function zetsAreInSimplex(aZets: ProjectivePoint){
+    function zetsAreInSimplex(aZets: ProjectivePoint) {
         if (numsAreZeros(aZets)) {
             return false;
         }
-    
-        if (aZets[nL]*aZets[nR]<0) {
+
+        if (aZets[nL] * aZets[nR] < 0) {
             return false;
         }
         return true;
     }
 }
-//Поиск двух проективных точек на прямой 
-//(lambda1-1)z1+(lambda2-1)z2+(lambda3-1)z3=0
+//Поиск двух проективных точек на прямой трехкратных предельных циклов
 export function getTripleLineProjectivePoints(aNums: number[], isMonodromic: boolean) {
     if (isMonodromic) {
         return getTripleLineMonodromic(aNums);
     }
     return getTripleLineNotMonodromic(aNums);
 }
+//Поиск двух проективных точек на прямой трехкратных предельных циклов
+//Немонодромный случай 
 export function getTripleLineNotMonodromic(aNums: number[]): ProjectivePoints | null {
 
     //Если прямая не лежит в нужной карте, рисовать не надо
@@ -224,6 +243,8 @@ export function getTripleLineNotMonodromic(aNums: number[]): ProjectivePoints | 
         return aZets;
     }
 }
+//Поиск двух проективных точек на прямой трехкратных предельных циклов
+//Монодромный случай 
 export function getTripleLineMonodromic(aNums: number[]): ProjectivePoints | null {
 
     //Если все числа равны, то прямая не лежит в нужной карте, рисовать не надо
