@@ -5,6 +5,7 @@ import { Translation } from 'react-i18next';
 import { getClassName } from 'utils/appUtils';
 
 import './ButtonStyle.scss';
+import i18n from 'locales/i18n';
 
 type MyProps = ButtonProps & {
     dataTextKey?: string
@@ -12,22 +13,28 @@ type MyProps = ButtonProps & {
 
 function Button(oProps: MyProps) {
 
-    let sTextKey = oProps.dataTextKey ? oProps.dataTextKey : '';
-    let oAttr = Object.assign({...oProps}, {
+    let {dataTextKey: sTextKey, ...oBtnAttr} = oProps;
+
+    Object.assign(oBtnAttr, {
         size: 'small',
         className: getClassName('app-btn', oProps.className),
         variant: "contained"
     });
-    delete oAttr['dataTextKey'];
 
     return (
         <Translation>
             {
-                (t, { i18n }) =>
-                    <UiButton {...oAttr}>{t(sTextKey)}</UiButton>
+                (t) =>
+                    <UiButton {...oBtnAttr}>{renderText(t,sTextKey)}</UiButton>
             }
         </Translation >
     );
+}
+function renderText(t: typeof i18n.t,sTextKey?: string){
+    if(typeof sTextKey === 'string'){
+        return t(sTextKey);
+    }
+    return null;
 }
 
 export default Button;

@@ -14,17 +14,17 @@ type MyProps = CheckboxProps & {
 
 function Checkbox(oProps: MyProps) {
 
-    let sClassName = getClassName('app-chbox', oProps.className);
-    let sLabelKey = oProps.dataLabelKey;
+    let {dataLabelKey: sLabelKey,
+        className: sClassName,
+         ...oChBAttr} = oProps;
 
-    let oAttr = {...oProps,
-        className: sClassName
-    };
-    delete oAttr['dataLabelKey'];
-    oAttr.className = sClassName.concat('-chbox');
+    sClassName = getClassName('app-chbox', sClassName);
+    Object.assign(oChBAttr, {
+        className: sClassName.concat('-chbox')
+    });
 
     let oCheckbox = (
-        <UiCheckbox {...oAttr}
+        <UiCheckbox {...oChBAttr}
         />
     );
     if(sLabelKey === undefined){
