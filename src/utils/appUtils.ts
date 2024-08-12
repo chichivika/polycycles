@@ -1,5 +1,17 @@
-import { getNumsMul, numsAreAlmostEqual } from "./jsUtils";
 
+import { getNumsMul} from "./jsUtils";
+
+//Константы и методы, использующие специальную логику приложения
+
+//Точность для сравнения чисел
+export const nEqualPrecision = 1e-6;
+
+export function numsAreAlmostEqual(nNum1: number, nNum2: number){
+    if(Math.abs(nNum1 - nNum2)<nEqualPrecision){
+        return true;
+    }
+    return false;
+}
 export function getClassName(sDefaultName:string, sName?: string): string {
     if (sName) {
         sDefaultName = sDefaultName.concat(` ${sName}`);

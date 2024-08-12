@@ -15,10 +15,9 @@ import {
     mapVertsToPolygonEdges
 } from 'utils/drawUtils';
 import {
-    productNumsFromTo,
-    numsAreAlmostEqual
+    productNumsFromTo
 } from 'utils/jsUtils';
-import { numsAreDegenerated, numsMulIsUnit } from 'utils/appUtils';
+import { numsAreDegenerated, numsMulIsUnit, numsAreAlmostEqual } from 'utils/appUtils';
 import {
     TrapezeInfo, AllTrapezesInfo,
     RombSegment,

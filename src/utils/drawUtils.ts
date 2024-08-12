@@ -1,5 +1,4 @@
-import { numsAreAlmostEqual} from "./jsUtils";
-import {numsAreZeros} from './appUtils';
+import {numsAreZeros, numsAreAlmostEqual} from './appUtils';
 
 export type Point = [number, number];
 export type Points = Point[];
