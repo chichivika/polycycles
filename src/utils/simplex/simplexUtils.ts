@@ -1,5 +1,9 @@
 import { Point, Points,Segment } from 'utils/drawUtils';
 
+//=======================================================
+//Вспомогательные константы и методы для ClassSimplexBase
+//=======================================================
+
 export type SimplexVertInfo = {
     point: Point,
     inKSet: boolean
