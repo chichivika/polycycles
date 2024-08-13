@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/polycycles/static/css/main.27677a73.css",
+    "main.js": "/polycycles/static/js/main.1dbb4e33.js",
+    "index.html": "/polycycles/index.html",
+    "main.27677a73.css.map": "/polycycles/static/css/main.27677a73.css.map",
+    "main.1dbb4e33.js.map": "/polycycles/static/js/main.1dbb4e33.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.27677a73.css",
+    "static/js/main.1dbb4e33.js"
+  ]
+}
