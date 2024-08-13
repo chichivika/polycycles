@@ -8,6 +8,9 @@ import {
     selectPolycycleWidth
 } from 'appRedux/drawSlice';
 
+//=========================================
+//Привязанный схематичный рисунок полицикла
+//=========================================
 
 const mapStateToProps = (oState: StateType) => {
     return {

@@ -5,7 +5,12 @@ import DrawPolycycle from '../polycycle/ConnectedDrawPolycycle';
 import { connect } from 'react-redux';
 import { StateType } from "appRedux/store";
 
+//==============================================================
+//Обёртка с дополнительными инструментами для рисунка "Полицикл"
+//==============================================================
+
 type MyProps = {
+    //Монодромный ли полицикл
     isMonodromic: boolean
 };
 type MyState = {
@@ -21,6 +26,7 @@ class PolycycleWrapper extends React.Component<MyProps, MyState> {
                 </DrawWrapper>
         )
     }
+    //Получить массив путей в мультиязычной модели для пояснения к рисунку
     _getHoverKeys(){
         if(this.props.isMonodromic)
         {

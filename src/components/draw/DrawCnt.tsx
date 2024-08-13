@@ -9,13 +9,20 @@ import { connect } from 'react-redux';
 import { update } from 'appRedux/drawSlice';
 import './DrawCntStyle.scss';
 
+//=====================
+//Контейнер с рисунками
+//=====================
+
 type MyState = {}
 type MyProps = {
+    //Ширина окна
     windowWidth: number | null,
+    //Обновление глобального хранилища
     dispatchUpdate: typeof update
 };
 
 class DrawCnt extends React.Component<MyProps, MyState> {
+    //Ссылка на объемлющий контейнер
     _refContainer = React.createRef<HTMLDivElement>();
     render() {
         return (
@@ -52,6 +59,7 @@ class DrawCnt extends React.Component<MyProps, MyState> {
             this._resize();
         }
     }
+    //Обновить свойство ширины контейнера в глобальном хранилище
     _resize() {
         let oCont = this._refContainer.current as HTMLDivElement;
         if (!oCont) return;

@@ -1,17 +1,27 @@
 import React from "react";
 
+//=============================
+//Схематичный рисунок полицикла
+//=============================
+
 type MyProps = {
+    //Характеристические числа
     charNums: number[],
+    //Монодромный ли полицикл
     isMonodromic: boolean,
+    //Есть ли ошибке в полях ввода
     isFormError: boolean,
+    //Размер картинки
     size: number
 };
 type MyState = {
 
 }
 class DrawPolycycle extends React.Component<MyProps, MyState> {
+    //Отступ полицикла от края рисунка
     paddingLeft:number = 10;
     render() {
+        //Если есть ошибки в полях ввода
         if (this.props.isFormError) {
             return this._renderEmpty();
         }
@@ -25,6 +35,7 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
             </svg>
         );
     }
+    //Отрисовка пустого компонента в случае ошибки
     _renderEmpty() {
         return (
             <svg className='draw-graph draw-polycycle'
@@ -37,6 +48,7 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
             </svg>
         );
     }
+    //Отрисовка надписей характеристических чисел
     _renderCharNums() {
         let aNums = this.props.charNums;
 
@@ -49,6 +61,7 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
             );
         });
     }
+    //Получить настройки отображения характеристического числа на рисунке
     _getCharNumTextPosition(i: number, nNum: number) {
         let sNum = String(nNum);
         let nLength = sNum.length;
@@ -86,6 +99,7 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
                 };
         }
     }
+    //Отрисовка полицикла
     _renderPolycycle() {
         let nWindt = this.props.size - 2*this.paddingLeft;
         let nHeight = 3*this.props.size/4;
@@ -98,6 +112,7 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
                 />
         );
     }
+    //Получить путь к картинке полицикла
     _getImgSrc() {
         if (this.props.isMonodromic) {
             return './img/monodromial-polycycle.svg';

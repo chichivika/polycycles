@@ -10,6 +10,9 @@ import {
     selectUnfoldSpecialInfo
 } from 'appRedux/drawSlice';
 
+//==============================================
+//Привязанная бифуркационная диаграмма полицикла
+//==============================================
 
 const mapStateToProps = (oState: StateType) => {
     let oSpecialInfo = selectUnfoldSpecialInfo(oState);

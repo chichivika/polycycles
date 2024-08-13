@@ -7,31 +7,50 @@ import { Translation } from "react-i18next";
 import './DiagramStyle.scss';
 import { getNumsMul } from "utils/jsUtils";
 
+//==================================
+//Бифуркационная диаграмма полицикла
+//==================================
+
 type MyProps = {
+    //Характеристические числа
     charNums: number[],
+    //Монодромный ли полицикл
     isMonodromic: boolean,
+    //Есть ли ошибки в полях ввода
     isFormError: boolean,
+    //Размер рисунка (сторона квадрата)
     size: number,
+    //Пусть K-линии вдоль сторон симплекса
     edgesPath: EdgesPath,
+    //Является ли набор характеристических чисел типичным
     isTypicalCase: boolean
 };
 type MyState = {
 
 }
 class DrawDiagram extends React.Component<MyProps, MyState> {
+    //Отступ диаграммы от края
     paddingLeft: number = 60;
+    //Радиус круга
     _radius: number = 0;
+    //Массив координат L-точек (лунок)
     _lPoints: Points = [];
+    //Нужно ли рисовать K-линию внутри круга
     _isInnerPath: boolean = false;
+    //Объект класса ClassDiagram
     _diagramObject: ClassDiagram | null = null;
 
     render() {
 
+        //Если ширина рисунка еще не рассчитана,
+        //ничего не рисуем
         if (this.props.size === 0) return null;
 
+        //Если в полях ввода есть ошибка
         if (this.props.isFormError) {
             return this._renderEmpty();
         }
+        //Если набор чисел нетипичный
         if(!this.props.isTypicalCase){
             this._isInnerPath = false;
             this._diagramObject = new ClassDiagram({
@@ -67,6 +86,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
             </svg>
         );
     }
+    //Отрисовка ломаной K-линии
     _renderEdgesPath() {
         let oDiagram = this._diagramObject;
         if (oDiagram === null) return;
@@ -79,19 +99,19 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
             </g>
         );
     }
+    //Нужно ли рисовать K-линия внутри круга
     _getIsInnerPath() {
         let aNums = this.props.charNums;
         let nMul = getNumsMul(aNums);
         return (nMul < 1);
     }
-    _renderPocket(nEdge: number, bStart: boolean) {
-        return '';
-    }
+    //Отрисовать участки путей
     _renderArcs(aArcs: string[]) {
         return aArcs.map((sArc, i) => {
             return <path key={i} d={sArc} />
         });
     }
+    //Отрисовать основной круг диаграммы
     _renderCircle() {
         let oDiagram = this._diagramObject;
         if (oDiagram === null) return;
@@ -104,6 +124,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
             </circle>
         );
     }
+    //Отрисовать точки на диаграмме и подписи к ним
     _renderDotsAndTexts() {
         return (
             <g>
@@ -112,6 +133,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
             </g>
         );
     }
+    //Отрисовать подписи для всех SL-точек
     _renderSLTexts() {
         let oDiagram = this._diagramObject;
         if (oDiagram === null) return;
@@ -119,6 +141,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
         let aDots = oDiagram.getSLPoints();
         return aDots.map((aDot, i) => this._renderSLText(aDot, i));
     }
+    //Отрисовать подпись для одной SL-точки
     _renderSLText(aDot: Point, i: number) {
         let oDiagram = this._diagramObject;
         if (oDiagram === null) return;
@@ -144,6 +167,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
             </text>
         );
     }
+    //Отрисовать подписи для всех L-точек
     _renderAllLDots() {
         let oDiagram = this._diagramObject;
         if (oDiagram === null) return;
@@ -151,6 +175,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
         let aDots = oDiagram.getLPoints();
         return aDots.map((aDot, i) => this._renderLDot(aDot, i));
     }
+    //Отрисовать L-точку с подписью
     _renderLDot(aDot: Point, i: number) {
         let oDiagram = this._diagramObject;
         if (oDiagram === null) return;
@@ -190,6 +215,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
             </g>
         );
     }
+    //Отрисовать пустой вариант компонента
     _renderEmpty() {
         return (
             <svg className='draw-graph draw-diagram'
@@ -203,6 +229,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
             </svg>
         );
     }
+    //Отрисовать подпись в случае нетипичности
     _renderNotTypicalText() {
 
         return (
@@ -217,6 +244,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
             </Translation>
         );
     }
+    //Отрисовать нетипичный вариант компонента
     _renderNotTypicalCase() {
         return (
             <svg className='draw-graph draw-diagram draw-diagram-not-typical'
