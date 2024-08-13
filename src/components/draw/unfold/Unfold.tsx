@@ -5,12 +5,22 @@ import { SetInfo } from "utils/unfold/unfoldUtils";
 
 import './UnfoldStyle.scss';
 
+//===========================
+//Рисунок развертки полицикла
+//===========================
+
 type MyProps = {
+    //Есть ли ошибка в полях ввода
     isFormError: boolean,
+    //Размер рисунка
     size: number,
+    //Координаты внешних вершин симплекса
     outerVerts: Points,
+    //Сегменты линий внутри внешнего симплекса
     innerLines: Segments,
+    //Информация о K-множестве
     kSet: SetInfo,
+    //Информация о множестве трехкратных циклов
     tripleSet: SetInfo
 
 };
@@ -19,8 +29,11 @@ type MyState = {
 }
 class Unfold extends React.Component<MyProps, MyState> {
     render() {
+        //Если размер  рисунка еще не установлен,
+        //ничего не рисуем
         if (this.props.size === 0) return null;
 
+        //Если в полях ввода имеется ошибка
         if (this.props.isFormError) {
             return this._renderEmpty();
         }
@@ -37,9 +50,11 @@ class Unfold extends React.Component<MyProps, MyState> {
             </svg>
         );
     }
+    //Получить имя стилевого класса для рисунка
     _getSVGClassName() {
        return 'draw-graph draw-unfold';
     }
+    //Отрисовать пустой вариант компонента
     _renderEmpty() {
         let sClassName = this._getSVGClassName();
         sClassName = sClassName.concat(' draw-form-error');
@@ -55,6 +70,7 @@ class Unfold extends React.Component<MyProps, MyState> {
             </svg>
         );
     }
+    //Отрисовать внешний симплекс
     _renderOuterTriangle() {
         let aVerts = this.props.outerVerts;
         return (
@@ -63,6 +79,7 @@ class Unfold extends React.Component<MyProps, MyState> {
             </g>
         );
     }
+    //Отрисовать сегменты линий внутри внешнего симплекса
     _renderInnerLines() {
         let aLines = this.props.innerLines;
         return (
@@ -71,6 +88,7 @@ class Unfold extends React.Component<MyProps, MyState> {
             </g>
         );
     }
+    //Отрисовать закрашенные области
     _renderAreas() {
         let aKAreas = this.props.kSet.areas;
         let aKPolygons = aKAreas.map(aPolygon => renderPolygon(aPolygon))
@@ -88,6 +106,7 @@ class Unfold extends React.Component<MyProps, MyState> {
             </g>
         );
     }
+    //Отрисовать сегменты линий специальных множеств
     _renderSpecialLines() {
         let aKSegments = this.props.kSet.segments;
         let aTripleSegments = this.props.tripleSet.segments;

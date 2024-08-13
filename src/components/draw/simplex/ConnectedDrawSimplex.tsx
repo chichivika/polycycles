@@ -8,6 +8,9 @@ import {
     selectSimplexData
 } from 'appRedux/drawSlice';
 
+//=======================================
+//Привязанный рисунок симплекса полицикла
+//=======================================
 
 const mapStateToProps = (oState: StateType) => {
     let oSimplexData = selectSimplexData(oState);

@@ -10,21 +10,31 @@ import {
 import { getDeltaPoints, getOrtDeltaPoints, Points } from "utils/drawUtils";
 import { renderClosedPath, renderPolygon, renderLine } from "utils/svgUtils";
 
+//===========================
+//Рисунок симплекса полицикла
+//===========================
+
 type MyProps = {
+    //Есть ли ошибка в полях ввода
     isFormError: boolean,
+    //Размер рисунка
     size: number,
+    //Массив вершин симплекса с дополнительной информацией
     vertsInfo: SimplexVertsInfo,
+    //Массив координат вершин симплекса
     verts: Points,
+    //Массив сторон симплекса с дополнительной информацией
     edgesInfo: SimplexEdgesInfo,
+    //Области K-множества
     kSetAreas: SimplexKSetAreasInfo,
+    //Сегмент прямой трехкратных циклов
     tripleSegment: SimplexTripleSegment
 };
 
 class DrawSimplex extends React.Component<MyProps, {}> {
-    paddingTop = 30;
-
     render() {
 
+        //Если в полях ввода есть ошибка
         if (this.props.isFormError) {
             return this._renderEmpty();
         }
@@ -41,6 +51,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
             </svg >
         );
     }
+    //Отрисовка пустого варианта при наличии ошибки
     _renderEmpty() {
         return (
             <svg className='draw-graph draw-simplex draw-form-error'
@@ -55,12 +66,14 @@ class DrawSimplex extends React.Component<MyProps, {}> {
             </svg>
         );
     }
+    //Отрисовка областей K-множества
     _renderKSetArea() {
         let aAreas = this.props.kSetAreas;
         return aAreas.map(aArea => renderPolygon(aArea, {
             className: 'draw-k-area'
         }));
     }
+    //Отрисовка подписей для сторон
     _renderTexts() {
         return (
             <g key='edge-texts' fontWeight='normal'>
@@ -68,10 +81,12 @@ class DrawSimplex extends React.Component<MyProps, {}> {
             </g>
         );
     }
+    //Отрисовка симплекса без дополнительной информации
     _renderSimpleTriangle() {
         let aVerts = this.props.verts;
         return renderClosedPath(aVerts);
     }
+    //Отрисовка подписи для одной стороны симплекса
     _renderEdgeText(oEdgeInfo: SimplexEdgeInfo,i: number) {
         let aVerts = oEdgeInfo.points;
 
@@ -111,6 +126,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
             </text>
         );
     }
+    //Отрисовка всех сторон симплекса
     _renderEdges() {
         return (
             <g key='edges'>
@@ -120,19 +136,22 @@ class DrawSimplex extends React.Component<MyProps, {}> {
             </g>
         );
     }
+    //Отрисовка всех вершин симплекса
     _renderVertices() {
         return (
             <g key='verts'>
-                {this.props.vertsInfo.map((oVert, i) => this._drawTriangleVert(oVert, i))}
+                {this.props.vertsInfo.map((oVert, i) => this._renderTriangleVert(oVert, i))}
             </g>
         );
     }
+    //Отрисовка сегмента прямой трехкратных циклов
     _renderTripleLine() {
         return renderLine(this.props.tripleSegment,
             { className: 'draw-triple-set' },
             `triple-line`);
     }
-    _drawTriangleVert(oVertInfo: SimplexVertInfo, i: number) {
+    //Отрисовка одной вершины симплекса
+    _renderTriangleVert(oVertInfo: SimplexVertInfo, i: number) {
         if (oVertInfo.inKSet) {
             let aPoint = oVertInfo.point;
             return (
@@ -141,6 +160,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         }
         return null;
     }
+    //Отрисовка одной стороны симплекса
     _drawTriangleEdge(oEdgeInfo: SimplexEdgeInfo, i: number) {
         let aVerts = oEdgeInfo.points;
         let sClassName = oEdgeInfo.inKSet ? 'draw-k-set' : 'draw-simplex';

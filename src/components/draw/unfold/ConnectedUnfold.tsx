@@ -10,6 +10,10 @@ import {
     selectUnfoldSpecialInfo
 } from 'appRedux/drawSlice';
 
+//======================================
+//Привязанный рисунок развертки полицикла
+//======================================
+
 const mapStateToProps = (oState: StateType) => {
     let oSpecialInfo = selectUnfoldSpecialInfo(oState);
 
