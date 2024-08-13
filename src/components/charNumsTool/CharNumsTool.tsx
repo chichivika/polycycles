@@ -7,23 +7,28 @@ import { StateType } from 'appRedux/store';
 import { selectIsInputErrorState } from 'appRedux/drawSlice';
 import './CharNumsStyle.scss';
 
+//==================================================
+//Инструмент для ввода трех характеристических чисел
+//==================================================
+
 type MyProps = {
+    //Показывается ли ошибка в одном из полей ввода
     isError?: boolean
 }
 class CharacterNumsTool extends React.Component<MyProps, {}> {
     render() {
         return (
             <div className='char-nums-tool'>
-                {/* <ShowRools /> */}
-                {this.renderLabel()}
+                {this._renderLabel()}
                 <div className='char-nums-cnt'>
-                    {this.renderInputs()}
-                    {this.getHelpText()}
+                    {this._renderInputs()}
+                    {this._renderHelpText()}
                 </div>
             </div>
         )
     }
-    renderLabel() {
+    //Отрисовка названия инструмента
+    _renderLabel() {
         return (
             <Translation>
                 {
@@ -33,16 +38,16 @@ class CharacterNumsTool extends React.Component<MyProps, {}> {
             </Translation>
         );
     }
-    renderInputs(){
+    //Отрисовка полей ввода
+    _renderInputs(){
         return (
             <div className='char-nums-inputs-cnt'>
-                <CharNumInput i={0}/>
-                <CharNumInput i={1}/>
-                <CharNumInput i={2}/>
+                {[0,1,2].map(i=> <CharNumInput i={i}/> )}
             </div>
         );
     }
-    getHelpText() {
+    //Отрисовка поясняющего текста об ошибке
+    _renderHelpText() {
         if (!this.props.isError) {
             return null;
         }

@@ -7,8 +7,13 @@ import { setLanguage, getLanguage, getAllLanguages } from '../../locales/i18n';
 
 import './HeaderStyle.scss';
 
+//=========================================
+//Инструмент для изменения языка приложения
+//=========================================
+
 type MyProps = {};
 type MyState = {
+    //Выбранный язык
     value: string
 };
 class LangSelect extends React.Component<MyProps, MyState> {
@@ -34,6 +39,7 @@ class LangSelect extends React.Component<MyProps, MyState> {
             </Select>
         );
     }
+    //Обработчик события изменения выбора
     onValueChange(oEvent: SelectChangeEvent<string>) {
         let sNewValue = oEvent.target.value;
         this.setState({ value: sNewValue });

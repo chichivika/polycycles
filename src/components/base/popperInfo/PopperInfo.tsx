@@ -8,12 +8,20 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { Translation } from 'react-i18next';
 import './PopperInfoStyle.scss'
 
+//===============================
+//Иконка с подсказкой при нажатии
+//===============================
+
 type MyProps = {
+    //Путь к тексту подсказки в мультиязычной модели
     textKey?: string,
+    //Дочерние компоненты (используются вместо текстовой подсказки)
     children?: ReactElement
 };
 type MyState = {
+    //Открыто ли окно с подсказкой
     open: boolean,
+    //Элемент, у которого появляется подсказка
     anchorEl: HTMLElement | null
 }
 class PopperInfo extends React.Component<MyProps, MyState> {
@@ -34,7 +42,7 @@ class PopperInfo extends React.Component<MyProps, MyState> {
             </IconButton>
         );
         return (
-            <ClickAwayListener onClickAway={this.closePopper.bind(this)}>
+            <ClickAwayListener onClickAway={this.onClosePopper.bind(this)}>
                 <div className='popper-info-cnt'>
                     {oIcon}
                     <Popper className='popper-info'
@@ -47,11 +55,14 @@ class PopperInfo extends React.Component<MyProps, MyState> {
             </ClickAwayListener>
         )
     }
+    //Отрисовка содержимого подсказки
     _renderContent() {
+        //Если есть дочерние элементы, то игнорируем свойство textKey
         if(this.props.children){
             let aChildren = this.props.children as ReactElement;
             return aChildren;
         }
+        //Иначе проверяем textKey и отрисовываем текст
         if (typeof this.props.textKey === 'string') {
             let sKey = this.props.textKey as string;
             return (
@@ -65,12 +76,14 @@ class PopperInfo extends React.Component<MyProps, MyState> {
         
         return null;
     }
-    closePopper() {
+    //Обработчик события клика вне окна с подсказкой
+    onClosePopper() {
         this.setState({
             open: false,
             anchorEl: null
         });
     }
+    //Обработчик события клика на иконке для вызова подсказки
     onClick(oEvent: React.MouseEvent<HTMLElement>) {
         this.setState({ anchorEl: oEvent.currentTarget as HTMLElement });
         this.setState({

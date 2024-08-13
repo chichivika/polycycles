@@ -5,6 +5,10 @@ import { getClassName } from 'utils/appUtils';
 
 import './InputStyle.scss';
 
+//====================
+//Текстовое поле ввода
+//====================
+
 function Input(oProps: TextFieldProps) {
 
     let sClassName = getClassName('app-input', oProps.className);

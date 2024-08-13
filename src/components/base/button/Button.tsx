@@ -7,7 +7,12 @@ import { getClassName } from 'utils/appUtils';
 import './ButtonStyle.scss';
 import i18n from 'locales/i18n';
 
+//======
+//Кнопка
+//======
+
 type MyProps = ButtonProps & {
+    //Путь к тексту в мультиязычной модели
     dataTextKey?: string
 };
 
@@ -30,6 +35,7 @@ function Button(oProps: MyProps) {
         </Translation >
     );
 }
+//Отрисовка текста кнопки
 function renderText(t: typeof i18n.t,sTextKey?: string){
     if(typeof sTextKey === 'string'){
         return t(sTextKey);

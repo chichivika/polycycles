@@ -7,9 +7,15 @@ import { StateType } from 'appRedux/store';
 
 import './IsMonodromicStyle.scss';
 
+//=========================================
+//Чекбокс для флага монодромности полицикла
+//=========================================
+
 type MyProps = {
-    dispatchUpdate: typeof drawingUpdate,
-    isMonodromic: boolean
+    //Монодромный ли полицикл
+    isMonodromic: boolean,
+    //Обновление значения монодромности в глобальном хранилище
+    dispatchUpdate: typeof drawingUpdate
 };
 type MyState = {
     
@@ -30,11 +36,13 @@ class Toolbar extends React.Component<MyProps, MyState> {
             </div>
         )
     }
+    //Обработчик события изменения флага в чекбоксе
     onChange(oEvent: React.ChangeEvent<HTMLInputElement>) {
         this.props.dispatchUpdate({
             isMonodromic: !this.props.isMonodromic
         });
     }
+    //Отрисовка иконки с миниатюрой полицикла
     _getIconSrc() {
         if (this.props.isMonodromic) {
             return './img/is-monodromic-icon.svg';
@@ -43,7 +51,6 @@ class Toolbar extends React.Component<MyProps, MyState> {
     }
 }
 
-//Connected Component
 const mapStateToProps = (oState: StateType) => ({
     isMonodromic: oState.draw.isMonodromic
 });

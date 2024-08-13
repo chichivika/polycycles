@@ -1,6 +1,5 @@
 import UiCheckbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import React from 'react';
 import { CheckboxProps } from '@mui/material/Checkbox';
 
 import { Translation } from 'react-i18next';
@@ -8,7 +7,12 @@ import { getClassName } from 'utils/appUtils';
 
 import './CheckboxStyle.scss';
 
+//=======
+//Чекбокс
+//=======
+
 type MyProps = CheckboxProps & {
+    //Пусть в лэйблу в мультиязычной модели
     dataLabelKey?: string
 }
 

@@ -6,21 +6,30 @@ import Tooltip from '@mui/material/Tooltip';
 import { Translation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { StateType } from 'appRedux/store';
-import { selectInputSetting } from 'appRedux/drawSlice';
-import { updateCharNumber } from 'appRedux/drawSlice';
+import { selectInputSetting, updateCharNumber } from 'appRedux/drawSlice';
 import { CharNumInputState } from './utils';
 import { charNumberIsValid } from 'utils/appUtils';
 
+//========================================
+//Поле ввода для характеристического числа
+//========================================
+
 type OwnProps = {
+    //Индекс поля ввода
     i: number
 }
 type MyProps = OwnProps & {
+    //Монодромный ли полицикл
     isMonodromic: boolean,
+    //Значение поля ввода
     value: string,
+    //Показывать ли ошибку в поле ввода
     error: boolean,
+    //Обновление характеристического числа в глобальном хранилище
     dispatchUpdateInput: typeof updateCharNumber
 }
 type MyState = {
+    //Текущее значение поля ввода
     value: string
 };
 
@@ -33,15 +42,17 @@ class CharNumInput extends React.Component<MyProps, MyState> {
         };
     }
     render() {
-        let oInput = this.renderInput();
+        let oInput = this._renderInput();
 
+        //В случае немонодромного полицикла, подсказываем,
+        //какое из сёдел имеет противоположную ориентацию
         if (this.props.i !== 2 || this.props.isMonodromic) {
             return oInput;
         }
 
         return (
             <div className='char-num-input-wrapper'>
-                {this.renderInputHelpInfo()}
+                {this._renderInputHelpInfo()}
                 {oInput}
             </div>
         );
@@ -53,7 +64,8 @@ class CharNumInput extends React.Component<MyProps, MyState> {
             });
         }
     }
-    renderInput() {
+    //Отрисовка поля ввода
+    _renderInput() {
 
         return (
             <Input value={this.state.value}
@@ -66,7 +78,8 @@ class CharNumInput extends React.Component<MyProps, MyState> {
             />
         );
     }
-    renderInputHelpInfo() {
+    //Отрисовка подсказки у поля ввода
+    _renderInputHelpInfo() {
         return (
             <Translation>
                 {
@@ -78,6 +91,7 @@ class CharNumInput extends React.Component<MyProps, MyState> {
             </Translation>
         );
     }
+    //Обработчик события отпускания клавиши
     onKeyUp(oEvent: React.KeyboardEvent) {
         switch (oEvent.code) {
             case 'Enter':
@@ -91,6 +105,7 @@ class CharNumInput extends React.Component<MyProps, MyState> {
                 break;
         }
     }
+    //Обработчик события изменения значения в текстовом поле
     onChange(oEvent: React.ChangeEvent<HTMLInputElement>) {
         let sNewValue = oEvent.target.value;
         let sNumber = this._parseNumValue(sNewValue);
@@ -98,17 +113,20 @@ class CharNumInput extends React.Component<MyProps, MyState> {
             value: sNumber
         });
     }
+    //Обработчик события потери фокуса в текстовом поле
     onBlur(oEvent: React.FocusEvent<HTMLInputElement>) {
         let sNumber = oEvent.target.value;
 
         this._checkValueAndUpdate(sNumber);
     }
+    //Обработчик события фокусировки ан текстовом поле
     onFocus(oEvent: React.FocusEvent<HTMLInputElement>) {
         this._updateInputSetting({
             value: this.state.value,
             error: false
         });
     }
+    //Увеличить значение характеристического числа
     _increaseValue(){
         let sValue = this.state.value;
         let nNewValue = Number(sValue) + 0.1;
@@ -116,6 +134,7 @@ class CharNumInput extends React.Component<MyProps, MyState> {
 
         this._checkValueAndUpdate(nNewValue.toFixed(1));
     }
+    //Уменьшить значение характеристического числа
     _decreaseValue(){
         let sValue = this.state.value;
         let nNewValue = Number(sValue) - 0.1;
@@ -123,6 +142,8 @@ class CharNumInput extends React.Component<MyProps, MyState> {
 
         this._checkValueAndUpdate(nNewValue.toFixed(1));
     }
+    //Сформировать новые значения характеристического числа и необходимости показывать ошибку
+    //для обновления в глобальном хранилище
     _checkValueAndUpdate(sNumber: string) {
         if (sNumber === '.') {
             this._updateInputSetting({
@@ -132,22 +153,20 @@ class CharNumInput extends React.Component<MyProps, MyState> {
             return;
         }
 
-        let bError = false;
-        if (!charNumberIsValid(sNumber)) {
-            bError = true;
-        }
         let nNumber = Number(sNumber);
         this._updateInputSetting({
             value: String(nNumber),
-            error: bError
+            error: !charNumberIsValid(sNumber)
         });
     }
+    //Обновить данные по характеристическому числу в глобальном хранилище
     _updateInputSetting(oSetting: CharNumInputState) {
         this.props.dispatchUpdateInput({
             charNumSetting: oSetting,
             i: this.props.i
         });
     }
+    //Преобразовать значение в текстовом поле при вводе
     _parseNumValue(sNumber: string) {
         let sNewNumber = '';
         let bPoint = false;
@@ -168,7 +187,6 @@ class CharNumInput extends React.Component<MyProps, MyState> {
         return sNewNumber;
     }
 }
-
 const mapStateToProps = (oState: StateType, oProps: OwnProps) => {
     let oCharNumSetting = selectInputSetting(oState, oProps.i);
     return {
