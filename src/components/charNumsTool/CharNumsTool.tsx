@@ -42,7 +42,7 @@ class CharacterNumsTool extends React.Component<MyProps, {}> {
     _renderInputs(){
         return (
             <div className='char-nums-inputs-cnt'>
-                {[0,1,2].map(i=> <CharNumInput i={i}/> )}
+                {[0,1,2].map(i=> <CharNumInput key={i} i={i}/> )}
             </div>
         );
     }
