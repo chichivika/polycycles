@@ -115,9 +115,9 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
     //Получить путь к картинке полицикла
     _getImgSrc() {
         if (this.props.isMonodromic) {
-            return './img/monodromial-polycycle.svg';
+            return './polycycles/img/monodromial-polycycle.svg';
         }
-        return './img/non-monodromial-polycycle.svg';
+        return './polycycles/img/non-monodromial-polycycle.svg';
     }
 }
 
