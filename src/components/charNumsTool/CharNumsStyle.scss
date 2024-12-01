@@ -47,12 +47,17 @@
                     padding: 0px;
                     z-index: 2;
                     color: colors.$header-color;
-                    top: -0.2rem;
-                    right: -0.2rem;
+                    top: -0.4rem;
+                    right: -0.3rem;
                     font-size: 1.1rem;
 
-                    &:hover {
-                        color: colors.$btn-hover-color;
+                    & > path:first-of-type{
+                        opacity: 1;
+                        color: white;
+                    }
+
+                    &:hover > path:nth-of-type(2) {
+                        color: colors.$icon-hover-color;
                     }
                 }
             }

@@ -1,6 +1,6 @@
 import React from 'react';
 import Input from 'components/base/input/Input';
-import HelpIcon from '@mui/icons-material/Info';
+import HelpIcon from '@mui/icons-material/InfoTwoTone';
 import Tooltip from '@mui/material/Tooltip';
 
 import { Translation } from 'react-i18next';
