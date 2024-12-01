@@ -6,14 +6,14 @@ import { Points} from "./drawUtils";
 //=====================================
 
 //Нарисовать многоугольник по его вершинам
-export function renderPolygon(aVerts: Points, oAttr?: SVGLineElementAttributes<SVGPolygonElement>){
+export function renderPolygon(aVerts: Points, oAttr?: SVGLineElementAttributes<SVGPolygonElement>, sKey?: string){
     let sVerts = '';
     aVerts.forEach(aVert=>{
         sVerts = sVerts.concat(' ' + aVert.join(','));
     });
     oAttr = oAttr ? oAttr : {};
     return (
-        <polygon points={sVerts} {...oAttr}/>
+        <polygon key={sKey || null} points={sVerts} {...oAttr}/>
     );
 }
 //Нарисовать замкнутый ломаный путь из линий

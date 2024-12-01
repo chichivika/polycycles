@@ -69,9 +69,9 @@ class DrawSimplex extends React.Component<MyProps, {}> {
     //Отрисовка областей K-множества
     _renderKSetArea() {
         let aAreas = this.props.kSetAreas;
-        return aAreas.map(aArea => renderPolygon(aArea, {
+        return aAreas.map((aArea, iIndex) => renderPolygon(aArea, {
             className: 'draw-k-area'
-        }));
+        }, `${iIndex}`));
     }
     //Отрисовка подписей для сторон
     _renderTexts() {
