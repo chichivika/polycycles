@@ -1,23 +1,15 @@
-import React from "react";
-//import './Style.scss';
+import React from 'react';
+// import './Style.scss';
 
-//=======================================
-//Пустой шаблон для классового компонента
-//=======================================
+// =======================================
+// Пустой шаблон для классового компонента
+// =======================================
 
-type MyProps = {
-
-};
-type MyState = {
-
-}
+type MyProps = {};
+type MyState = {};
 class MyComponent extends React.Component<MyProps, MyState> {
     render() {
-        return (
-            <div className="">
-
-            </div>
-        )
+        return <div className='' />;
     }
 }
 

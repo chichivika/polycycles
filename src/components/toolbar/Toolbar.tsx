@@ -1,18 +1,19 @@
-import CharNumsTool from 'components/charNumsTool/CharNumsTool';
-import IsMonodromicTool from 'components/isMonodromicTool/IsMonodromicTool';
+import React from 'react';
+import CharNumsTool from '../charNumsTool/CharNumsTool';
+import IsMonodromicTool from '../isMonodromicTool/IsMonodromicTool';
 
 import './ToolbarStyle.scss';
 
-//============================
-//Панель с инструментами ввода
-//============================
+// ============================
+// Панель с инструментами ввода
+// ============================
 
-function Toolbar(){
+function Toolbar() {
     return (
-        <div className="toolbar">
-                <IsMonodromicTool/>
-                <CharNumsTool/>
-            </div>
+        <div className='toolbar'>
+            <IsMonodromicTool />
+            <CharNumsTool />
+        </div>
     );
 }
 

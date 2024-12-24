@@ -1,28 +1,28 @@
-import DrawDiagram from './Diagram';
-
 import { connect } from 'react-redux';
-import { StateType } from 'appRedux/store';
+import DrawDiagram from './Diagram';
+import { StateType } from '../../../appRedux/store';
 import {
     selectCharNumbers,
     selectDiagramWidth,
     selectIsFormError,
     selectIsTypicalCase,
-    selectUnfoldSpecialInfo
-} from 'appRedux/drawSlice';
+    selectUnfoldSpecialInfo,
+} from '../../../appRedux/drawSlice';
 
-//==============================================
-//Привязанная бифуркационная диаграмма полицикла
-//==============================================
+// ==============================================
+// Привязанная бифуркационная диаграмма полицикла
+// ==============================================
 
 const mapStateToProps = (oState: StateType) => {
-    let oSpecialInfo = selectUnfoldSpecialInfo(oState);
+    const { draw: drawState } = oState;
+    const oSpecialInfo = selectUnfoldSpecialInfo(drawState);
     return {
-        charNums: selectCharNumbers(oState),
-        isMonodromic: oState.draw.isMonodromic,
-        isFormError: selectIsFormError(oState),
-        size: selectDiagramWidth(oState),
+        charNums: selectCharNumbers(drawState),
+        isMonodromic: drawState.isMonodromic,
+        isFormError: selectIsFormError(drawState),
+        size: selectDiagramWidth(drawState),
         edgesPath: oSpecialInfo.edgesPath,
-        isTypicalCase: selectIsTypicalCase(oState)
+        isTypicalCase: selectIsTypicalCase(drawState),
     };
 };
 const mapDispatchToProps = {};

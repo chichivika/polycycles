@@ -1,58 +1,53 @@
-import {
-    Points,
-    Point,
-    Segment,
-    Segments
-} from 'utils/drawUtils';
+import { Points, Point, Segment, Segments } from '../drawUtils';
 
-//======================================================
-//Вспомогательные константы и методы для ClassUnfoldBase
-//======================================================
+// ======================================================
+// Вспомогательные константы и методы для ClassUnfoldBase
+// ======================================================
 
 export type SegmentInfo = Points | null;
 export type SegmentsInfo = SegmentInfo[];
 export type RombCoordinates = {
-    bottom: Point,
-    top: Point,
-    rHip: Point,
-    lHip: Point
-}
+    bottom: Point;
+    top: Point;
+    rHip: Point;
+    lHip: Point;
+};
 
 export type TrapezeInfo = Segments | null;
 export type AllTrapezesInfo = TrapezeInfo[];
 export type RombSegment = Segment | null;
 export type AllRombSegments = Segments;
 export type RombInfo = {
-    segment: RombSegment,
-    middle: boolean,
-    outerSides: number[]
-}
+    segment: RombSegment;
+    middle: boolean;
+    outerSides: number[];
+};
 export type AllRombsInfo = RombInfo[];
 
-//Информация о множестве для отрисовки
+// Информация о множестве для отрисовки
 export type SetInfo = {
-    //Сегменты для отрисовки ломаных
-    segments: Segments,
-    //Области для закрашивания
-    areas: Points[]
+    // Сегменты для отрисовки ломаных
+    segments: Segments;
+    // Области для закрашивания
+    areas: Points[];
 };
 
-//Информация о прохождении K-линией стороны симплекса
+// Информация о прохождении K-линией стороны симплекса
 export type EdgePath = {
-    //индекс стороны
-    edgeIndex: number,
-    //имеется ли карман
-    hasPocket: boolean
+    // индекс стороны
+    edgeIndex: number;
+    // имеется ли карман
+    hasPocket: boolean;
 };
-//Информация о прохождении K-линией сторон симплекса
-export type EdgesPath = EdgePath[]
+// Информация о прохождении K-линией сторон симплекса
+export type EdgesPath = EdgePath[];
 
-//Объект информации для отрисовки
+// Объект информации для отрисовки
 export type SpecialInfo = {
-    //K-множество
-    kSet: SetInfo,
-    //Множество трехкратных циклов
-    tripleSet: SetInfo,
-    //Путь K-линии вдоль сторон симплекса
-    edgesPath: EdgesPath
-}
+    // K-множество
+    kSet: SetInfo;
+    // Множество трехкратных циклов
+    tripleSet: SetInfo;
+    // Путь K-линии вдоль сторон симплекса
+    edgesPath: EdgesPath;
+};

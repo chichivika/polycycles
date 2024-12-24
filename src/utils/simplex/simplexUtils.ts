@@ -1,18 +1,18 @@
-import { Point, Points,Segment } from 'utils/drawUtils';
+import { Point, Points, Segment } from '../drawUtils';
 
-//=======================================================
-//Вспомогательные константы и методы для ClassSimplexBase
-//=======================================================
+// =======================================================
+// Вспомогательные константы и методы для ClassSimplexBase
+// =======================================================
 
 export type SimplexVertInfo = {
-    point: Point,
-    inKSet: boolean
+    point: Point;
+    inKSet: boolean;
 };
 export type SimplexVertsInfo = SimplexVertInfo[];
 
 export type SimplexEdgeInfo = {
-    points: Segment,
-    inKSet: boolean
+    points: Segment;
+    inKSet: boolean;
 };
 export type SimplexEdgesInfo = SimplexEdgeInfo[];
 

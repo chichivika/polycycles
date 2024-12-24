@@ -1,35 +1,31 @@
-import React from "react";
+import React from 'react';
+import { connect } from 'react-redux';
+import { StateType } from '../../../appRedux/store';
 import DrawWrapper from './DrawWrapper';
 import DrawPolycycle from '../polycycle/ConnectedDrawPolycycle';
 
-import { connect } from 'react-redux';
-import { StateType } from "appRedux/store";
-
-//==============================================================
-//Обёртка с дополнительными инструментами для рисунка "Полицикл"
-//==============================================================
+// ==============================================================
+// Обёртка с дополнительными инструментами для рисунка "Полицикл"
+// ==============================================================
 
 type MyProps = {
-    //Монодромный ли полицикл
-    isMonodromic: boolean
+    // Монодромный ли полицикл
+    isMonodromic: boolean;
 };
-type MyState = {
-
-}
+type MyState = {};
 class PolycycleWrapper extends React.Component<MyProps, MyState> {
     render() {
         return (
-            <DrawWrapper labelKey='drawInfo.polycycle.label'
-                    hoverKeys={this._getHoverKeys()}
-                >
-                    <DrawPolycycle />
-                </DrawWrapper>
-        )
+            <DrawWrapper labelKey='drawInfo.polycycle.label' hoverKeys={this._getHoverKeys()}>
+                <DrawPolycycle />
+            </DrawWrapper>
+        );
     }
-    //Получить массив путей в мультиязычной модели для пояснения к рисунку
-    _getHoverKeys(){
-        if(this.props.isMonodromic)
-        {
+
+    // Получить массив путей в мультиязычной модели для пояснения к рисунку
+    _getHoverKeys() {
+        const { isMonodromic } = this.props;
+        if (isMonodromic) {
             return ['drawInfo.polycycle.monodromic.hover', 'drawInfo.polycycle.hover'];
         }
 
@@ -38,7 +34,7 @@ class PolycycleWrapper extends React.Component<MyProps, MyState> {
 }
 
 const mapStateToProps = (oState: StateType) => ({
-    isMonodromic: oState.draw.isMonodromic
+    isMonodromic: oState.draw.isMonodromic,
 });
 const mapDispatchToProps = {};
 

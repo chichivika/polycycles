@@ -1,29 +1,29 @@
-import Unfold from "./Unfold";
-
 import { connect } from 'react-redux';
-import { StateType } from 'appRedux/store';
+import Unfold from './Unfold';
+import { StateType } from '../../../appRedux/store';
 import {
     selectIsFormError,
     selectUnfoldWidth,
     selectUnfoldInnerLines,
     selectUnfoldOuterVerts,
-    selectUnfoldSpecialInfo
-} from 'appRedux/drawSlice';
+    selectUnfoldSpecialInfo,
+} from '../../../appRedux/drawSlice';
 
-//======================================
-//Привязанный рисунок развертки полицикла
-//======================================
+// ======================================
+// Привязанный рисунок развертки полицикла
+// ======================================
 
 const mapStateToProps = (oState: StateType) => {
-    let oSpecialInfo = selectUnfoldSpecialInfo(oState);
+    const { draw: drawState } = oState;
+    const oSpecialInfo = selectUnfoldSpecialInfo(drawState);
 
     return {
-        isFormError: selectIsFormError(oState),
-        size: selectUnfoldWidth(oState),
-        outerVerts: selectUnfoldOuterVerts(oState),
-        innerLines: selectUnfoldInnerLines(oState),
+        isFormError: selectIsFormError(drawState),
+        size: selectUnfoldWidth(drawState),
+        outerVerts: selectUnfoldOuterVerts(drawState),
+        innerLines: selectUnfoldInnerLines(drawState),
         kSet: oSpecialInfo.kSet,
-        tripleSet: oSpecialInfo.tripleSet
+        tripleSet: oSpecialInfo.tripleSet,
     };
 };
 const mapDispatchToProps = {};

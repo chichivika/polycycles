@@ -1,23 +1,22 @@
-import DrawPolycycle from './DrawPolycycle';
-
 import { connect } from 'react-redux';
-import { StateType } from 'appRedux/store';
+import DrawPolycycle from './DrawPolycycle';
+import { StateType } from '../../../appRedux/store';
 import {
     selectCharNumbers,
     selectIsFormError,
-    selectPolycycleWidth
-} from 'appRedux/drawSlice';
+    selectPolycycleWidth,
+} from '../../../appRedux/drawSlice';
 
-//=========================================
-//Привязанный схематичный рисунок полицикла
-//=========================================
+// =========================================
+// Привязанный схематичный рисунок полицикла
+// =========================================
 
 const mapStateToProps = (oState: StateType) => {
     return {
-        charNums: selectCharNumbers(oState),
+        charNums: selectCharNumbers(oState.draw),
         isMonodromic: oState.draw.isMonodromic,
-        isFormError: selectIsFormError(oState),
-        size: selectPolycycleWidth()
+        isFormError: selectIsFormError(oState.draw),
+        size: selectPolycycleWidth(),
     };
 };
 const mapDispatchToProps = {};
