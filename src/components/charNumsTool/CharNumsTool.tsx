@@ -66,8 +66,8 @@ class CharacterNumsTool extends React.Component<MyProps, {}> {
     }
 }
 
-const mapStateToProps = (oState: StateType) => ({
-    isError: selectIsInputErrorState(oState.draw),
+const mapStateToProps = (state: StateType) => ({
+    isError: selectIsInputErrorState(state.draw),
 });
 const mapDispatchToProps = {};
 

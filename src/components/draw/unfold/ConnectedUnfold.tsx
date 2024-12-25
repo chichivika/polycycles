@@ -13,17 +13,17 @@ import {
 // Привязанный рисунок развертки полицикла
 // ======================================
 
-const mapStateToProps = (oState: StateType) => {
-    const { draw: drawState } = oState;
-    const oSpecialInfo = selectUnfoldSpecialInfo(drawState);
+const mapStateToProps = (state: StateType) => {
+    const { draw: drawState } = state;
+    const specialInfo = selectUnfoldSpecialInfo(drawState);
 
     return {
         isFormError: selectIsFormError(drawState),
         size: selectUnfoldWidth(drawState),
         outerVerts: selectUnfoldOuterVerts(drawState),
         innerLines: selectUnfoldInnerLines(drawState),
-        kSet: oSpecialInfo.kSet,
-        tripleSet: oSpecialInfo.tripleSet,
+        kSet: specialInfo.kSet,
+        tripleSet: specialInfo.tripleSet,
     };
 };
 const mapDispatchToProps = {};

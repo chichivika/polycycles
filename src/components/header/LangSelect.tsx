@@ -41,8 +41,8 @@ class LangSelect extends React.Component<MyProps, MyState> {
     }
 
     // Обработчик события изменения выбора
-    onValueChange(oEvent: SelectChangeEvent<string>) {
-        const sNewValue = oEvent.target.value;
+    onValueChange(event: SelectChangeEvent<string>) {
+        const sNewValue = event.target.value;
         this.setState({ value: sNewValue });
         setLanguage(sNewValue);
     }

@@ -14,11 +14,10 @@ type MyProps = ButtonProps & {
     dataTextKey?: string;
 };
 
-function Button(oProps: MyProps) {
-    const { dataTextKey: sTextKey, ...oBtnAttr } = oProps;
-    const { className } = oProps;
+function Button(props: MyProps) {
+    const { dataTextKey, className, ...btnAttrs } = props;
 
-    Object.assign(oBtnAttr, {
+    Object.assign(btnAttrs, {
         size: 'small',
         className: getClassName('app-btn', className),
         variant: 'contained',
@@ -26,15 +25,15 @@ function Button(oProps: MyProps) {
 
     return (
         <Translation>
-            {(t) => <UiButton {...oBtnAttr}>{renderText(t, sTextKey)}</UiButton>}
+            {(t) => <UiButton {...btnAttrs}>{renderText(t, dataTextKey)}</UiButton>}
         </Translation>
     );
 }
 
 // Отрисовка текста кнопки
-function renderText(t: typeof i18n.t, sTextKey?: string) {
-    if (typeof sTextKey === 'string') {
-        return t(sTextKey);
+function renderText(t: typeof i18n.t, dataTextKey?: string) {
+    if (typeof dataTextKey === 'string') {
+        return t(dataTextKey);
     }
     return null;
 }

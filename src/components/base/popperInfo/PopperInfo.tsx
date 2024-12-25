@@ -25,8 +25,8 @@ type MyState = {
     anchorEl: HTMLElement | null;
 };
 class PopperInfo extends React.Component<MyProps, MyState> {
-    constructor(oProps: MyProps) {
-        super(oProps);
+    constructor(props: MyProps) {
+        super(props);
         this.state = {
             open: false,
             anchorEl: null,
@@ -63,9 +63,9 @@ class PopperInfo extends React.Component<MyProps, MyState> {
         const { children, textKey } = this.props;
         // Если есть дочерние элементы, то игнорируем свойство textKey
         if (children) {
-            const aChildren = children as ReactElement;
-            return aChildren;
+            return children;
         }
+
         // Иначе проверяем textKey и отрисовываем текст
         if (typeof textKey === 'string') {
             const sKey = textKey as string;
@@ -84,9 +84,9 @@ class PopperInfo extends React.Component<MyProps, MyState> {
     }
 
     // Обработчик события клика на иконке для вызова подсказки
-    onClick(oEvent: React.MouseEvent<HTMLElement>) {
+    onClick(event: React.MouseEvent<HTMLElement>) {
         const { open } = this.state;
-        this.setState({ anchorEl: oEvent.currentTarget as HTMLElement });
+        this.setState({ anchorEl: event.currentTarget as HTMLElement });
         this.setState({
             open: !open,
         });

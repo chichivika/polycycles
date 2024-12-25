@@ -33,8 +33,8 @@ type MyState = {
 };
 
 class CharNumInput extends React.Component<MyProps, MyState> {
-    constructor(oProps: MyProps) {
-        super(oProps);
+    constructor(props: MyProps) {
+        super(props);
 
         const { value } = this.props;
         this.state = {
@@ -43,19 +43,19 @@ class CharNumInput extends React.Component<MyProps, MyState> {
     }
 
     render() {
-        const oInput = this._renderInput();
+        const inputEl = this._renderInput();
         const { i, isMonodromic } = this.props;
 
         // В случае немонодромного полицикла, подсказываем,
         // какое из сёдел имеет противоположную ориентацию
         if (i !== 2 || isMonodromic) {
-            return oInput;
+            return inputEl;
         }
 
         return (
             <div className='char-num-input-wrapper'>
                 {CharNumInput._renderInputHelpInfo()}
-                {oInput}
+                {inputEl}
             </div>
         );
     }
@@ -101,9 +101,9 @@ class CharNumInput extends React.Component<MyProps, MyState> {
     }
 
     // Обработчик события отпускания клавиши
-    onKeyUp(oEvent: React.KeyboardEvent) {
+    onKeyUp(event: React.KeyboardEvent) {
         const { value } = this.state;
-        switch (oEvent.code) {
+        switch (event.code) {
             case 'Enter':
                 this._checkValueAndUpdate(value);
                 break;
@@ -119,22 +119,22 @@ class CharNumInput extends React.Component<MyProps, MyState> {
     }
 
     // Обработчик события изменения значения в текстовом поле
-    onChange(oEvent: React.ChangeEvent<HTMLInputElement>) {
-        const { value: sNewValue } = oEvent.target;
-        const sNumber = CharNumInput._parseNumValue(sNewValue);
+    onChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const { value: newValue } = event.target;
+        const newNumber = CharNumInput._parseNumValue(newValue);
         this.setState({
-            value: sNumber,
+            value: newNumber,
         });
     }
 
     // Обработчик события потери фокуса в текстовом поле
-    onBlur(oEvent: React.FocusEvent<HTMLInputElement>) {
-        const { value: sNumber } = oEvent.target;
+    onBlur(event: React.FocusEvent<HTMLInputElement>) {
+        const { value: newNumber } = event.target;
 
-        this._checkValueAndUpdate(sNumber);
+        this._checkValueAndUpdate(newNumber);
     }
 
-    // Обработчик события фокусировки ан текстовом поле
+    // Обработчик события фокусировки на текстовом поле
     onFocus() {
         const { value } = this.state;
         this._updateInputSetting({
@@ -146,29 +146,29 @@ class CharNumInput extends React.Component<MyProps, MyState> {
     // Увеличить значение характеристического числа
     _increaseValue() {
         const { value } = this.state;
-        const nNewValue = Number(value) + 0.1;
-        if (Number.isNaN(nNewValue)) {
+        const newValue = Number(value) + 0.1;
+        if (Number.isNaN(newValue)) {
             return;
         }
 
-        this._checkValueAndUpdate(nNewValue.toFixed(1));
+        this._checkValueAndUpdate(newValue.toFixed(1));
     }
 
     // Уменьшить значение характеристического числа
     _decreaseValue() {
         const { value } = this.state;
-        const nNewValue = Number(value) - 0.1;
-        if (Number.isNaN(nNewValue) || nNewValue <= 0) {
+        const newValue = Number(value) - 0.1;
+        if (Number.isNaN(newValue) || newValue <= 0) {
             return;
         }
 
-        this._checkValueAndUpdate(nNewValue.toFixed(1));
+        this._checkValueAndUpdate(newValue.toFixed(1));
     }
 
     // Сформировать новые значения характеристического числа и необходимости показывать ошибку
     // для обновления в глобальном хранилище
-    _checkValueAndUpdate(sNumber: string) {
-        if (sNumber === '.') {
+    _checkValueAndUpdate(newValue: string) {
+        if (newValue === '.') {
             this._updateInputSetting({
                 value: '',
                 error: true,
@@ -176,54 +176,55 @@ class CharNumInput extends React.Component<MyProps, MyState> {
             return;
         }
 
-        const nNumber = Number(sNumber);
+        const newNumber = Number(newValue);
         this._updateInputSetting({
-            value: String(nNumber),
-            error: !charNumberIsValid(sNumber),
+            value: String(newNumber),
+            error: !charNumberIsValid(newValue),
         });
     }
 
     // Обновить данные по характеристическому числу в глобальном хранилище
-    _updateInputSetting(oSetting: CharNumInputState) {
+    _updateInputSetting(settings: CharNumInputState) {
         const { i, dispatchUpdateInput } = this.props;
 
         dispatchUpdateInput({
-            charNumSetting: oSetting,
             i,
+            charNumSetting: settings,
         });
     }
 
     // Преобразовать значение в текстовом поле при вводе
-    static _parseNumValue(sNumber: string) {
-        let sNewNumber = '';
-        let bPoint = false;
+    static _parseNumValue(newValue: string) {
+        let parsedNumber = '';
+        let isFoundPoint = false;
 
         // eslint-disable-next-line no-restricted-syntax
-        for (const sChar of sNumber) {
-            if (sChar === '.') {
-                if (bPoint) {
+        for (const char of newValue) {
+            if (char === '.') {
+                if (isFoundPoint) {
                     continue;
                 }
-                bPoint = true;
-                sNewNumber = sNewNumber.concat(sChar);
+                isFoundPoint = true;
+                parsedNumber = parsedNumber.concat(char);
                 continue;
             }
-            if (!sChar.match(/[0-9]/)) {
+            if (!char.match(/[0-9]/)) {
                 continue;
             }
-            sNewNumber = sNewNumber.concat(sChar);
+            parsedNumber = parsedNumber.concat(char);
         }
 
-        return sNewNumber;
+        return parsedNumber;
     }
 }
 
-const mapStateToProps = (oState: StateType, oProps: OwnProps) => {
-    const oCharNumSetting = selectInputSetting(oState.draw, oProps.i);
+const mapStateToProps = (state: StateType, props: OwnProps) => {
+    const { draw: drawState } = state;
+    const charNumSettings = selectInputSetting(drawState, props.i);
     return {
-        isMonodromic: oState.draw.isMonodromic,
-        error: oCharNumSetting.error,
-        value: oCharNumSetting.value,
+        isMonodromic: drawState.isMonodromic,
+        error: charNumSettings.error,
+        value: charNumSettings.value,
     };
 };
 const mapDispatchToProps = {

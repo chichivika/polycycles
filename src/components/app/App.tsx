@@ -14,8 +14,8 @@ type MyState = {
     windowWidth: number | null;
 };
 class App extends React.Component<MyProps, MyState> {
-    constructor(oProps: MyProps) {
-        super(oProps);
+    constructor(props: MyProps) {
+        super(props);
         this.state = {
             windowWidth: null,
         };

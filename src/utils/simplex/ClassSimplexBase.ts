@@ -51,8 +51,8 @@ class ClassSimplexBase {
         this._charNums = charNums;
         this._isMonodromic = isMonodromic;
 
-        const oVerts = calcTriangleVertsBySizeAndPadding(this._size, this._paddingTop);
-        this._vertices = oVerts.window;
+        const verts = calcTriangleVertsBySizeAndPadding(this._size, this._paddingTop);
+        this._vertices = verts.window;
     }
 
     // ===================== PUBLIC ===================================
@@ -64,9 +64,9 @@ class ClassSimplexBase {
 
     // Получить массив вершин симплекса с дополнительной информацией
     public getVertsInfo(): SimplexVertsInfo {
-        return this._vertices.map((aVert, i) => {
+        return this._vertices.map((vert, i) => {
             return {
-                point: aVert,
+                point: vert,
                 inKSet: this.checkVerticeInKSet(i),
             };
         });
@@ -74,18 +74,18 @@ class ClassSimplexBase {
 
     // Получить массив координат сторон симплекса с дополнительной информацией
     public getEdgesInfo(): SimplexEdgesInfo {
-        const aVerts = this._vertices;
-        const aInfo: SimplexEdgesInfo = [];
+        const verts = this._vertices;
+        const info: SimplexEdgesInfo = [];
 
-        aVerts.forEach((aVert, nInd) => {
-            const nSecInd = (nInd + 1) % 3;
-            const nThirdInd = getThirdIndex(nInd, nSecInd);
-            aInfo[nThirdInd] = {
-                points: [aVert, aVerts[nSecInd]],
-                inKSet: this.checkEdgeInKSet(nThirdInd),
+        verts.forEach((vert, nInd) => {
+            const secondIndex = (nInd + 1) % 3;
+            const thirdIndex = getThirdIndex(nInd, secondIndex);
+            info[thirdIndex] = {
+                points: [vert, verts[secondIndex]],
+                inKSet: this.checkEdgeInKSet(thirdIndex),
             };
         });
-        return aInfo;
+        return info;
     }
 
     // Получить области K-множества
@@ -98,13 +98,13 @@ class ClassSimplexBase {
 
     // Проверить, принадлежит ли вершина K-множеству
     public checkVerticeInKSet(i: number): boolean {
-        const nFirst = (i + 1) % 3;
-        const nSecond = (i + 2) % 3;
-        const aNums = this._charNums;
+        const firstIndex = (i + 1) % 3;
+        const secondIndex = (i + 2) % 3;
+        const nums = this._charNums;
 
         if (
-            (aNums[nFirst] * aNums[i] - 1) * (aNums[nSecond] * aNums[i] - 1) <= 0 ||
-            (aNums[i] - 1) * (aNums[nFirst] * aNums[nSecond] * aNums[i] - 1) <= 0
+            (nums[firstIndex] * nums[i] - 1) * (nums[secondIndex] * nums[i] - 1) <= 0 ||
+            (nums[i] - 1) * (nums[firstIndex] * nums[secondIndex] * nums[i] - 1) <= 0
         ) {
             return true;
         }
@@ -113,13 +113,13 @@ class ClassSimplexBase {
 
     // Проверить, принадлежит ли сторона K-множеству
     public checkEdgeInKSet(i: number): boolean {
-        const nFirst = (i + 1) % 3;
-        const nSecond = (i + 2) % 3;
-        const aNums = this._charNums;
+        const firstIndex = (i + 1) % 3;
+        const secondIndex = (i + 2) % 3;
+        const nums = this._charNums;
 
         if (
-            (aNums[nFirst] * aNums[nSecond] - 1) *
-                (aNums[nFirst] * aNums[nSecond] * aNums[i] - 1) <=
+            (nums[firstIndex] * nums[secondIndex] - 1) *
+                (nums[firstIndex] * nums[secondIndex] * nums[i] - 1) <=
             0
         ) {
             return true;
@@ -129,45 +129,45 @@ class ClassSimplexBase {
 
     // Получить две точки для построения прямой трехкратных циклов
     public getTripleCycleLineSegment(): SimplexTripleSegment {
-        const aVerts = this._vertices;
+        const verts = this._vertices;
 
         // In projective coordinates
-        const aZets = this._getTripleLineProjectivePoints();
-        if (aZets === null || aZets.length < 2) {
+        const zets = this._getTripleLineProjectivePoints();
+        if (zets === null || zets.length < 2) {
             return [];
         }
 
-        const [aZets1, aZets2] = aZets;
+        const [zets1, zets2] = zets;
 
-        const aPoint1 = this._mapProjectiveToDescart(aZets1, aVerts);
-        const aPoint2 = this._mapProjectiveToDescart(aZets2, aVerts);
-        if (aPoint1[0] === aPoint2[0]) {
+        const point1 = this._mapProjectiveToDescart(zets1, verts);
+        const point2 = this._mapProjectiveToDescart(zets2, verts);
+        if (point1[0] === point2[0]) {
             return [
-                [aPoint1[0], 0],
-                [aPoint1[0], this._size],
+                [point1[0], 0],
+                [point1[0], this._size],
             ];
         }
 
-        const nTangent = (aPoint2[1] - aPoint1[1]) / (aPoint2[0] - aPoint1[0]);
-        const fnLine = (x: number) => aPoint1[1] + nTangent * (x - aPoint1[0]);
+        const tangent = (point2[1] - point1[1]) / (point2[0] - point1[0]);
+        const getSecondCoordinate = (x: number) => point1[1] + tangent * (x - point1[0]);
 
-        const aWindowPoint1 = [0, fnLine(0)];
-        const aWindowPoint2 = [this._size, fnLine(this._size)];
+        const windowPoint1 = [0, getSecondCoordinate(0)];
+        const windowPoint2 = [this._size, getSecondCoordinate(this._size)];
 
-        return [aWindowPoint1, aWindowPoint2] as Points;
+        return [windowPoint1, windowPoint2] as Points;
     }
 
     // ===================== PROTECTED ===================================
 
     // Рассчитать две точки на прямой трехкратных циклов в проективных координатах
     protected _getTripleLineProjectivePoints() {
-        const aNums = this._charNums;
-        return getTripleLineProjectivePoints(aNums, this._isMonodromic);
+        const nums = this._charNums;
+        return getTripleLineProjectivePoints(nums, this._isMonodromic);
     }
 
     // Преобразовать проективные координаты в декартовы
-    protected _mapProjectiveToDescart(aZets1: ProjectivePoint, aVerts: Points) {
-        return mapProjectiveToDescart(aZets1, aVerts, this._isMonodromic);
+    protected _mapProjectiveToDescart(zets1: ProjectivePoint, verts: Points) {
+        return mapProjectiveToDescart(zets1, verts, this._isMonodromic);
     }
 }
 export default ClassSimplexBase;

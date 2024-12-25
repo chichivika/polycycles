@@ -1,9 +1,9 @@
 export type CharNumsChangeEvent = {
-    value: string,
-    i: number
+    value: string;
+    i: number;
 };
-export type CharNumsChangeFunction = (oParam: CharNumsChangeEvent) => void;
+export type CharNumsChangeFunction = (param: CharNumsChangeEvent) => void;
 export type CharNumInputState = {
-    value: string,
-    error: boolean
+    value: string;
+    error: boolean;
 };

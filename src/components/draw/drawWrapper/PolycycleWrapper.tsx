@@ -33,8 +33,8 @@ class PolycycleWrapper extends React.Component<MyProps, MyState> {
     }
 }
 
-const mapStateToProps = (oState: StateType) => ({
-    isMonodromic: oState.draw.isMonodromic,
+const mapStateToProps = (state: StateType) => ({
+    isMonodromic: state.draw.isMonodromic,
 });
 const mapDispatchToProps = {};
 

@@ -15,17 +15,17 @@ type MyProps = CheckboxProps & {
     dataLabelKey?: string;
 };
 
-function Checkbox(oProps: MyProps) {
-    const { dataLabelKey: sLabelKey, className: sClassName, ...oChBAttr } = oProps;
+function Checkbox(props: MyProps) {
+    const { dataLabelKey, className, ...oChBAttr } = props;
 
-    const checkboxClassName = getClassName('app-chbox', sClassName);
+    const checkboxClassName = getClassName('app-chbox', className);
     Object.assign(oChBAttr, {
         className: checkboxClassName.concat('-chbox'),
     });
 
-    const oCheckbox = <UiCheckbox {...oChBAttr} />;
-    if (sLabelKey === undefined) {
-        return oCheckbox;
+    const checkboxEl = <UiCheckbox {...oChBAttr} />;
+    if (dataLabelKey === undefined) {
+        return checkboxEl;
     }
 
     return (
@@ -33,8 +33,8 @@ function Checkbox(oProps: MyProps) {
             {(t) => (
                 <FormControlLabel
                     className={getClassName('app-chbox', checkboxClassName)}
-                    control={oCheckbox}
-                    label={t(String(sLabelKey))}
+                    control={checkboxEl}
+                    label={t(String(dataLabelKey))}
                     labelPlacement='start'
                 />
             )}

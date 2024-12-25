@@ -38,14 +38,14 @@ class DrawWrapper extends React.Component<MyProps, MyState> {
     _renderInfo() {
         const { hoverKey, hoverKeys } = this.props;
         if (typeof hoverKey === 'string') {
-            const sKey = hoverKey as string;
-            return <PopperInfo textKey={sKey} />;
+            const key = hoverKey as string;
+            return <PopperInfo textKey={key} />;
         }
         if (Array.isArray(hoverKeys)) {
-            const aKeys = hoverKeys as string[];
+            const keys = hoverKeys as string[];
             return (
                 <PopperInfo>
-                    <Translation>{(t) => <div>{aKeys.map((sKey) => t(sKey))}</div>}</Translation>
+                    <Translation>{(t) => <div>{keys.map((key) => t(key))}</div>}</Translation>
                 </PopperInfo>
             );
         }
@@ -56,8 +56,8 @@ class DrawWrapper extends React.Component<MyProps, MyState> {
     _renderLabel() {
         const { labelKey } = this.props;
         if (typeof labelKey === 'string') {
-            const sKey = labelKey as string;
-            return <Translation>{(t) => <div>{t(sKey)}</div>}</Translation>;
+            const key = labelKey as string;
+            return <Translation>{(t) => <div>{t(key)}</div>}</Translation>;
         }
         return null;
     }

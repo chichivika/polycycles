@@ -4,16 +4,16 @@ import drawReducer from './drawSlice';
 const rootReducer = combineReducers({
     draw: drawReducer,
 });
-const oStore = configureStore({
+const store = configureStore({
     reducer: rootReducer,
 });
 
-export default oStore;
-export type StateType = ReturnType<typeof oStore.getState>;
+export default store;
+export type StateType = ReturnType<typeof store.getState>;
 
 export function getState() {
-    return oStore.getState();
+    return store.getState();
 }
 export function getDrawState() {
-    return oStore.getState().draw;
+    return store.getState().draw;
 }

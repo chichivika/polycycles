@@ -22,7 +22,7 @@ type MyParam = {
 
 // Какую чать от радиуса круга следует прибавить/вычесть (isInnerPath=false/true),
 // чтобы получить радиус K-линии
-const nRadiusRatio = 1 / 4;
+const radiusRatio = 1 / 4;
 class ClassDiagram {
     // координата х центра круга
     public readonly cx: number;
@@ -52,26 +52,27 @@ class ClassDiagram {
     // Координаты L-точек (лунки) на круге
     protected readonly _lPoints: Points;
 
-    constructor(oParam: MyParam) {
-        this._size = oParam.size;
-        this.cx = oParam.size / 2;
-        this.cy = oParam.size / 2;
+    constructor(param: MyParam) {
+        const { path, size } = param;
 
-        this.radius = this._size / 3;
-        this._isInnerPath = oParam.isInnerPath;
+        this._size = size;
+        this.cx = size / 2;
+        this.cy = size / 2;
+
+        this.radius = size / 3;
+        this._isInnerPath = param.isInnerPath;
 
         this._radRatio = this._getPathRadiusRatio();
         this._pathRadius = this.radius + this._radRatio * this.radius;
         this._lPoints = this._findLPoints();
 
-        const aPath = oParam.path;
         // Если ориентация пути отрицательна, переворачиваем массив
         // Таким образом, далее работаем только с положительной ориентацией
-        const bPosOrientation = this._getIsPosOrientation(aPath);
-        if (!bPosOrientation) {
-            aPath.reverse();
+        const isPosOrientation = this._getIsPosOrientation(path);
+        if (!isPosOrientation) {
+            path.reverse();
         }
-        this._path = aPath;
+        this._path = path;
     }
 
     // =========================== PUBLIC =======================================
@@ -98,85 +99,85 @@ class ClassDiagram {
 
     // Рассчитать массив строк для отрисовки кусков K-линии
     protected _findPathArcs() {
-        const aPath = this._path;
-        const nLength = aPath.length;
+        const path = this._path;
+        const pathLength = path.length;
 
-        const nRatio = this._radRatio;
-        const nPathRadius = this._pathRadius;
+        const ratio = this._radRatio;
+        const pathRadius = this._pathRadius;
 
-        let aArcs: string[] = [];
-        for (let i = 0; i < nLength; ++i) {
-            const oEdgeData = aPath[i];
-            const nEdgeIndex = oEdgeData.edgeIndex;
-            const aLPoint = this._lPoints[nEdgeIndex];
-            const aDelta = this._getCirclePerpAt(aLPoint);
+        let arcs: string[] = [];
+        for (let i = 0; i < pathLength; ++i) {
+            const edgeData = path[i];
+            const { edgeIndex } = edgeData;
+            const lPoint = this._lPoints[edgeIndex];
+            const deltaPoints = this._getCirclePerpAt(lPoint);
 
             // Координаты начала куска арки
-            const aPathPoint = getSummPointsWithCoeffs(this._getCenter(), aDelta, 1, 1 + nRatio);
+            const pathPoint = getSummPointsWithCoeffs(this._getCenter(), deltaPoints, 1, 1 + ratio);
 
             // Если мы в начале или конце пути, следует отрисовать окончание арки
-            if (i === 0 || i === nLength - 1) {
-                const aPocketArcs = oEdgeData.hasPocket
-                    ? this._getPocketArcs(oEdgeData, i === 0)
-                    : this._getNotPocketArcs(oEdgeData, i === 0, aPathPoint);
-                aArcs = aArcs.concat(aPocketArcs);
+            if (i === 0 || i === pathLength - 1) {
+                const pocketArcs = edgeData.hasPocket
+                    ? this._getPocketArcs(edgeData, i === 0)
+                    : this._getNotPocketArcs(edgeData, i === 0, pathPoint);
+                arcs = arcs.concat(pocketArcs);
             }
             // Если конец пути, завершаем цикл
-            if (i === nLength - 1) {
+            if (i === pathLength - 1) {
                 break;
             }
 
             // Иначе высчитываем следующую точку и формируем настройки арки
-            const oNextEdgeData = aPath[i + 1];
-            const nNextEdgeIndex = oNextEdgeData.edgeIndex;
-            const oNext = this._lPoints[nNextEdgeIndex] as Point;
-            const aNextDelta = this._getCirclePerpAt(oNext);
+            const nextEdgeData = path[i + 1];
+            const nextEdgeIndex = nextEdgeData.edgeIndex;
+            const nextPoint = this._lPoints[nextEdgeIndex] as Point;
+            const nextDelta = this._getCirclePerpAt(nextPoint);
 
-            const oNextPath = getSummPointsWithCoeffs(this._getCenter(), aNextDelta, 1, 1 + nRatio);
-            aArcs.push(
-                `M${aPathPoint[0]} ${aPathPoint[1]} A${nPathRadius} ${nPathRadius}
-                 0 0 0 ${oNextPath[0]} ${oNextPath[1]}`,
+            const nextPath = getSummPointsWithCoeffs(this._getCenter(), nextDelta, 1, 1 + ratio);
+            arcs.push(
+                `M${pathPoint[0]} ${pathPoint[1]} A${pathRadius} ${pathRadius}
+                 0 0 0 ${nextPath[0]} ${nextPath[1]}`,
             );
         }
 
-        return aArcs;
+        return arcs;
     }
 
     // Рассчитать массив строк для отрисовки конца K-линии при наличии кармана
-    protected _getPocketArcs(oEdgeData: EdgePath, bStart: boolean): string[] {
-        const nRatio = this._radRatio;
-        const nEdgeIndex = oEdgeData.edgeIndex;
-        const aLPoint = this._lPoints[nEdgeIndex];
-        const aDelta = this._getCirclePerpAt(aLPoint);
-        const aPathPoint = getSummPointsWithCoeffs(aLPoint, aDelta, 1, nRatio);
+    protected _getPocketArcs(edgeData: EdgePath, isStart: boolean): string[] {
+        const ratio = this._radRatio;
+        const { edgeIndex } = edgeData;
+        const lPoint = this._lPoints[edgeIndex];
+        const delta = this._getCirclePerpAt(lPoint);
+        const pathPoint = getSummPointsWithCoeffs(lPoint, delta, 1, ratio);
 
-        const aArcs: string[] = [];
-        const aVect = getDeltaPoints(aLPoint, aPathPoint);
-        const bPosRotation = (bStart && this._isInnerPath) || (!bStart && !this._isInnerPath);
-        const aRotated = ClassDiagram._rotateOnAngle(aVect, (Math.PI * 3) / 4, !bPosRotation);
-        const nVectLength = nRatio * this.radius;
-        const aCaspPoint = getSummPoints(aLPoint, aRotated);
-        const bSweep = bPosRotation ? 0 : 1;
-        aArcs.push(
-            `M${aPathPoint[0]} ${aPathPoint[1]} A ${nVectLength} ${nVectLength}
-             0 0 ${bSweep} ${aCaspPoint[0]} ${aCaspPoint[1]}`,
+        const arcs: string[] = [];
+        const vect = getDeltaPoints(lPoint, pathPoint);
+        const isPosRotation = (isStart && this._isInnerPath) || (!isStart && !this._isInnerPath);
+        const rotatedVector = ClassDiagram._rotateOnAngle(vect, (Math.PI * 3) / 4, !isPosRotation);
+        const vectLength = ratio * this.radius;
+        const caspPoint = getSummPoints(lPoint, rotatedVector);
+        const isSweep = isPosRotation ? 0 : 1;
+        arcs.push(
+            `M${pathPoint[0]} ${pathPoint[1]} A ${vectLength} ${vectLength}
+             0 0 ${isSweep} ${caspPoint[0]} ${caspPoint[1]}`,
         );
 
-        const aPerpVect = ClassDiagram._rotateOnAngle(aVect, Math.PI * 0.51, !bPosRotation);
-        const aPerpPoint = getSummPoints(aLPoint, aPerpVect);
-        aArcs.push(
-            `M ${aCaspPoint[0]} ${aCaspPoint[1]} Q ${aPerpPoint[0]} ${aPerpPoint[1]}
-             ${aLPoint[0]} ${aLPoint[1]}`,
+        const perpVect = ClassDiagram._rotateOnAngle(vect, Math.PI * 0.51, !isPosRotation);
+        const perpPoint = getSummPoints(lPoint, perpVect);
+        arcs.push(
+            `M ${caspPoint[0]} ${caspPoint[1]} Q ${perpPoint[0]} ${perpPoint[1]}
+             ${lPoint[0]} ${lPoint[1]}`,
         );
-        return aArcs;
+        return arcs;
     }
 
     // Рассчитать массив строк для отрисовки конца K-линии при отсутствии кармана
-    protected _getNotPocketArcs(oEdgeData: EdgePath, bStart: boolean, aPathPoint: Point): string[] {
-        const nEdgeIndex = oEdgeData.edgeIndex;
-        const aLPoint = this._lPoints[nEdgeIndex];
+    protected _getNotPocketArcs(edgeData: EdgePath, isStart: boolean, pathPoint: Point): string[] {
+        const { edgeIndex } = edgeData;
+        const lPoint = this._lPoints[edgeIndex];
 
-        return [`M${aLPoint[0]} ${aLPoint[1]} L ${aPathPoint[0]} ${aPathPoint[1]}`];
+        return [`M${lPoint[0]} ${lPoint[1]} L ${pathPoint[0]} ${pathPoint[1]}`];
     }
 
     // Получить координаты центра круга
@@ -187,84 +188,76 @@ class ClassDiagram {
     // Повернуть вектор на заданный угол
     protected static _rotateOnAngle(
         // Координаты вектора
-        aPoint: Point,
+        vect: Point,
         // Угол поворота в радианах
-        nAngle: number,
+        angle: number,
         // Поворачивать ли против часовой стрелки
-        bPos: boolean,
+        isPos: boolean,
     ): Point {
-        const nCos = Math.cos(nAngle);
-        const nSin = Math.sin(nAngle);
-        const nCoef = bPos ? 1 : -1;
-        return [
-            nCos * aPoint[0] - nCoef * nSin * aPoint[1],
-            nCoef * nSin * aPoint[0] + nCos * aPoint[1],
-        ];
+        const nCos = Math.cos(angle);
+        const nSin = Math.sin(angle);
+        const nCoef = isPos ? 1 : -1;
+        return [nCos * vect[0] - nCoef * nSin * vect[1], nCoef * nSin * vect[0] + nCos * vect[1]];
     }
 
     // Найти координаты SL-точек (петель) на круге
     protected _findSLPoints() {
-        const nX = this.cx;
-        const nY = this.cy;
-        const nR = this.radius;
+        const { cx, cy, radius } = this;
 
-        const aDots: Points = [
-            [nX + (nR * Math.sqrt(3)) / 2, nY + nR / 2],
-            [nX - (nR * Math.sqrt(3)) / 2, nY + nR / 2],
-            [nX, nY - nR],
+        const dots: Points = [
+            [cx + (radius * Math.sqrt(3)) / 2, cy + radius / 2],
+            [cx - (radius * Math.sqrt(3)) / 2, cy + radius / 2],
+            [cx, cy - radius],
         ];
 
-        return aDots;
+        return dots;
     }
 
     // Найти координаты L-точек (лунок) на круге
     protected _findLPoints() {
-        const nX = this.cx;
-        const nY = this.cy;
-        const nR = this.radius;
+        const { cx, cy, radius } = this;
 
-        const aDots: Points = [
-            [nX - (nR * Math.sqrt(3)) / 2, nY - nR / 2],
-            [nX + (nR * Math.sqrt(3)) / 2, nY - nR / 2],
-            [nX, nY + nR],
+        const dots: Points = [
+            [cx - (radius * Math.sqrt(3)) / 2, cy - radius / 2],
+            [cx + (radius * Math.sqrt(3)) / 2, cy - radius / 2],
+            [cx, cy + radius],
         ];
 
-        return aDots;
+        return dots;
     }
 
     // Проверить, является ли ориентация пути положительной
-    protected _getIsPosOrientation(aPath: EdgesPath) {
-        if (aPath.length < 2) {
+    protected _getIsPosOrientation(path: EdgesPath) {
+        if (path.length < 2) {
             return true;
         }
-        const oEdgeData = aPath[0];
-        const nEdgeIndex = oEdgeData.edgeIndex;
-        const aLPoint = this._lPoints[nEdgeIndex];
-        const aDelta = this._getCirclePerpAt(aLPoint);
+        const edgeData = path[0];
+        const { edgeIndex } = edgeData;
+        const lPoint = this._lPoints[edgeIndex];
+        const delta = this._getCirclePerpAt(lPoint);
 
-        const oNextEdgeData = aPath[1];
-        const nNextEdgeIndex = oNextEdgeData.edgeIndex;
-        const oNext = this._lPoints[nNextEdgeIndex] as Point;
-        const aNextDelta = this._getCirclePerpAt(oNext);
+        const nextEdgeData = path[1];
+        const nextEdgeIndex = nextEdgeData.edgeIndex;
+        const nextLPoint = this._lPoints[nextEdgeIndex] as Point;
+        const nextDelta = this._getCirclePerpAt(nextLPoint);
 
-        return aDelta[0] * aNextDelta[1] - aDelta[1] * aNextDelta[0] < 0;
+        return delta[0] * nextDelta[1] - delta[1] * nextDelta[0] < 0;
     }
 
     // Получить часть круга, которую следует прибавить
     // для рассчета радиуса K-линии
     protected _getPathRadiusRatio() {
         if (!this._isInnerPath) {
-            return nRadiusRatio;
+            return radiusRatio;
         }
-        return -nRadiusRatio;
+        return -radiusRatio;
     }
 
     // Получить перпендикуляр к кругу в заданной точке
-    protected _getCirclePerpAt(aPoint: Point) {
-        const nX = this.cx;
-        const nY = this.cy;
+    protected _getCirclePerpAt(point: Point) {
+        const { cx, cy } = this;
 
-        return getDeltaPoints([nX, nY], aPoint);
+        return getDeltaPoints([cx, cy], point);
     }
 }
 

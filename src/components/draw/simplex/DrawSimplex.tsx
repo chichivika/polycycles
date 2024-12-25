@@ -64,10 +64,10 @@ class DrawSimplex extends React.Component<MyProps, {}> {
 
     // Отрисовка областей K-множества
     _renderKSetArea() {
-        const { kSetAreas: aAreas } = this.props;
-        return aAreas.map((aArea, iIndex) =>
+        const { kSetAreas } = this.props;
+        return kSetAreas.map((kSetArea, iIndex) =>
             renderPolygon(
-                aArea,
+                kSetArea,
                 {
                     className: 'draw-k-area',
                 },
@@ -88,47 +88,47 @@ class DrawSimplex extends React.Component<MyProps, {}> {
 
     // Отрисовка симплекса без дополнительной информации
     _renderSimpleTriangle() {
-        const { verts: aVerts } = this.props;
-        return renderClosedPath(aVerts);
+        const { verts } = this.props;
+        return renderClosedPath(verts);
     }
 
     // Отрисовка подписи для одной стороны симплекса
-    static _renderEdgeText(oEdgeInfo: SimplexEdgeInfo, i: number) {
-        const aVerts = oEdgeInfo.points;
+    static _renderEdgeText(edgeInfo: SimplexEdgeInfo, i: number) {
+        const verts = edgeInfo.points;
 
-        let aFVert = aVerts[0];
-        let aSVert = aVerts[1];
+        let firstVert = verts[0];
+        let secondVert = verts[1];
         if (i === 2) {
-            [aFVert, aSVert] = [aSVert, aFVert];
+            [firstVert, secondVert] = [secondVert, firstVert];
         }
 
-        const aTangent = getDeltaPoints(aFVert, aSVert);
-        const aUnionTangent = getOrtDeltaPoints(aFVert, aSVert);
+        const tangent = getDeltaPoints(firstVert, secondVert);
+        const unionTangent = getOrtDeltaPoints(firstVert, secondVert);
 
-        const aOrt = [aUnionTangent[1], -aUnionTangent[0]];
+        const ort = [unionTangent[1], -unionTangent[0]];
 
-        const nX = aFVert[0] + aTangent[0] / 2 + 10 * aOrt[0] - 19 * aUnionTangent[0];
-        const nY = aFVert[1] + aTangent[1] / 2 + 10 * aOrt[1] - 19 * aUnionTangent[1];
+        const x = firstVert[0] + tangent[0] / 2 + 10 * ort[0] - 19 * unionTangent[0];
+        const y = firstVert[1] + tangent[1] / 2 + 10 * ort[1] - 19 * unionTangent[1];
 
-        let nAngle = 0;
+        let angle = 0;
         switch (i) {
             case 0:
-                nAngle = -60;
+                angle = -60;
                 break;
             case 1:
-                nAngle = 60;
+                angle = 60;
                 break;
             default:
-                nAngle = 0;
+                angle = 0;
         }
 
         return (
             <text
                 key={i}
-                x={nX}
-                y={nY}
+                x={x}
+                y={y}
                 fontSize='1.2rem'
-                transform={`rotate(${nAngle} ${nX}, ${nY})`}
+                transform={`rotate(${angle} ${x}, ${y})`}
                 textLength='38px'
             >
                 z
@@ -144,9 +144,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
     _renderEdges() {
         const { edgesInfo } = this.props;
         return (
-            <g key='edges'>
-                {edgesInfo.map((oEdge, i) => DrawSimplex._drawTriangleEdge(oEdge, i))}
-            </g>
+            <g key='edges'>{edgesInfo.map((edge, i) => DrawSimplex._drawTriangleEdge(edge, i))}</g>
         );
     }
 
@@ -155,7 +153,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         const { vertsInfo } = this.props;
         return (
             <g key='verts'>
-                {vertsInfo.map((oVert, i) => DrawSimplex._renderTriangleVert(oVert, i))}
+                {vertsInfo.map((vert, i) => DrawSimplex._renderTriangleVert(vert, i))}
             </g>
         );
     }
@@ -167,19 +165,19 @@ class DrawSimplex extends React.Component<MyProps, {}> {
     }
 
     // Отрисовка одной вершины симплекса
-    static _renderTriangleVert(oVertInfo: SimplexVertInfo, i: number) {
-        if (oVertInfo.inKSet) {
-            const aPoint = oVertInfo.point;
-            return <circle key={i} cx={aPoint[0]} cy={aPoint[1]} r='5' fill='blue' />;
+    static _renderTriangleVert(vertInfo: SimplexVertInfo, i: number) {
+        if (vertInfo.inKSet) {
+            const { point } = vertInfo;
+            return <circle key={i} cx={point[0]} cy={point[1]} r='5' fill='blue' />;
         }
         return null;
     }
 
     // Отрисовка одной стороны симплекса
-    static _drawTriangleEdge(oEdgeInfo: SimplexEdgeInfo, i: number) {
-        const aVerts = oEdgeInfo.points;
-        const sClassName = oEdgeInfo.inKSet ? 'draw-k-set' : 'draw-simplex';
-        return renderLine(aVerts, { className: sClassName }, `${i}`);
+    static _drawTriangleEdge(edgeInfo: SimplexEdgeInfo, i: number) {
+        const verts = edgeInfo.points;
+        const className = edgeInfo.inKSet ? 'draw-k-set' : 'draw-simplex';
+        return renderLine(verts, { className }, `${i}`);
     }
 }
 

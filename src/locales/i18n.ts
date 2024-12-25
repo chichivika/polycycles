@@ -24,18 +24,18 @@ i18n.use(initReactI18next).init({
 export default i18n;
 
 function getInitLang() {
-    let sCurrLang = navigator.language.toLowerCase();
-    if (i18n.languages.includes(sCurrLang)) {
-        return sCurrLang;
+    let currLang = navigator.language.toLowerCase();
+    if (i18n.languages.includes(currLang)) {
+        return currLang;
     }
     // In case of 'ru-Ru' languages
-    if (sCurrLang.match('-')) {
-        [sCurrLang] = sCurrLang.split('-');
-    } else if (sCurrLang.match('_')) {
-        [sCurrLang] = sCurrLang.split('-');
+    if (currLang.match('-')) {
+        [currLang] = currLang.split('-');
+    } else if (currLang.match('_')) {
+        [currLang] = currLang.split('-');
     }
-    if (i18n.languages.includes(sCurrLang)) {
-        return sCurrLang;
+    if (i18n.languages.includes(currLang)) {
+        return currLang;
     }
     return 'en';
 }
@@ -46,9 +46,9 @@ export function getLanguage(): string {
 export function getAllLanguages() {
     return [...i18n.languages].sort();
 }
-export function setLanguage(sLang: string): void {
-    i18n.changeLanguage(sLang).catch((oError) => {
+export function setLanguage(language: string): void {
+    i18n.changeLanguage(language).catch((error) => {
         // eslint-disable-next-line no-console
-        console.log(oError.message);
+        console.log(error.message);
     });
 }

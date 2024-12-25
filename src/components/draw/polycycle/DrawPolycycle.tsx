@@ -49,52 +49,53 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
     _renderCharNums() {
         const { charNums } = this.props;
 
-        return charNums.map((nNum, i) => {
-            const oPos = this._getCharNumTextPosition(i, nNum);
+        return charNums.map((num, i) => {
+            const position = this._getCharNumTextPosition(i, num);
             return (
                 // eslint-disable-next-line react/no-array-index-key
-                <text key={i} x={oPos.x} y={oPos.y}>
-                    {oPos.value}
+                <text key={i} x={position.x} y={position.y}>
+                    {position.value}
                 </text>
             );
         });
     }
 
     // Получить настройки отображения характеристического числа на рисунке
-    _getCharNumTextPosition(i: number, nNum: number) {
+    _getCharNumTextPosition(i: number, charNum: number) {
         const { size } = this.props;
-        let sNum = String(nNum);
-        let nLength = sNum.length;
-        let nDots = 0;
-        if (nLength > 4) {
-            sNum = sNum.slice(0, 4);
-            nLength = sNum.length;
-            nDots = 1;
-            if (sNum.at(-1) === '.') {
-                sNum = `${sNum}..`;
+        let numValue = String(charNum);
+        let numValueLength = numValue.length;
+        let dotsCount = 0;
+
+        if (numValueLength > 4) {
+            numValue = numValue.slice(0, 4);
+            numValueLength = numValue.length;
+            dotsCount = 1;
+            if (numValue.at(-1) === '.') {
+                numValue = `${numValue}..`;
             } else {
-                sNum = `${sNum}...`;
+                numValue = `${numValue}...`;
             }
         }
 
         switch (i) {
             case 0:
                 return {
-                    x: size - 80 - nLength * 5 - nDots * 5,
+                    x: size - 80 - numValueLength * 5 - dotsCount * 5,
                     y: size - 90,
-                    value: sNum,
+                    value: numValue,
                 };
             case 1:
                 return {
                     x: 65,
                     y: size - 90,
-                    value: sNum,
+                    value: numValue,
                 };
             default:
                 return {
-                    x: size / 2 - nLength * 5 - nDots * 6,
+                    x: size / 2 - numValueLength * 5 - dotsCount * 6,
                     y: 45,
-                    value: sNum,
+                    value: numValue,
                 };
         }
     }
@@ -102,15 +103,15 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
     // Отрисовка полицикла
     _renderPolycycle() {
         const { size } = this.props;
-        const nWindt = size - 2 * this.paddingLeft;
-        const nHeight = (3 * size) / 4;
+        const width = size - 2 * this.paddingLeft;
+        const height = (3 * size) / 4;
         return (
             <image
                 href={this._getImgSrc()}
                 x={this.paddingLeft}
-                y={(size - nHeight) / 2}
-                width={nWindt}
-                height={nHeight}
+                y={(size - height) / 2}
+                width={width}
+                height={height}
             />
         );
     }

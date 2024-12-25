@@ -53,16 +53,16 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
             return this._renderNotTypicalCase();
         }
 
-        let aPath = edgesPath;
-        if (aPath.length < 2) {
+        let path = edgesPath;
+        if (path.length < 2) {
             this._isInnerPath = false;
-            aPath = [];
+            path = [];
         } else {
             this._isInnerPath = this._getIsInnerPath();
         }
 
         this._diagramObject = new ClassDiagram({
-            path: aPath,
+            path,
             size,
             isInnerPath: this._isInnerPath,
         });
@@ -78,44 +78,43 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
 
     // Отрисовка ломаной K-линии
     _renderEdgesPath() {
-        const oDiagram = this._diagramObject;
-        if (oDiagram === null) {
+        const diagram = this._diagramObject;
+        if (diagram === null) {
             return;
         }
 
-        const aArcs = oDiagram.getPathArcs();
+        const arcs = diagram.getPathArcs();
 
-        return <g className='draw-k-set'>{DrawDiagram._renderArcs(aArcs)}</g>;
+        return <g className='draw-k-set'>{DrawDiagram._renderArcs(arcs)}</g>;
     }
 
     // Нужно ли рисовать K-линия внутри круга
     _getIsInnerPath() {
         const { charNums } = this.props;
-        const nMul = getNumsMul(charNums);
-        return nMul < 1;
+        return getNumsMul(charNums) < 1;
     }
 
     // Отрисовать участки путей
-    static _renderArcs(aArcs: string[]) {
-        return aArcs.map((sArc, i) => {
+    static _renderArcs(arcs: string[]) {
+        return arcs.map((arc, i) => {
             // eslint-disable-next-line react/no-array-index-key
-            return <path key={i} d={sArc} />;
+            return <path key={i} d={arc} />;
         });
     }
 
     // Отрисовать основной круг диаграммы
     _renderCircle() {
-        const oDiagram = this._diagramObject;
-        if (oDiagram === null) {
+        const diagram = this._diagramObject;
+        if (diagram === null) {
             return;
         }
 
         return (
             <circle
                 className='draw-diagram-circle'
-                cx={oDiagram.cx}
-                cy={oDiagram.cy}
-                r={oDiagram.radius}
+                cx={diagram.cx}
+                cy={diagram.cy}
+                r={diagram.radius}
             />
         );
     }
@@ -132,37 +131,36 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
 
     // Отрисовать подписи для всех SL-точек
     _renderSLTexts() {
-        const oDiagram = this._diagramObject;
-        if (oDiagram === null) {
+        const diagram = this._diagramObject;
+        if (diagram === null) {
             return;
         }
 
-        const aDots = oDiagram.getSLPoints();
-        return aDots.map((aDot, i) => this._renderSLText(aDot, i));
+        const dots = diagram.getSLPoints();
+        return dots.map((dot, i) => this._renderSLText(dot, i));
     }
 
     // Отрисовать подпись для одной SL-точки
-    _renderSLText(aDot: Point, i: number) {
-        const oDiagram = this._diagramObject;
-        if (oDiagram === null) {
+    _renderSLText(dot: Point, i: number) {
+        const diagram = this._diagramObject;
+        if (diagram === null) {
             return;
         }
 
-        const nX = oDiagram.cx;
-        const nY = oDiagram.cy;
-        const aTangent = getDeltaPoints(aDot, [nX, nY]);
+        const { cx, cy } = diagram;
+        const tangent = getDeltaPoints(dot, [cx, cy]);
 
-        const nLength = 32;
-        const nHeight = 15;
-        const nRatio = 0.25;
+        const length = 32;
+        const height = 15;
+        const ratio = 0.25;
 
-        const nCoeff = this._isInnerPath ? -1 : 1;
+        const coeff = this._isInnerPath ? -1 : 1;
         return (
             <text
                 key={i}
                 className='draw-diagram-text draw-diagram-SL-text'
-                x={aDot[0] + nCoeff * aTangent[0] * nRatio - nLength / 2}
-                y={aDot[1] + nCoeff * aTangent[1] * nRatio + nHeight / 2}
+                x={dot[0] + coeff * tangent[0] * ratio - length / 2}
+                y={dot[1] + coeff * tangent[1] * ratio + height / 2}
             >
                 SL
                 <tspan baselineShift='sub'>{i + 1}</tspan>
@@ -172,48 +170,47 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
 
     // Отрисовать подписи для всех L-точек
     _renderAllLDots() {
-        const oDiagram = this._diagramObject;
-        if (oDiagram === null) {
+        const diagram = this._diagramObject;
+        if (diagram === null) {
             return;
         }
 
-        const aDots = oDiagram.getLPoints();
-        return aDots.map((aDot, i) => this._renderLDot(aDot, i));
+        const dots = diagram.getLPoints();
+        return dots.map((dot, i) => this._renderLDot(dot, i));
     }
 
     // Отрисовать L-точку с подписью
-    _renderLDot(aDot: Point, i: number) {
-        const oDiagram = this._diagramObject;
-        if (oDiagram === null) {
+    _renderLDot(dot: Point, i: number) {
+        const diagram = this._diagramObject;
+        if (diagram === null) {
             return;
         }
 
-        let nF = (i + 1) % 3;
-        let nS = (i + 2) % 3;
-        if (nF > nS) {
-            [nF, nS] = [nS, nF];
+        let firstIndex = (i + 1) % 3;
+        let secondIndex = (i + 2) % 3;
+        if (firstIndex > secondIndex) {
+            [firstIndex, secondIndex] = [secondIndex, firstIndex];
         }
-        const sSubText = `${nF + 1},${nS + 1}`;
+        const subText = `${firstIndex + 1},${secondIndex + 1}`;
 
-        const nX = oDiagram.cx;
-        const nY = oDiagram.cy;
-        const aTangent = getDeltaPoints(aDot, [nX, nY]);
+        const { cx, cy } = diagram;
+        const tangent = getDeltaPoints(dot, [cx, cy]);
 
-        const nLength = 32;
-        const nRatio = 0.25;
-        const nHeight = 15;
+        const length = 32;
+        const ratio = 0.25;
+        const height = 15;
 
-        const nCoeff = this._isInnerPath ? -1 : 1;
+        const coeff = this._isInnerPath ? -1 : 1;
         return (
             <g key={i}>
-                <circle className='draw-diagram-dot' cx={aDot[0]} cy={aDot[1]} r={5} />
+                <circle className='draw-diagram-dot' cx={dot[0]} cy={dot[1]} r={5} />
                 <text
                     className='draw-diagram-text draw-diagram-L-text'
-                    textLength={nLength}
-                    x={aDot[0] + nCoeff * aTangent[0] * nRatio - nLength / 2}
-                    y={aDot[1] + nCoeff * aTangent[1] * nRatio + nHeight / 2}
+                    textLength={length}
+                    x={dot[0] + coeff * tangent[0] * ratio - length / 2}
+                    y={dot[1] + coeff * tangent[1] * ratio + height / 2}
                 >
-                    L<tspan baselineShift='sub'>{sSubText}</tspan>
+                    L<tspan baselineShift='sub'>{subText}</tspan>
                 </text>
             </g>
         );

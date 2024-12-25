@@ -11,19 +11,19 @@ export type CharNumSettings = {
 };
 
 // Настройки для рисунков фиксированного размера
-export type FixedDrawSetting = {
+export type FixedDrawSettings = {
     width: number;
 };
 // Настройки для рисунков изменяющих размер
-export type DrawSetting = {
+export type DrawSettings = {
     minWidth: number;
     maxWidth: number;
 };
 
 // Начальное значение характеристических чисел
-export const aInitialCharNums = ['0.25', '2', '2.5'];
+export const initialCharNums = ['0.25', '2', '2.5'];
 // Объект настроек отображения для рисунков
-export const aInitialDrawSetting = {
+export const initialDrawSettings = {
     polycycle: { width: 300 },
     simplex: { width: 300 },
     unfold: {
@@ -39,7 +39,7 @@ export const aInitialDrawSetting = {
 export function getDrawInitialState() {
     return {
         isMonodromic: true,
-        charNums: aInitialCharNums.map((sNum) => {
+        charNums: initialCharNums.map((sNum) => {
             return {
                 value: sNum,
                 error: false,
@@ -50,15 +50,15 @@ export function getDrawInitialState() {
 }
 
 // Ограничить ширину рисунка по его настройкам отображения
-export function boundWidth(nWidth: number, oSetting: DrawSetting) {
-    if (!oSetting) {
-        return nWidth;
+export function boundWidth(width: number, settings: DrawSettings) {
+    if (!settings) {
+        return width;
     }
-    if (nWidth < oSetting.minWidth) {
-        return oSetting.minWidth;
+    if (width < settings.minWidth) {
+        return settings.minWidth;
     }
-    if (nWidth > oSetting.maxWidth) {
-        return oSetting.maxWidth;
+    if (width > settings.maxWidth) {
+        return settings.maxWidth;
     }
-    return nWidth;
+    return width;
 }

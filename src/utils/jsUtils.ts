@@ -5,31 +5,31 @@
 // Произведение чисел от и до с возможностью исключения
 export function productNumsFromTo(
     // Массив чисел для произведения
-    aNums: number[],
+    nums: number[],
     // Индекс начала
-    nFrom: number,
+    from: number,
     // Индекс окончания
-    nTo: number,
+    to: number,
     // Массив чисел, которые следует пропустить
-    aExcept?: number[],
+    excepts?: number[],
 ) {
-    let nProduct = 1;
-    for (let i = nFrom; i <= nTo; ++i) {
-        if (aExcept instanceof Array && aExcept.includes(i)) {
+    let product = 1;
+    for (let i = from; i <= to; ++i) {
+        if (excepts instanceof Array && excepts.includes(i)) {
             continue;
         }
-        nProduct *= aNums[i];
+        product *= nums[i];
     }
 
-    return nProduct;
+    return product;
 }
 
 // Получить сумму чисел массива
-export function getNumsSum(aNums: number[]) {
-    return aNums.reduce((nSum, nNum) => nSum + nNum, 0);
+export function getNumsSum(nums: number[]) {
+    return nums.reduce((sum, num) => sum + num, 0);
 }
 
 // Получить произведение чисел массива
-export function getNumsMul(aNums: number[]) {
-    return aNums.reduce((nMul, nNum) => nMul * nNum, 1);
+export function getNumsMul(nums: number[]) {
+    return nums.reduce((mul, num) => mul * num, 1);
 }

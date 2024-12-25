@@ -13,8 +13,8 @@ import {
 // Привязанная бифуркационная диаграмма полицикла
 // ==============================================
 
-const mapStateToProps = (oState: StateType) => {
-    const { draw: drawState } = oState;
+const mapStateToProps = (state: StateType) => {
+    const { draw: drawState } = state;
     const oSpecialInfo = selectUnfoldSpecialInfo(drawState);
     return {
         charNums: selectCharNumbers(drawState),

@@ -84,16 +84,16 @@ class ClassUnfoldBase {
         this._charNums = charNums;
         this._isMonodromic = isMonodromic;
 
-        const oOuterVerts = calcTriangleVertsBySizeAndPadding(this._size, this._paddingTop);
-        this._outerVerts = oOuterVerts.window;
+        const outerVerts = calcTriangleVertsBySizeAndPadding(this._size, this._paddingTop);
+        this._outerVerts = outerVerts.window;
 
         this._rombusSide = (2 / Math.sqrt(3)) * this._innerPadding;
 
-        const oInnerVerts = this._findInnerVerts(oOuterVerts.descart);
-        this._innerVerts = oInnerVerts.window;
+        const innerVerts = this._findInnerVerts(outerVerts.descart);
+        this._innerVerts = innerVerts.window;
 
-        const oRombusHips = this._findRombusHips(oOuterVerts.descart, oInnerVerts.descart);
-        this._rombusHips = oRombusHips.window;
+        const rombusHips = this._findRombusHips(outerVerts.descart, innerVerts.descart);
+        this._rombusHips = rombusHips.window;
     }
 
     // ============================= PUBLIC =============================
@@ -110,12 +110,12 @@ class ClassUnfoldBase {
 
     // Получить координаты сегментов внутри внешнего симплекса
     public getInnerLines(): Segments {
-        const aRombHips = this._rombusHips;
+        const rombHips = this._rombusHips;
 
         return [
-            [aRombHips[0][0], aRombHips[1][1]],
-            [aRombHips[1][0], aRombHips[2][1]],
-            [aRombHips[2][0], aRombHips[0][1]],
+            [rombHips[0][0], rombHips[1][1]],
+            [rombHips[1][0], rombHips[2][1]],
+            [rombHips[2][0], rombHips[0][1]],
         ];
     }
 
@@ -125,8 +125,8 @@ class ClassUnfoldBase {
             return this._numsMulIsUnit;
         }
 
-        const aNums = this._charNums;
-        this._numsMulIsUnit = numsMulIsUnit(aNums);
+        const nums = this._charNums;
+        this._numsMulIsUnit = numsMulIsUnit(nums);
         return this._numsMulIsUnit;
     }
 
@@ -136,8 +136,8 @@ class ClassUnfoldBase {
             return this._numsAreDegenerated;
         }
 
-        const aNums = this._charNums;
-        this._numsAreDegenerated = numsAreDegenerated(aNums);
+        const nums = this._charNums;
+        this._numsAreDegenerated = numsAreDegenerated(nums);
         return this._numsAreDegenerated;
     }
 
@@ -150,16 +150,16 @@ class ClassUnfoldBase {
             return this._getDegenSpecialInfo();
         }
 
-        const oInfo = ClassUnfoldBase.getInitialSpecialInfo();
+        const info = ClassUnfoldBase.getInitialSpecialInfo();
 
-        const oKSetData = this._getKSetData();
-        oInfo.kSet.segments = oKSetData.segments;
-        oInfo.kSet.areas = oKSetData.areas;
-        oInfo.edgesPath = oKSetData.edgesPath;
+        const kSetData = this._getKSetData();
+        info.kSet.segments = kSetData.segments;
+        info.kSet.areas = kSetData.areas;
+        info.edgesPath = kSetData.edgesPath;
 
-        oInfo.tripleSet = this.getTripleLineInfo();
+        info.tripleSet = this.getTripleLineInfo();
 
-        return oInfo;
+        return info;
     }
 
     // Проверить, является ли набор характеристических чисел типичным
@@ -182,48 +182,50 @@ class ClassUnfoldBase {
 
     // Рассчитать координаты боковых сторон ромбов
     // Сначала левый бок, затем правый (если смотреть на ромб из центра)
-    protected _findRombusHips(aDescOuters: Points, aDescInners: Points) {
-        const nRombSide = this._rombusSide;
-        const aDesc = [
+    protected _findRombusHips(descOuters: Points, descInners: Points) {
+        const rombSide = this._rombusSide;
+        const descartPoints = [
             [
-                [aDescOuters[0][0] - nRombSide / 2, aDescInners[0][1]],
-                [aDescOuters[0][0] - nRombSide, aDescOuters[0][1]],
+                [descOuters[0][0] - rombSide / 2, descInners[0][1]],
+                [descOuters[0][0] - rombSide, descOuters[0][1]],
             ],
             [
-                [aDescOuters[1][0] + nRombSide, aDescOuters[1][1]],
-                [aDescOuters[1][0] + nRombSide / 2, aDescInners[1][1]],
+                [descOuters[1][0] + rombSide, descOuters[1][1]],
+                [descOuters[1][0] + rombSide / 2, descInners[1][1]],
             ],
             [
-                [aDescOuters[2][0] - nRombSide / 2, aDescOuters[2][1] - this._innerPadding],
-                [aDescOuters[2][0] + nRombSide / 2, aDescOuters[2][1] - this._innerPadding],
+                [descOuters[2][0] - rombSide / 2, descOuters[2][1] - this._innerPadding],
+                [descOuters[2][0] + rombSide / 2, descOuters[2][1] - this._innerPadding],
             ],
         ];
 
         return {
-            descart: aDesc,
-            window: aDesc.map((aRombus) => mapAllDescartToWindow(aRombus as Points, this._size)),
+            descart: descartPoints,
+            window: descartPoints.map((point) =>
+                mapAllDescartToWindow(point as Points, this._size),
+            ),
         };
     }
 
     // Рассчитать координаты вершин внутреннего симплекса
-    protected _findInnerVerts(aDescOuters: Points) {
-        const nRomSide = this._rombusSide;
-        const aDescartInners = [
-            [aDescOuters[0][0] - (nRomSide * 3) / 2, aDescOuters[0][1] + this._innerPadding],
-            [aDescOuters[1][0] + (nRomSide * 3) / 2, aDescOuters[1][1] + this._innerPadding],
-            [aDescOuters[2][0], aDescOuters[2][1] - 2 * this._innerPadding],
+    protected _findInnerVerts(descOuters: Points) {
+        const rombSide = this._rombusSide;
+        const descInners = [
+            [descOuters[0][0] - (rombSide * 3) / 2, descOuters[0][1] + this._innerPadding],
+            [descOuters[1][0] + (rombSide * 3) / 2, descOuters[1][1] + this._innerPadding],
+            [descOuters[2][0], descOuters[2][1] - 2 * this._innerPadding],
         ] as Points;
 
         return {
-            descart: aDescartInners,
-            window: mapAllDescartToWindow(aDescartInners, this._size),
+            descart: descInners,
+            window: mapAllDescartToWindow(descInners, this._size),
         };
     }
 
     // Проверить, является ли ромб вырожденным
     protected _checkRombIsDegen(i: number) {
-        const aNums = this._charNums;
-        return numsAreAlmostEqual(aNums[i], 1);
+        const nums = this._charNums;
+        return numsAreAlmostEqual(nums[i], 1);
     }
 
     // Проверить внешнюю сторону ромба на принадлежность K-множеству
@@ -231,27 +233,27 @@ class ClassUnfoldBase {
     // Иначе вернуть null
     protected _checkRombSideInKSet(
         // Индекс ромба
-        nRombIndex: number,
+        rombIndex: number,
         // 0 - левая сторона, 1 - правая сторона
-        nSideIndex: number,
+        sideIndex: number,
     ): Point | null {
-        const nRIndex = (nRombIndex + 1) % 3;
-        const nLIndex = (nRombIndex + 2) % 3;
+        const rightIndex = (rombIndex + 1) % 3;
+        const leftIndex = (rombIndex + 2) % 3;
 
-        const nTrapezeIndex = nSideIndex === 0 ? nLIndex : nRIndex;
+        const trapezeIndex = sideIndex === 0 ? leftIndex : rightIndex;
 
-        const aPoints = this._getKTriplePoints(nTrapezeIndex, [nRIndex, nLIndex]);
-        if (!ClassUnfoldBase._checkTripleIsOrdered(aPoints)) {
+        const points = this._getKTriplePoints(trapezeIndex, [rightIndex, leftIndex]);
+        if (!ClassUnfoldBase._checkTripleIsOrdered(points)) {
             return null;
         }
 
-        const aOuterVert = this._outerVerts[nRombIndex];
-        const aRombHip = this._rombusHips[nRombIndex][nSideIndex];
+        const outerVert = this._outerVerts[rombIndex];
+        const rombHip = this._rombusHips[rombIndex][sideIndex];
 
-        const aDeltaVect = getDeltaPoints(aOuterVert, aRombHip);
-        const nRatio = ClassUnfoldBase._getPointsRatio(aPoints);
+        const deltaVect = getDeltaPoints(outerVert, rombHip);
+        const ratio = ClassUnfoldBase._getPointsRatio(points);
 
-        return [aOuterVert[0] + nRatio * aDeltaVect[0], aOuterVert[1] + nRatio * aDeltaVect[1]];
+        return [outerVert[0] + ratio * deltaVect[0], outerVert[1] + ratio * deltaVect[1]];
     }
 
     // Получить индексы смежных с тарпецией ромбов
@@ -262,9 +264,9 @@ class ClassUnfoldBase {
 
     // Получить координаты смежных с тарпецией боковых вершин ромбов
     protected _getTrapezeSideRombsHips(i: number) {
-        const aHips = this._rombusHips;
-        const [nL, nR] = ClassUnfoldBase._getTrapezeSideInds(i);
-        return [aHips[nL], aHips[nR]];
+        const hips = this._rombusHips;
+        const [leftIndex, rightIndex] = ClassUnfoldBase._getTrapezeSideInds(i);
+        return [hips[leftIndex], hips[rightIndex]];
     }
 
     // Получить индексы смежных с ромбов трапеций
@@ -275,36 +277,36 @@ class ClassUnfoldBase {
 
     // получить координаты ромба по индексу
     protected _getRombCoordinates(i: number): RombCoordinates {
-        const aOuters = this._outerVerts;
-        const aInners = this._innerVerts;
-        const aHips = this._rombusHips[i];
+        const outerVerts = this._outerVerts;
+        const innerVerts = this._innerVerts;
+        const hips = this._rombusHips[i];
 
         // объект координат, если смотреть из центра симплекса
         return {
             // вершина
-            top: aOuters[i],
+            top: outerVerts[i],
             // низ
-            bottom: aInners[i],
+            bottom: innerVerts[i],
             // правый бок
-            rHip: aHips[1],
+            rHip: hips[1],
             // левый бок
-            lHip: aHips[0],
+            lHip: hips[0],
         };
     }
 
     // Получить массив координат вершин ромба
     // Сначала top, далее против часовой стрелки
     protected _getRombVerts(i: number): Points {
-        const oCoordinates = this._getRombCoordinates(i);
+        const coordinates = this._getRombCoordinates(i);
 
-        return [oCoordinates.top, oCoordinates.lHip, oCoordinates.bottom, oCoordinates.rHip];
+        return [coordinates.top, coordinates.lHip, coordinates.bottom, coordinates.rHip];
     }
 
     // Проверить, вырождена ли трапеция
     protected _checkTrapezeDegen(i: number) {
-        const [nFIndex, nSIndex] = ClassUnfoldBase._getTrapezeSideInds(i);
-        const aNums = this._charNums;
-        const nMul = aNums[nFIndex] * aNums[nSIndex];
+        const [firstIndex, secondIndex] = ClassUnfoldBase._getTrapezeSideInds(i);
+        const nums = this._charNums;
+        const nMul = nums[firstIndex] * nums[secondIndex];
 
         return numsAreAlmostEqual(nMul, 1);
     }
@@ -313,7 +315,7 @@ class ClassUnfoldBase {
     protected _getTrapezeCoordinates(i: number) {
         const aInnerVerts = this._innerVerts;
 
-        const [nLIndex, nRIndex] = ClassUnfoldBase._getTrapezeSideInds(i);
+        const [leftIndex, rightIndex] = ClassUnfoldBase._getTrapezeSideInds(i);
         const [aLeftRomb, aRightRomb] = this._getTrapezeSideRombsHips(i);
 
         // объект координат, если смотреть из центра симплекса
@@ -323,44 +325,44 @@ class ClassUnfoldBase {
             // Левая вершина основания
             baseL: aLeftRomb[1],
             // Правая вершина меньшей стороны
-            topR: aInnerVerts[nRIndex],
+            topR: aInnerVerts[rightIndex],
             // Левая вершина меньшей стороны
-            topL: aInnerVerts[nLIndex],
+            topL: aInnerVerts[leftIndex],
         };
     }
 
     // Получить массив координат вершин трапеции
     // Сначала baseL, затем против часовой стрелки
     protected _getTrapezeVerts(i: number) {
-        const oCoordinates = this._getTrapezeCoordinates(i);
+        const coordinates = this._getTrapezeCoordinates(i);
 
-        return [oCoordinates.baseL, oCoordinates.topL, oCoordinates.topR, oCoordinates.baseR];
+        return [coordinates.baseL, coordinates.topL, coordinates.topR, coordinates.baseR];
     }
 
     // Получить, в каком отношении K-линия должна резделить высоту трапеции
     protected _getTrapezeRatio(i: number): number | null {
-        const aPoints = this._getKTriplePoints(i, [i]);
+        const points = this._getKTriplePoints(i, [i]);
 
-        if (!ClassUnfoldBase._checkTripleIsOrdered(aPoints)) {
+        if (!ClassUnfoldBase._checkTripleIsOrdered(points)) {
             return null;
         }
 
-        return ClassUnfoldBase._getPointsRatio(aPoints);
+        return ClassUnfoldBase._getPointsRatio(points);
     }
 
     // Получить отношения длин двух векторов
-    protected static _getPointsRatio(aPoints: number[]) {
-        return (aPoints[1] - aPoints[0]) / (aPoints[2] - aPoints[0]);
+    protected static _getPointsRatio(points: number[]) {
+        return (points[1] - points[0]) / (points[2] - points[0]);
     }
 
     // Получить специальную информацию в случае вырождения чисел
     protected _getDegenSpecialInfo(): SpecialInfo {
-        const oInfo = ClassUnfoldBase.getInitialSpecialInfo();
-        oInfo.kSet = {
+        const info = ClassUnfoldBase.getInitialSpecialInfo();
+        info.kSet = {
             segments: this._getDegenKLineSegments(),
             areas: [this._outerVerts],
         };
-        return oInfo;
+        return info;
     }
 
     // Получить информацию о K-множестве для всех трапеций
@@ -376,62 +378,62 @@ class ClassUnfoldBase {
         }
         // Если произведение характеристических чисел равно единице
         if (this.getNumsMulIsUnit()) {
-            const oTrapezeVerts = this._getTrapezeCoordinates(i);
-            return [[oTrapezeVerts.topL, oTrapezeVerts.topR]];
+            const trapezeVerts = this._getTrapezeCoordinates(i);
+            return [[trapezeVerts.topL, trapezeVerts.topR]];
         }
 
         // Иначе общий алгоритм
-        const nRatio = this._getTrapezeRatio(i);
-        if (nRatio === null) {
+        const ratio = this._getTrapezeRatio(i);
+        if (ratio === null) {
             return null;
         }
 
-        const oTrapezeVerts = this._getTrapezeCoordinates(i);
-        const oROrt = getDeltaPoints(oTrapezeVerts.baseR, oTrapezeVerts.topR);
-        const oLOrt = getDeltaPoints(oTrapezeVerts.baseL, oTrapezeVerts.topL);
+        const trapezeVerts = this._getTrapezeCoordinates(i);
+        const rightOrt = getDeltaPoints(trapezeVerts.baseR, trapezeVerts.topR);
+        const leftOrt = getDeltaPoints(trapezeVerts.baseL, trapezeVerts.topL);
 
-        const aSegment = [
+        const segment = [
             [
-                oTrapezeVerts.baseL[0] + oLOrt[0] * nRatio,
-                oTrapezeVerts.baseL[1] + oLOrt[1] * nRatio,
+                trapezeVerts.baseL[0] + leftOrt[0] * ratio,
+                trapezeVerts.baseL[1] + leftOrt[1] * ratio,
             ],
             [
-                oTrapezeVerts.baseR[0] + oROrt[0] * nRatio,
-                oTrapezeVerts.baseR[1] + oROrt[1] * nRatio,
+                trapezeVerts.baseR[0] + rightOrt[0] * ratio,
+                trapezeVerts.baseR[1] + rightOrt[1] * ratio,
             ],
         ] as Segment;
 
-        return [aSegment];
+        return [segment];
     }
 
     // Получить информацию о K-множестве для одной трапеции
     // в случае её вырождения
     protected _getDegenTrapezeInfo(i: number): Segments {
         const oTrapeze = this._getTrapezeCoordinates(i);
-        const aSegments = [[oTrapeze.baseL, oTrapeze.baseR]] as Segments;
+        const segments = [[oTrapeze.baseL, oTrapeze.baseR]] as Segments;
 
         if (!this.getNumsMulIsUnit()) {
-            return aSegments;
+            return segments;
         }
 
         const [iLInd, iRInd] = ClassUnfoldBase._getTrapezeSideInds(i);
         const oLRomb = this._getRombCoordinates(iLInd) as RombCoordinates;
         const oRRomb = this._getRombCoordinates(iRInd) as RombCoordinates;
 
-        aSegments.push([oRRomb.lHip, oRRomb.bottom]);
-        aSegments.push([oTrapeze.topR, oTrapeze.topL]);
-        aSegments.push([oLRomb.bottom, oLRomb.rHip]);
+        segments.push([oRRomb.lHip, oRRomb.bottom]);
+        segments.push([oTrapeze.topR, oTrapeze.topL]);
+        segments.push([oLRomb.bottom, oLRomb.rHip]);
 
-        return aSegments;
+        return segments;
     }
 
     // Получить информацию о K-множестве для всех ромбов
-    protected _getAllRombusKInfo(aTrapezeInfo: AllTrapezesInfo): AllRombsInfo {
+    protected _getAllRombusKInfo(trapezeInfo: AllTrapezesInfo): AllRombsInfo {
         const aAllInfo: AllRombsInfo = [];
 
         for (let i = 0; i < 3; ++i) {
-            const oInfo = this._getRombusKInfo(aTrapezeInfo, i);
-            aAllInfo.push(oInfo);
+            const info = this._getRombusKInfo(trapezeInfo, i);
+            aAllInfo.push(info);
         }
         return aAllInfo;
     }
@@ -446,32 +448,32 @@ class ClassUnfoldBase {
     }
 
     // Получить информацию о K-множестве для одного ромба
-    protected _getRombusKInfo(aTrapezeInfo: AllTrapezesInfo, i: number): RombInfo {
-        const oInfo = ClassUnfoldBase._getRombEmptyInfo();
+    protected _getRombusKInfo(trapezeInfo: AllTrapezesInfo, i: number): RombInfo {
+        const info = ClassUnfoldBase._getRombEmptyInfo();
 
         if (this._checkRombIsDegen(i)) {
-            oInfo.segment = this._getDegenRombusKInfo(aTrapezeInfo, i);
-            return oInfo;
+            info.segment = this._getDegenRombusKInfo(trapezeInfo, i);
+            return info;
         }
         if (this.getNumsMulIsUnit()) {
-            oInfo.segment = this._getRombInfoWhileMulUnit(aTrapezeInfo, i);
-            return oInfo;
+            info.segment = this._getRombInfoWhileMulUnit(trapezeInfo, i);
+            return info;
         }
 
-        return this._getRombusBaseKInfo(aTrapezeInfo, i);
+        return this._getRombusBaseKInfo(trapezeInfo, i);
     }
 
     // Получить информацию о K-множестве для одного ромба
     // в случае его вырождения
-    protected _getDegenRombusKInfo(aTrapezeInfo: AllTrapezesInfo, i: number): RombSegment {
+    protected _getDegenRombusKInfo(trapezeInfo: AllTrapezesInfo, i: number): RombSegment {
         const oRomb = this._getRombCoordinates(i);
         if (this.getNumsMulIsUnit()) {
             return [oRomb.top, oRomb.bottom];
         }
 
-        const [nLIndex, nRIndex] = ClassUnfoldBase._getRombSideInds(i);
-        const aRTrapeze = aTrapezeInfo[nRIndex];
-        const aLTrapeze = aTrapezeInfo[nLIndex];
+        const [leftIndex, rightIndex] = ClassUnfoldBase._getRombSideInds(i);
+        const aRTrapeze = trapezeInfo[rightIndex];
+        const aLTrapeze = trapezeInfo[leftIndex];
 
         if (aRTrapeze !== null) {
             const aSegment = aRTrapeze[0];
@@ -487,78 +489,78 @@ class ClassUnfoldBase {
 
     // Получить информацию о K-множестве для одного ромба
     // в случае, когда произведение характеристических чисел равно единице
-    protected _getRombInfoWhileMulUnit(aTrapezeInfo: AllTrapezesInfo, i: number): RombSegment {
-        const aInners = this._innerVerts;
+    protected _getRombInfoWhileMulUnit(trapezeInfo: AllTrapezesInfo, i: number): RombSegment {
+        const innerVerts = this._innerVerts;
 
         const aLSegments = this._checkRombSideInKSet(i, 0);
         if (aLSegments !== null) {
-            return [aLSegments, aInners[i]];
+            return [aLSegments, innerVerts[i]];
         }
         const aRSegments = this._checkRombSideInKSet(i, 1);
         if (aRSegments !== null) {
-            return [aRSegments, aInners[i]];
+            return [aRSegments, innerVerts[i]];
         }
         return null;
     }
 
     // Получить информацию о K-множестве для одного ромба, стандартный алгоритм
-    protected _getRombusBaseKInfo(aTrapezeInfo: AllTrapezesInfo, i: number): RombInfo {
-        const oInfo = ClassUnfoldBase._getRombEmptyInfo();
+    protected _getRombusBaseKInfo(trapezeInfo: AllTrapezesInfo, i: number): RombInfo {
+        const info = ClassUnfoldBase._getRombEmptyInfo();
 
         // Ромб является промежуточным звеном пути K-линии
-        oInfo.middle = true;
+        info.middle = true;
 
-        const [nLIndex, nRIndex] = ClassUnfoldBase._getRombSideInds(i);
-        const aVerts: Points = [];
+        const [leftIndex, rightIndex] = ClassUnfoldBase._getRombSideInds(i);
+        const verts: Points = [];
 
         // Проверяем, есть ли K-линия в смежных с ромбом трапециями
-        const aRTrapeze = aTrapezeInfo[nRIndex] as TrapezeInfo;
-        const aLTrapeze = aTrapezeInfo[nLIndex] as TrapezeInfo;
+        const aRTrapeze = trapezeInfo[rightIndex] as TrapezeInfo;
+        const aLTrapeze = trapezeInfo[leftIndex] as TrapezeInfo;
 
         if (aRTrapeze !== null) {
             const aFirstSegment = aRTrapeze[0];
-            aVerts.push(aFirstSegment[0]);
+            verts.push(aFirstSegment[0]);
         }
         if (aLTrapeze !== null) {
             const aFirstSegment = aLTrapeze[0];
-            aVerts.push(aFirstSegment[1]);
+            verts.push(aFirstSegment[1]);
         }
         // Если нашлось две точки, завершаем алгоритм
-        if (aVerts.length === 2) {
-            oInfo.segment = aVerts as Segment;
-            return oInfo;
+        if (verts.length === 2) {
+            info.segment = verts as Segment;
+            return info;
         }
 
         // Ромб является концом пути K-линии
-        oInfo.middle = false;
+        info.middle = false;
 
         // Иначе проверяем внешние стороны ромба на принадлежность K-множеству
 
         // Проверяем левую внешнюю сторону
         const aLSegment = this._checkRombSideInKSet(i, 0);
         if (aLSegment !== null) {
-            oInfo.outerSides.push(nLIndex);
-            aVerts.push(aLSegment);
+            info.outerSides.push(leftIndex);
+            verts.push(aLSegment);
         }
         // Если нашлось две точки, завершаем алгоритм
-        if (aVerts.length === 2) {
-            oInfo.segment = aVerts as Segment;
-            return oInfo;
+        if (verts.length === 2) {
+            info.segment = verts as Segment;
+            return info;
         }
 
         // Проверяем правую внешнюю сторону
         const aRSegments = this._checkRombSideInKSet(i, 1);
         if (aRSegments !== null) {
-            oInfo.outerSides.push(nRIndex);
-            aVerts.push(aRSegments);
+            info.outerSides.push(rightIndex);
+            verts.push(aRSegments);
         }
         // Если нашлось две точки, завершаем алгоритм
-        if (aVerts.length === 2) {
-            oInfo.segment = aVerts as Segment;
-            return oInfo;
+        if (verts.length === 2) {
+            info.segment = verts as Segment;
+            return info;
         }
 
-        return oInfo;
+        return info;
     }
 
     // Получить все вырожденные ромбы
@@ -578,36 +580,36 @@ class ClassUnfoldBase {
     }
 
     // Преобразование проективных координат в декартовы
-    protected _mapProjectiveToDescart(aZets1: ProjectivePoint, aVerts: Points) {
-        return mapProjectiveToDescart(aZets1, aVerts, this._isMonodromic);
+    protected _mapProjectiveToDescart(aZets1: ProjectivePoint, verts: Points) {
+        return mapProjectiveToDescart(aZets1, verts, this._isMonodromic);
     }
 
     // Проверить, что тройка чисел упорядочена
-    protected static _checkTripleIsOrdered(aPoints: number[]) {
-        if (aPoints[0] < aPoints[1] && aPoints[1] < aPoints[2]) {
+    protected static _checkTripleIsOrdered(points: number[]) {
+        if (points[0] < points[1] && points[1] < points[2]) {
             return true;
         }
         return false;
     }
 
     // Получить тройку чисел для проверки на принадлежность K-множеству
-    protected _getKTriplePoints(i: number, aExcept: number[]) {
-        const fnMul = this._productNumsFromTo.bind(this);
-        const aNums = this._charNums;
+    protected _getKTriplePoints(i: number, excepts: number[]) {
+        const multiplicate = this._productNumsFromTo.bind(this);
+        const nums = this._charNums;
 
         return [
             0,
-            (1 - fnMul(0, 2, aExcept)) / (fnMul(i, 2, aExcept) * (aNums[i] - 1)),
-            fnMul(0, i, aExcept),
+            (1 - multiplicate(0, 2, excepts)) / (multiplicate(i, 2, excepts) * (nums[i] - 1)),
+            multiplicate(0, i, excepts),
         ];
     }
 
     // ============ Информация о множестве трехкратных циклов ================
 
     // Получить точки пересечения прямой трехкратных циклов с внутренним симплексом
-    protected _getTripleLineIntersectSide(nSide: number) {
+    protected _getTripleLineIntersectSide(side: number) {
         return getTripleLineIntersectSidePoint(
-            nSide,
+            side,
             this._innerVerts,
             this._charNums,
             this._isMonodromic,
@@ -615,194 +617,194 @@ class ClassUnfoldBase {
     }
 
     // Получить Информацию о множестве трехкратных циклов в случае вырождения
-    protected _getTripleInfoWhileDegen(aDegenInds: number[]) {
-        const oInfo: SetInfo = {
+    protected _getTripleInfoWhileDegen(degenInds: number[]) {
+        const info: SetInfo = {
             segments: [],
             areas: [],
         };
-        if (aDegenInds.length === 3) {
-            return oInfo;
+        if (degenInds.length === 3) {
+            return info;
         }
-        const aInners = this._innerVerts;
+        const innerVerts = this._innerVerts;
 
-        if (aDegenInds.length === 2) {
-            const nFInd = aDegenInds[0];
-            const nSInd = aDegenInds[1];
+        if (degenInds.length === 2) {
+            const firstIndex = degenInds[0];
+            const secondIndex = degenInds[1];
 
-            const aFPoints = this._getRombVerts(nFInd);
-            const aSPoints = this._getRombVerts(nSInd);
-            const nTrapezeInd = getThirdIndex(nFInd, nSInd);
-            const aTrapezeVerts = this._getTrapezeVerts(nTrapezeInd);
+            const firstRombVerts = this._getRombVerts(firstIndex);
+            const secondRombVerts = this._getRombVerts(secondIndex);
+            const trapezeIndex = getThirdIndex(firstIndex, secondIndex);
+            const trapezeVerts = this._getTrapezeVerts(trapezeIndex);
 
-            oInfo.areas.push(aFPoints, aSPoints, aTrapezeVerts);
-            oInfo.segments.push([aInners[nFInd], aInners[nSInd]]);
-            return oInfo;
+            info.areas.push(firstRombVerts, secondRombVerts, trapezeVerts);
+            info.segments.push([innerVerts[firstIndex], innerVerts[secondIndex]]);
+            return info;
         }
 
-        const nInd = aDegenInds[0];
-        const aPoints = this._getRombVerts(nInd);
-        const aIntersect = getTripleLineIntersectSidePoint(
-            nInd,
+        const firstDegenIndex = degenInds[0];
+        const rombVerts = this._getRombVerts(firstDegenIndex);
+        const intersects = getTripleLineIntersectSidePoint(
+            firstDegenIndex,
             this._innerVerts,
             this._charNums,
             this._isMonodromic,
         );
-        if (aIntersect !== null) {
-            oInfo.segments.push([this._innerVerts[nInd], aIntersect]);
-            const aTrapeze = this._getTrapezeCoordinates(nInd);
-            const aDelta = getDeltaPoints(aTrapeze.topL, aIntersect);
-            const aSide = getDeltaPoints(aTrapeze.topL, aTrapeze.topR);
-            const nRatio = getVectorLength(aDelta) / getVectorLength(aSide);
-            const aVect = getDeltaPoints(aTrapeze.baseL, aTrapeze.baseR);
-            const aPoint = [
-                aTrapeze.baseL[0] + nRatio * aVect[0],
-                aTrapeze.baseL[1] + nRatio * aVect[1],
+        if (intersects !== null) {
+            info.segments.push([this._innerVerts[firstDegenIndex], intersects]);
+            const trapeze = this._getTrapezeCoordinates(firstDegenIndex);
+            const delta = getDeltaPoints(trapeze.topL, intersects);
+            const side = getDeltaPoints(trapeze.topL, trapeze.topR);
+            const ratio = getVectorLength(delta) / getVectorLength(side);
+            const vect = getDeltaPoints(trapeze.baseL, trapeze.baseR);
+            const trapezePoint = [
+                trapeze.baseL[0] + ratio * vect[0],
+                trapeze.baseL[1] + ratio * vect[1],
             ] as Point;
-            oInfo.segments.push([aPoint, aIntersect]);
-            oInfo.areas.push(aPoints);
+            info.segments.push([trapezePoint, intersects]);
+            info.areas.push(rombVerts);
         }
-        return oInfo;
+        return info;
     }
 
     // Получить информацию о линии трехкратных циклов
     protected getTripleLineInfo() {
-        const oInfo: SetInfo = {
+        const info: SetInfo = {
             segments: [],
             areas: [],
         };
 
-        const aDegenInds = this._getAllDegenRombs();
-        if (aDegenInds.length > 0) {
-            return this._getTripleInfoWhileDegen(aDegenInds);
+        const degenInds = this._getAllDegenRombs();
+        if (degenInds.length > 0) {
+            return this._getTripleInfoWhileDegen(degenInds);
         }
 
-        const aIntersections: Points = [];
-        const aTrapezeSegments: Segments = [];
+        const intersections: Points = [];
+        const trapezeSegments: Segments = [];
         [0, 1, 2].forEach((i) => {
-            const aIntersect = getTripleLineIntersectSidePoint(
+            const intersect = getTripleLineIntersectSidePoint(
                 i,
                 this._innerVerts,
                 this._charNums,
                 this._isMonodromic,
             );
-            if (aIntersect !== null) {
-                aIntersections.push(aIntersect);
+            if (intersect !== null) {
+                intersections.push(intersect);
 
-                const aTrapeze = this._getTrapezeCoordinates(i);
-                const aDelta = getDeltaPoints(aTrapeze.topL, aIntersect);
-                const aSide = getDeltaPoints(aTrapeze.topL, aTrapeze.topR);
-                const nRatio = getVectorLength(aDelta) / getVectorLength(aSide);
-                const aVect = getDeltaPoints(aTrapeze.baseL, aTrapeze.baseR);
-                const aPoint = [
-                    aTrapeze.baseL[0] + nRatio * aVect[0],
-                    aTrapeze.baseL[1] + nRatio * aVect[1],
+                const trapeze = this._getTrapezeCoordinates(i);
+                const delta = getDeltaPoints(trapeze.topL, intersect);
+                const side = getDeltaPoints(trapeze.topL, trapeze.topR);
+                const ratio = getVectorLength(delta) / getVectorLength(side);
+                const vect = getDeltaPoints(trapeze.baseL, trapeze.baseR);
+                const trapezePoint = [
+                    trapeze.baseL[0] + ratio * vect[0],
+                    trapeze.baseL[1] + ratio * vect[1],
                 ] as Point;
-                aTrapezeSegments.push([aPoint, aIntersect]);
+                trapezeSegments.push([trapezePoint, intersect]);
             }
         });
-        if (aIntersections.length === 2) {
-            oInfo.segments.push(aIntersections as Segment);
-            oInfo.segments = oInfo.segments.concat(aTrapezeSegments);
+        if (intersections.length === 2) {
+            info.segments.push(intersections as Segment);
+            info.segments = info.segments.concat(trapezeSegments);
         }
 
-        return oInfo;
+        return info;
     }
 
     // ==================== Информация о K-множестве ========================
 
     // Получить путь K-линии вдоль симплекса
-    protected _getEdgePath(aAllTrapezesInfo: AllTrapezesInfo, aRombInfo: AllRombsInfo): EdgesPath {
-        const stPath = new Set<number>();
-        const aPockets: boolean[] = [false, false, false];
+    protected _getEdgePath(allTrapezesInfo: AllTrapezesInfo, rombInfo: AllRombsInfo): EdgesPath {
+        const path = new Set<number>();
+        const pockets: boolean[] = [false, false, false];
 
         for (let i = 0; i < 3; ++i) {
-            const oInfo = aRombInfo[i];
-            if (oInfo.segment === null) {
+            const info = rombInfo[i];
+            if (info.segment === null) {
                 continue;
             }
 
-            const [nLIndex, nRIndex] = ClassUnfoldBase._getRombSideInds(i);
-            if (!oInfo.middle) {
-                oInfo.outerSides.forEach((nSide) => {
-                    stPath.add(nSide);
+            const [leftIndex, rightIndex] = ClassUnfoldBase._getRombSideInds(i);
+            if (!info.middle) {
+                info.outerSides.forEach((side) => {
+                    path.add(side);
                     if (
-                        aAllTrapezesInfo[nSide] !== null &&
-                        this._getTripleLineIntersectSide(nSide) !== null
+                        allTrapezesInfo[side] !== null &&
+                        this._getTripleLineIntersectSide(side) !== null
                     ) {
-                        aPockets[nSide] = true;
+                        pockets[side] = true;
                     }
                 });
             } else {
-                stPath.add(nLIndex);
-                stPath.add(nRIndex);
+                path.add(leftIndex);
+                path.add(rightIndex);
             }
-            if (aAllTrapezesInfo[nRIndex] === null) {
+            if (allTrapezesInfo[rightIndex] === null) {
                 continue;
             }
 
-            stPath.add(nRIndex);
+            path.add(rightIndex);
         }
 
-        const aPaths: EdgesPath = Array.from(stPath).map((nSide) => {
+        const pathData: EdgesPath = Array.from(path).map((side) => {
             return {
-                edgeIndex: nSide,
-                hasPocket: aPockets[nSide],
+                edgeIndex: side,
+                hasPocket: pockets[side],
             };
         });
-        return aPaths;
+        return pathData;
     }
 
     // Получить все данные о K-множестве
     protected _getKSetData() {
-        const aAllTrapezesInfo = this._getAllTrapezesInfo();
-        const aRombInfo = this._getAllRombusKInfo(aAllTrapezesInfo);
+        const allTrapezesInfo = this._getAllTrapezesInfo();
+        const rombInfo = this._getAllRombusKInfo(allTrapezesInfo);
 
-        let aPath: EdgesPath = [];
+        let edgesPath: EdgesPath = [];
         if (this.getIsTypicalCase()) {
-            aPath = this._getEdgePath(aAllTrapezesInfo, aRombInfo);
+            edgesPath = this._getEdgePath(allTrapezesInfo, rombInfo);
         }
 
-        const aRombSegments: Segments = [];
-        aRombInfo.forEach((oInfo) => {
-            if (oInfo.segment === null) {
+        const rombSegments: Segments = [];
+        rombInfo.forEach((info) => {
+            if (info.segment === null) {
                 return;
             }
-            aRombSegments.push(oInfo.segment as Segment);
+            rombSegments.push(info.segment as Segment);
         });
 
-        let aSegments: Segments = [];
-        const aFillPolygons: Points[] = [];
+        let segments: Segments = [];
+        const fillPolygons: Points[] = [];
         if (this.getNumsMulIsUnit()) {
-            aFillPolygons.push(this._innerVerts);
+            fillPolygons.push(this._innerVerts);
         }
 
-        aAllTrapezesInfo.forEach((aTrapezeInfo: TrapezeInfo) => {
-            if (aTrapezeInfo === null) {
+        allTrapezesInfo.forEach((trapezeInfo: TrapezeInfo) => {
+            if (trapezeInfo === null) {
                 return;
             }
-            if (aTrapezeInfo.length === 4) {
-                aFillPolygons.push(aTrapezeInfo.map((aInfo: Segment) => aInfo[0]));
+            if (trapezeInfo.length === 4) {
+                fillPolygons.push(trapezeInfo.map((info: Segment) => info[0]));
             }
-            aSegments = aSegments.concat(aTrapezeInfo);
+            segments = segments.concat(trapezeInfo);
         });
 
         return {
-            // Сегменты для отрисовки ломаной
-            segments: aSegments.concat(aRombSegments),
-            // Области для закрашивания
-            areas: aFillPolygons,
             // Путь вдоль ребер симплекса
-            edgesPath: aPath,
+            edgesPath,
+            // Сегменты для отрисовки ломаной
+            segments: segments.concat(rombSegments),
+            // Области для закрашивания
+            areas: fillPolygons,
         };
     }
 
     // Получить сегменты K-линии в случае вырождения
     protected _getDegenKLineSegments(): Segments {
-        const aOuters = this._outerVerts;
+        const outerVerts = this._outerVerts;
 
-        let aSegments = mapVertsToPolygonEdges(aOuters);
-        aSegments = aSegments.concat(this.getInnerLines());
-        return aSegments;
+        let segments = mapVertsToPolygonEdges(outerVerts);
+        segments = segments.concat(this.getInnerLines());
+        return segments;
     }
 
     // Получить пустой объект информации о K-множестве

@@ -22,130 +22,133 @@ export type Coordinate = { x: number; y: number };
 export type Coordinates = Coordinate[];
 
 // Рассчитать длину вектора
-export function getVectorLength(aVector: Point) {
-    return Math.sqrt(aVector[0] ** 2 + aVector[1] ** 2);
+export function getVectorLength(vector: Point) {
+    return Math.sqrt(vector[0] ** 2 + vector[1] ** 2);
 }
 
 // Рассчитать разницу векторов
-export function getDeltaPoints(aFPoint: Point, aSPoint: Point): Point {
-    return [aSPoint[0] - aFPoint[0], aSPoint[1] - aFPoint[1]];
+export function getDeltaPoints(firstPoint: Point, secondPoint: Point): Point {
+    return [secondPoint[0] - firstPoint[0], secondPoint[1] - firstPoint[1]];
 }
 
 // Рассчитать сумму векторов
-export function getSummPoints(aFPoint: Point, aSPoint: Point): Point {
-    return [aSPoint[0] + aFPoint[0], aSPoint[1] + aFPoint[1]];
+export function getSummPoints(firstPoint: Point, secondPoint: Point): Point {
+    return [secondPoint[0] + firstPoint[0], secondPoint[1] + firstPoint[1]];
 }
 
 // Рассчитать сумму векторов с коэффициентами
 export function getSummPointsWithCoeffs(
-    aFPoint: Point,
-    aSPoint: Point,
-    nFCoeff: number,
-    nSCoeff: number,
+    firstPoint: Point,
+    secondPoint: Point,
+    firstCoeff: number,
+    secondCoeff: number,
 ): Point {
     return [
-        nFCoeff * aFPoint[0] + nSCoeff * aSPoint[0],
-        nFCoeff * aFPoint[1] + nSCoeff * aSPoint[1],
+        firstCoeff * firstPoint[0] + secondCoeff * secondPoint[0],
+        firstCoeff * firstPoint[1] + secondCoeff * secondPoint[1],
     ];
 }
 
 // Рассчитать единичный вектор, сонаправленный с разницей двух векторов
-export function getOrtDeltaPoints(aFPoint: Point, aSPoint: Point): Point {
-    const aDelta = getDeltaPoints(aFPoint, aSPoint);
-    const nLength = getVectorLength(aDelta);
-    if (nLength === 0) {
+export function getOrtDeltaPoints(firstPoint: Point, secondPoint: Point): Point {
+    const delta = getDeltaPoints(firstPoint, secondPoint);
+    const vectorLength = getVectorLength(delta);
+    if (vectorLength === 0) {
         return [0, 0];
     }
 
-    return [aDelta[0] / nLength, aDelta[1] / nLength];
+    return [delta[0] / vectorLength, delta[1] / vectorLength];
 }
 
 // Преобразовать вершины многоугольника в массив отрезков его сторон
-export function mapVertsToPolygonEdges(aVerts: Points): Segments {
-    const nL = aVerts.length;
-    if (nL === 0) {
+export function mapVertsToPolygonEdges(verts: Points): Segments {
+    const vertsCount = verts.length;
+    if (vertsCount === 0) {
         return [];
     }
-    if (nL === 1) {
-        const aVert = aVerts[0] as Point;
-        return [[aVert, aVert]];
+    if (vertsCount === 1) {
+        const vert = verts[0] as Point;
+        return [[vert, vert]];
     }
-    const aEdges: Segments = [];
-    for (let i = 0; i < nL - 1; ++i) {
-        aEdges.push([aVerts[i], aVerts[i + 1]]);
+    const edges: Segments = [];
+    for (let i = 0; i < vertsCount - 1; ++i) {
+        edges.push([verts[i], verts[i + 1]]);
     }
-    aEdges.push([aVerts[nL - 1], aVerts[0]]);
-    return aEdges;
+    edges.push([verts[vertsCount - 1], verts[0]]);
+    return edges;
 }
 
 // Преобразовать стандартные декартовы координаты точки в координаты окна
-export function mapDescartToWindow(aPoint: Point, nSize: number): Point {
-    return [aPoint[0], nSize - aPoint[1]];
+export function mapDescartToWindow(point: Point, size: number): Point {
+    return [point[0], size - point[1]];
 }
+
 // Преобразовать массив стандартных декартовых координат точек в координаты окна
-export function mapAllDescartToWindow(aPoints: Points, nSize: number): Points {
-    return aPoints.map((aPoint) => {
-        return mapDescartToWindow(aPoint, nSize);
+export function mapAllDescartToWindow(points: Points, size: number): Points {
+    return points.map((point) => {
+        return mapDescartToWindow(point, size);
     });
 }
+
 // Преобразовать проективные координаты в декартовы координаты
 export function mapProjectiveToDescart(
     // Проективные координаты
-    aZets: ProjectivePoint,
+    zets: ProjectivePoint,
     // вершины симплекса в стандартных декартовых, либо в window-координатах
-    aVerts: Points,
+    verts: Points,
     // монодромный или нет
     isMonodromic: boolean,
 ): Point {
     if (isMonodromic) {
-        return mapProjectiveToDescartMonodromic(aZets, aVerts);
+        return mapProjectiveToDescartMonodromic(zets, verts);
     }
 
-    return mapProjectiveToDescartNotMonodromic(aZets, aVerts);
+    return mapProjectiveToDescartNotMonodromic(zets, verts);
 }
 
 // Преобразовать проективные координаты в декартовы координаты
 // Монодромный случай
-export function mapProjectiveToDescartMonodromic(aZets: ProjectivePoint, aVerts: Points): Point {
-    const nSum = aZets.reduce((acc, item) => acc + item, 0);
-    if (nSum === 0) {
+export function mapProjectiveToDescartMonodromic(zets: ProjectivePoint, verts: Points): Point {
+    const sum = zets.reduce((acc, item) => acc + item, 0);
+    if (sum === 0) {
         throw new Error('drawUtils.mapProjectiveToDescart: zero summ of projective coordinates.');
     }
 
-    let nX = 0;
-    let nY = 0;
+    let x = 0;
+    let y = 0;
 
     for (let i = 0; i < 3; ++i) {
-        nX += aZets[i] * aVerts[i][0];
-        nY += aZets[i] * aVerts[i][1];
+        x += zets[i] * verts[i][0];
+        y += zets[i] * verts[i][1];
     }
 
-    return [nX / nSum, nY / nSum];
+    return [x / sum, y / sum];
 }
 
 // Преобразовать проективные координаты в декартовы координаты
 // Немонодромный случай
-export function mapProjectiveToDescartNotMonodromic(aZets: ProjectivePoint, aVerts: Points): Point {
-    return mapProjectiveToDescartMonodromic([aZets[0], aZets[1], -aZets[2]], aVerts);
+export function mapProjectiveToDescartNotMonodromic(zets: ProjectivePoint, verts: Points): Point {
+    return mapProjectiveToDescartMonodromic([zets[0], zets[1], -zets[2]], verts);
 }
 
 // Рассчитать вершины симплекса в окне, учитывая вертикальный отступ от края
-export function calcTriangleVertsBySizeAndPadding(nSize: number, nVertPad: number) {
-    const nHeight = nSize - 2 * nVertPad;
-    const nEdgeSize = (2 / Math.sqrt(3)) * nHeight;
+export function calcTriangleVertsBySizeAndPadding(size: number, vertPadding: number) {
+    const height = size - 2 * vertPadding;
+    const edgeSize = (2 / Math.sqrt(3)) * height;
 
     // in the standard Descartes coordinates
-    const aDescVerts = [
-        [nSize / 2 + nEdgeSize / 2, nSize - nVertPad - nHeight],
-        [nSize / 2 - nEdgeSize / 2, nSize - nVertPad - nHeight],
-        [nSize / 2, nSize - nVertPad],
+    const descVerts = [
+        [size / 2 + edgeSize / 2, size - vertPadding - height],
+        [size / 2 - edgeSize / 2, size - vertPadding - height],
+        [size / 2, size - vertPadding],
     ] as Points;
 
     return {
-        descart: aDescVerts,
-        window: mapAllDescartToWindow(aDescVerts, nSize),
+        descart: descVerts,
+        window: mapAllDescartToWindow(descVerts, size),
     };
 }
+
 // =========================== Triple Polycycle Set ===========================
 
 // Прямая трехкратных предельных циклов в проективных координатах задается уравнением
@@ -155,43 +158,43 @@ export function calcTriangleVertsBySizeAndPadding(nSize: number, nVertPad: numbe
 // со сторонами симплекса
 export function getTripleLineIntersectSidePoint(
     // индекс стороны симплекса
-    nSide: number,
+    sideIndex: number,
     // вершины симплекса в window-координатах
-    aVerts: Points,
+    verts: Points,
     // характеристические числа
-    aNums: number[],
+    nums: number[],
     // монодромный или нет
     isMonodromic: boolean,
 ): Point | null {
-    const aZets: ProjectivePoint = [0, 0, 0];
-    const nR = (nSide + 1) % 3;
-    const nL = (nSide + 2) % 3;
+    const zets: ProjectivePoint = [0, 0, 0];
+    const rightIndex = (sideIndex + 1) % 3;
+    const leftIndex = (sideIndex + 2) % 3;
 
-    aZets[nL] = aNums[nR] - 1;
-    aZets[nR] = 1 - aNums[nL];
+    zets[leftIndex] = nums[rightIndex] - 1;
+    zets[rightIndex] = 1 - nums[leftIndex];
 
     // Если найденные точки не лежат в симплексе,
     // возаращаем null
-    if (isMonodromic && !zetsAreInSimplex(aZets)) {
+    if (isMonodromic && !zetsAreInSimplex(zets)) {
         return null;
     }
     if (!isMonodromic) {
-        const aReverseZets = [aZets[0], aZets[1], -aZets[2]] as ProjectivePoint;
-        if (!zetsAreInSimplex(aReverseZets)) {
+        const reverseZets = [zets[0], zets[1], -zets[2]] as ProjectivePoint;
+        if (!zetsAreInSimplex(reverseZets)) {
             return null;
         }
     }
 
     // Иначе, переводим в декартовые и возвращаем
-    return mapProjectiveToDescart(aZets, aVerts, isMonodromic);
+    return mapProjectiveToDescart(zets, verts, isMonodromic);
 
     // Проверка, лежат ли точки в симплексе z1>=0,z2>=0,z3>=0
-    function zetsAreInSimplex(aProjectiveZets: ProjectivePoint) {
-        if (numsAreZeros(aProjectiveZets)) {
+    function zetsAreInSimplex(projectiveZets: ProjectivePoint) {
+        if (numsAreZeros(projectiveZets)) {
             return false;
         }
 
-        if (aProjectiveZets[nL] * aProjectiveZets[nR] < 0) {
+        if (projectiveZets[leftIndex] * projectiveZets[rightIndex] < 0) {
             return false;
         }
         return true;
@@ -199,35 +202,35 @@ export function getTripleLineIntersectSidePoint(
 }
 
 // Поиск двух проективных точек на прямой трехкратных предельных циклов
-export function getTripleLineProjectivePoints(aNums: number[], isMonodromic: boolean) {
+export function getTripleLineProjectivePoints(nums: number[], isMonodromic: boolean) {
     if (isMonodromic) {
-        return getTripleLineMonodromic(aNums);
+        return getTripleLineMonodromic(nums);
     }
-    return getTripleLineNotMonodromic(aNums);
+    return getTripleLineNotMonodromic(nums);
 }
 
 // Поиск двух проективных точек на прямой трехкратных предельных циклов
 // Немонодромный случай
-export function getTripleLineNotMonodromic(aNums: number[]): ProjectivePoints | null {
+export function getTripleLineNotMonodromic(nums: number[]): ProjectivePoints | null {
     // Если прямая не лежит в нужной карте, рисовать не надо
-    if (numsAreAlmostEqual(aNums[0], aNums[1]) && numsAreAlmostEqual(aNums[1], 2 - aNums[2])) {
+    if (numsAreAlmostEqual(nums[0], nums[1]) && numsAreAlmostEqual(nums[1], 2 - nums[2])) {
         return null;
     }
 
     // Ищем ненулевой коэффициент для построения двух точек
     // Если третий коэффициент не ноль
-    if (!numsAreAlmostEqual(aNums[2], 1)) {
+    if (!numsAreAlmostEqual(nums[2], 1)) {
         return getZetsByThird();
     }
     // Иначе если второй коэффициент не ноль
-    if (!numsAreAlmostEqual(aNums[1], 1)) {
+    if (!numsAreAlmostEqual(nums[1], 1)) {
         return [
-            [aNums[1] - 1, 1 - aNums[0], aNums[1] - aNums[0] - 1],
+            [nums[1] - 1, 1 - nums[0], nums[1] - nums[0] - 1],
             [0, 0, 1],
         ];
     }
     // Иначе если первый коэффициент не ноль
-    if (!numsAreAlmostEqual(aNums[0], 1)) {
+    if (!numsAreAlmostEqual(nums[0], 1)) {
         return [
             [0, 0, 1],
             [0, 1, 0],
@@ -239,41 +242,41 @@ export function getTripleLineNotMonodromic(aNums: number[]): ProjectivePoints | 
     // При условии, что третий коэффициент не ноль,
     // выбираем две точки на прямой, сумма координат которых не ноль
     function getZetsByThird(): ProjectivePoints {
-        const aZets: ProjectivePoint[] = [];
-        if (!numsAreAlmostEqual(aNums[0] + aNums[2], 2)) {
-            aZets.push([aNums[2] - 1, 0, 1 - aNums[0]]);
+        const zets: ProjectivePoint[] = [];
+        if (!numsAreAlmostEqual(nums[0] + nums[2], 2)) {
+            zets.push([nums[2] - 1, 0, 1 - nums[0]]);
         }
-        if (!numsAreAlmostEqual(aNums[1] + aNums[2], 2)) {
-            aZets.push([0, aNums[2] - 1, 1 - aNums[1]]);
+        if (!numsAreAlmostEqual(nums[1] + nums[2], 2)) {
+            zets.push([0, nums[2] - 1, 1 - nums[1]]);
         }
-        if (aZets.length < 2) {
-            aZets.push([aNums[2] - 1, aNums[2] - 1, 2 - aNums[0] - aNums[1]]);
+        if (zets.length < 2) {
+            zets.push([nums[2] - 1, nums[2] - 1, 2 - nums[0] - nums[1]]);
         }
-        return aZets;
+        return zets;
     }
 }
 
 // Поиск двух проективных точек на прямой трехкратных предельных циклов
 // Монодромный случай
-export function getTripleLineMonodromic(aNums: number[]): ProjectivePoints | null {
+export function getTripleLineMonodromic(nums: number[]): ProjectivePoints | null {
     // Если все числа равны, то прямая не лежит в нужной карте, рисовать не надо
-    if (numsAreAlmostEqual(aNums[0], aNums[1]) && numsAreAlmostEqual(aNums[1], aNums[2])) {
+    if (numsAreAlmostEqual(nums[0], nums[1]) && numsAreAlmostEqual(nums[1], nums[2])) {
         return null;
     }
     // Ищем ненулевой коэффициент для построения двух точек
     // Если третий коэффициент не ноль
-    if (!numsAreAlmostEqual(aNums[2], 1)) {
+    if (!numsAreAlmostEqual(nums[2], 1)) {
         return getZetsByThird();
     }
     // Иначе если второй коэффициент не ноль
-    if (!numsAreAlmostEqual(aNums[1], 1)) {
+    if (!numsAreAlmostEqual(nums[1], 1)) {
         return [
-            [aNums[1] - 1, 1 - aNums[0], 1 - aNums[1] + aNums[0]],
+            [nums[1] - 1, 1 - nums[0], 1 - nums[1] + nums[0]],
             [0, 0, 1],
         ];
     }
     // Иначе если первый коэффициент не ноль
-    if (!numsAreAlmostEqual(aNums[0], 1)) {
+    if (!numsAreAlmostEqual(nums[0], 1)) {
         return [
             [0, 0, 1],
             [0, 1, 0],
@@ -285,16 +288,16 @@ export function getTripleLineMonodromic(aNums: number[]): ProjectivePoints | nul
     // При условии, что третий коэффициент не ноль,
     // выбираем две точки на прямой, сумма координат которых не ноль
     function getZetsByThird(): ProjectivePoints {
-        const aZets: ProjectivePoint[] = [];
-        if (!numsAreAlmostEqual(aNums[0], aNums[2])) {
-            aZets.push([aNums[2] - 1, 0, 1 - aNums[0]]);
+        const zets: ProjectivePoint[] = [];
+        if (!numsAreAlmostEqual(nums[0], nums[2])) {
+            zets.push([nums[2] - 1, 0, 1 - nums[0]]);
         }
-        if (!numsAreAlmostEqual(aNums[1], aNums[2])) {
-            aZets.push([0, aNums[2] - 1, 1 - aNums[1]]);
+        if (!numsAreAlmostEqual(nums[1], nums[2])) {
+            zets.push([0, nums[2] - 1, 1 - nums[1]]);
         }
-        if (aZets.length < 2) {
-            aZets.push([aNums[2] - 1, aNums[2] - 1, 2 - aNums[0] - aNums[1]]);
+        if (zets.length < 2) {
+            zets.push([nums[2] - 1, nums[2] - 1, 2 - nums[0] - nums[1]]);
         }
-        return aZets;
+        return zets;
     }
 }

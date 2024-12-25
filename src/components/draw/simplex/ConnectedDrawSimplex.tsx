@@ -11,10 +11,11 @@ import {
 // Привязанный рисунок симплекса полицикла
 // =======================================
 
-const mapStateToProps = (oState: StateType) => {
-    const oSimplexData = selectSimplexData(oState.draw);
+const mapStateToProps = (state: StateType) => {
+    const { draw: drawState } = state;
+    const oSimplexData = selectSimplexData(drawState);
     return {
-        isFormError: selectIsFormError(oState.draw),
+        isFormError: selectIsFormError(drawState),
         size: selectSimplexWidth(),
         vertsInfo: oSimplexData.vertsInfo,
         verts: oSimplexData.verts,

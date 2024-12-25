@@ -8,12 +8,15 @@ import './InputStyle.scss';
 // Текстовое поле ввода
 // ====================
 
-function Input(oProps: TextFieldProps) {
-    const { className } = oProps;
-    const sClassName = getClassName('app-input', className);
+function Input(props: TextFieldProps) {
+    const { className } = props;
 
-    const oAttr = { ...oProps, size: 'small', className: sClassName } as TextFieldProps;
-    return <UiInput {...oAttr} />;
+    const inputAttrs = {
+        ...props,
+        size: 'small',
+        className: getClassName('app-input', className),
+    } as TextFieldProps;
+    return <UiInput {...inputAttrs} />;
 }
 
 export default Input;

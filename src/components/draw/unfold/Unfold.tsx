@@ -38,9 +38,9 @@ class Unfold extends React.Component<MyProps, MyState> {
             return this._renderEmpty();
         }
 
-        const sClassName = Unfold._getSVGClassName();
+        const className = Unfold._getSVGClassName();
         return (
-            <svg className={sClassName} width={size} height={size}>
+            <svg className={className} width={size} height={size}>
                 {this._renderAreas()}
                 {this._renderOuterTriangle()}
                 {this._renderInnerLines()}
@@ -57,10 +57,10 @@ class Unfold extends React.Component<MyProps, MyState> {
     // Отрисовать пустой вариант компонента
     _renderEmpty() {
         const { size } = this.props;
-        let sClassName = Unfold._getSVGClassName();
-        sClassName = sClassName.concat(' draw-form-error');
+        let className = Unfold._getSVGClassName();
+        className = className.concat(' draw-form-error');
         return (
-            <svg className={sClassName} width={size} height={size}>
+            <svg className={className} width={size} height={size}>
                 {this._renderOuterTriangle()}
                 {this._renderInnerLines()}
                 <rect className='draw-form-error-lid' width={size} height={size} />
@@ -82,19 +82,19 @@ class Unfold extends React.Component<MyProps, MyState> {
 
     // Отрисовать закрашенные области
     _renderAreas() {
-        const { kSet: oKSetData, tripleSet: oTripleSetData } = this.props;
-        const { areas: aKAreas } = oKSetData;
-        const aKPolygons = aKAreas.map((aPolygon) => renderPolygon(aPolygon));
-        const { areas: aTripleAreas } = oTripleSetData;
-        const aTriplePolygons = aTripleAreas.map((aPolygon) => renderPolygon(aPolygon));
+        const { kSet, tripleSet } = this.props;
+        const { areas: kAreas } = kSet;
+        const kPolygons = kAreas.map((polygon) => renderPolygon(polygon));
+        const { areas: tripleAreas } = tripleSet;
+        const triplePolygons = tripleAreas.map((polygon) => renderPolygon(polygon));
 
         return (
             <g key='areas'>
                 <g key='k-area' className='draw-k-area'>
-                    {aKPolygons}
+                    {kPolygons}
                 </g>
                 <g key='triple-area' className='draw-triple-area'>
-                    {aTriplePolygons}
+                    {triplePolygons}
                 </g>
             </g>
         );
@@ -102,16 +102,16 @@ class Unfold extends React.Component<MyProps, MyState> {
 
     // Отрисовать сегменты линий специальных множеств
     _renderSpecialLines() {
-        const { kSet: oKSetData, tripleSet: oTripleSetData } = this.props;
-        const { segments: aKSegments } = oKSetData;
-        const { segments: aTripleSegments } = oTripleSetData;
+        const { kSet, tripleSet } = this.props;
+        const { segments: kSegments } = kSet;
+        const { segments: tripleSegments } = tripleSet;
         return (
             <g key='special-lines'>
                 <g key='k-line' className='draw-k-set'>
-                    {renderLines(aKSegments)}
+                    {renderLines(kSegments)}
                 </g>
                 <g key='triple-line' className='draw-triple-set'>
-                    {renderLines(aTripleSegments)}
+                    {renderLines(tripleSegments)}
                 </g>
             </g>
         );

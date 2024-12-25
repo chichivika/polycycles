@@ -11,11 +11,12 @@ import {
 // Привязанный схематичный рисунок полицикла
 // =========================================
 
-const mapStateToProps = (oState: StateType) => {
+const mapStateToProps = (state: StateType) => {
+    const { draw: drawState } = state;
     return {
-        charNums: selectCharNumbers(oState.draw),
-        isMonodromic: oState.draw.isMonodromic,
-        isFormError: selectIsFormError(oState.draw),
+        charNums: selectCharNumbers(drawState),
+        isMonodromic: drawState.isMonodromic,
+        isFormError: selectIsFormError(drawState),
         size: selectPolycycleWidth(),
     };
 };

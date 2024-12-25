@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
     getDrawInitialState,
-    aInitialDrawSetting,
+    initialDrawSettings,
     boundWidth,
     CharNumSettings,
 } from './storeUtils';
@@ -15,32 +15,31 @@ const drawSlice = createSlice({
     name: 'draw',
     initialState: getDrawInitialState(),
     reducers: {
-        update: (oState, oAction) => {
-            Object.assign(oState, oAction.payload);
+        update: (state, action) => {
+            Object.assign(state, action.payload);
         },
         // Обновить данные характеристического числа
-        updateCharNumber: (oState, oAction) => {
-            const oUpdate = oAction.payload;
-            const aNums = oState.charNums;
-            const nIndex = oUpdate.i;
-            const oSettings = oUpdate.charNumSetting;
+        updateCharNumber: (state, action) => {
+            const { charNums } = state;
+            const updateObject = action.payload;
+            const { i, charNumSetting } = updateObject;
 
-            if (checkNumbersEqual(aNums[nIndex], oSettings)) {
+            if (checkNumbersEqual(charNums[i], charNumSetting)) {
                 return;
             }
 
-            aNums.splice(nIndex, 1, oSettings);
-            oState.charNums = aNums;
+            charNums.splice(i, 1, charNumSetting);
+            state.charNums = charNums;
         },
     },
 });
 
 // Проверить равны ли данные по характеристическим числам
-function checkNumbersEqual(oCurrNum: CharNumSettings, oNewNum: CharNumSettings) {
-    if (oCurrNum.value !== oNewNum.value) {
+function checkNumbersEqual(currNumData: CharNumSettings, newNumData: CharNumSettings) {
+    if (currNumData.value !== newNumData.value) {
         return false;
     }
-    if (oCurrNum.error !== oNewNum.error) {
+    if (currNumData.error !== newNumData.error) {
         return false;
     }
     return true;
@@ -49,78 +48,81 @@ function checkNumbersEqual(oCurrNum: CharNumSettings, oNewNum: CharNumSettings) 
 export const { update, updateCharNumber } = drawSlice.actions;
 export type DrawState = ReturnType<typeof drawSlice.getInitialState>;
 export default drawSlice.reducer;
+
 // ========================== SELECTORS ====================================
 
 // Получить числовой массив характеристических чисел
-export function selectCharNumbers(oState: DrawState) {
-    const aNums = oState.charNums;
-    return aNums.map((oNum) => +oNum.value);
+export function selectCharNumbers(drawState: DrawState) {
+    const { charNums } = drawState;
+    return charNums.map((charNumData) => +charNumData.value);
 }
 // Есть ли ошибки в полях ввода
-export function selectIsFormError(oState: DrawState) {
-    const aNums = oState.charNums;
-    return aNums.some((oNumSet) => !charNumberIsValid(oNumSet.value));
+export function selectIsFormError(drawState: DrawState) {
+    const { charNums } = drawState;
+    return charNums.some((charNumData) => !charNumberIsValid(charNumData.value));
 }
 
 // Отображена ли хотя бы одна ошибка в полях ввода
-export function selectIsInputErrorState(oState: DrawState) {
-    const aNums = oState.charNums;
-    return aNums.some((oNumSet) => oNumSet.error);
+export function selectIsInputErrorState(drawState: DrawState) {
+    const { charNums } = drawState;
+    return charNums.some((charNumData) => charNumData.error);
 }
 
 // Получить данные характеристического числа по индексу
-export function selectInputSetting(oState: DrawState, i: number) {
-    return oState.charNums[i];
+export function selectInputSetting(drawState: DrawState, i: number) {
+    return drawState.charNums[i];
 }
 
 // Получить ширину рисунка "Полицикл"
 export function selectPolycycleWidth() {
-    return aInitialDrawSetting.polycycle.width;
+    return initialDrawSettings.polycycle.width;
 }
 
 // Получить ширину рисунка "Симплекс"
 export function selectSimplexWidth() {
-    return aInitialDrawSetting.simplex.width;
+    return initialDrawSettings.simplex.width;
 }
 
 // Получить ширину рисунка "Развертка"
-export function selectUnfoldWidth(oState: DrawState) {
-    const nWidth = oState.drawCntWidth;
+export function selectUnfoldWidth(drawState: DrawState) {
+    const { drawCntWidth } = drawState;
 
-    const nRest = nWidth - selectSimplexWidth() - selectPolycycleWidth() - 50;
-    const nSize = nRest / 2;
+    const widthRest = drawCntWidth - selectSimplexWidth() - selectPolycycleWidth() - 50;
+    const size = widthRest / 2;
 
-    return boundWidth(nSize, aInitialDrawSetting.unfold);
+    return boundWidth(size, initialDrawSettings.unfold);
 }
 
 // Получить ширину рисунка "Диаграмма"
-export function selectDiagramWidth(oState: DrawState) {
-    const nWidth = oState.drawCntWidth;
+export function selectDiagramWidth(drawState: DrawState) {
+    const { drawCntWidth } = drawState;
 
-    const nRest = nWidth - selectSimplexWidth() - selectPolycycleWidth() - 50;
-    const nSize = nRest / 2;
+    const widthRest = drawCntWidth - selectSimplexWidth() - selectPolycycleWidth() - 50;
+    const size = widthRest / 2;
 
-    return boundWidth(nSize, aInitialDrawSetting.diagram);
+    return boundWidth(size, initialDrawSettings.diagram);
 }
 
 // Получить инстанцию класса ClassSimplexBase
-export function selectSimplexObject(oDrawState: DrawState) {
-    if (oDrawState.drawCntWidth === 0) {
+export function selectSimplexObject(drawState: DrawState) {
+    const { drawCntWidth, isMonodromic } = drawState;
+    if (drawCntWidth === 0) {
         return null;
     }
-    const nSize = selectSimplexWidth();
+
+    const size = selectSimplexWidth();
     return new ClassSimplexBase({
-        size: nSize,
-        paddingTop: nSize * 0.1,
-        charNums: selectCharNumbers(oDrawState),
-        isMonodromic: oDrawState.isMonodromic,
+        size,
+        isMonodromic,
+        paddingTop: size * 0.1,
+        charNums: selectCharNumbers(drawState),
     });
 }
 
 // Получить данные для отрисовки картинки "Симплекс"
-export function selectSimplexData(oState: DrawState) {
-    const oSimplexObject = selectSimplexObject(oState);
-    if (oSimplexObject === null) {
+export function selectSimplexData(drawState: DrawState) {
+    const simplexObject = selectSimplexObject(drawState);
+    if (simplexObject === null) {
         return {
             vertsInfo: [],
             verts: [],
@@ -130,62 +132,63 @@ export function selectSimplexData(oState: DrawState) {
         };
     }
     return {
-        vertsInfo: oSimplexObject.getVertsInfo(),
-        verts: oSimplexObject.getVertices(),
-        edgesInfo: oSimplexObject.getEdgesInfo(),
-        kSetAreas: oSimplexObject.getKSetAreas(),
-        tripleSegment: oSimplexObject.getTripleCycleLineSegment(),
+        vertsInfo: simplexObject.getVertsInfo(),
+        verts: simplexObject.getVertices(),
+        edgesInfo: simplexObject.getEdgesInfo(),
+        kSetAreas: simplexObject.getKSetAreas(),
+        tripleSegment: simplexObject.getTripleCycleLineSegment(),
     };
 }
 
 // Получить инстанцию класса ClassUnfoldBase
-export function selectUnfoldObject(oDrawState: DrawState) {
-    if (oDrawState.drawCntWidth === 0) {
+export function selectUnfoldObject(drawState: DrawState) {
+    const { drawCntWidth, isMonodromic } = drawState;
+    if (drawCntWidth === 0) {
         return null;
     }
-    const nSize = selectUnfoldWidth(oDrawState);
+    const nSize = selectUnfoldWidth(drawState);
     return new ClassUnfoldBase({
         size: nSize,
+        isMonodromic,
         paddingTop: nSize * 0.1,
         innerPadTop: 60,
-        charNums: selectCharNumbers(oDrawState),
-        isMonodromic: oDrawState.isMonodromic,
+        charNums: selectCharNumbers(drawState),
     });
 }
 
 // Получить вершины внешнего симплекса развертки
-export function selectUnfoldOuterVerts(oState: DrawState) {
-    const oUnfoldObject = selectUnfoldObject(oState);
-    if (oUnfoldObject === null) {
+export function selectUnfoldOuterVerts(drawState: DrawState) {
+    const unfoldObject = selectUnfoldObject(drawState);
+    if (unfoldObject === null) {
         return [];
     }
-    return oUnfoldObject.getOuterVerts();
+    return unfoldObject.getOuterVerts();
 }
 
 // Получить массив внутренних линий развертки
-export function selectUnfoldInnerLines(oState: DrawState) {
-    const oUnfoldObject = selectUnfoldObject(oState);
-    if (oUnfoldObject === null) {
+export function selectUnfoldInnerLines(drawState: DrawState) {
+    const unfoldObject = selectUnfoldObject(drawState);
+    if (unfoldObject === null) {
         return [];
     }
-    return oUnfoldObject.getInnerLines();
+    return unfoldObject.getInnerLines();
 }
 
 // Получить данные для отрисовки развертки
-export function selectUnfoldSpecialInfo(oState: DrawState) {
-    const oUnfoldObject = selectUnfoldObject(oState);
-    if (oUnfoldObject === null) {
+export function selectUnfoldSpecialInfo(drawState: DrawState) {
+    const unfoldObject = selectUnfoldObject(drawState);
+    if (unfoldObject === null) {
         return ClassUnfoldBase.getInitialSpecialInfo();
     }
-    const oInfo = oUnfoldObject.getSpecialInfo();
+    const oInfo = unfoldObject.getSpecialInfo();
     return oInfo;
 }
 
 // Являются ли характеристические числа типичными
-export function selectIsTypicalCase(oState: DrawState) {
-    const oUnfoldObject = selectUnfoldObject(oState);
-    if (oUnfoldObject === null) {
+export function selectIsTypicalCase(drawState: DrawState) {
+    const unfoldObject = selectUnfoldObject(drawState);
+    if (unfoldObject === null) {
         return true;
     }
-    return oUnfoldObject.getIsTypicalCase();
+    return unfoldObject.getIsTypicalCase();
 }

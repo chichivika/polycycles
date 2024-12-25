@@ -58,15 +58,15 @@ class DrawCnt extends React.Component<MyProps, MyState> {
 
     // Обновить свойство ширины контейнера в глобальном хранилище
     _resize() {
-        const oCont = this._refContainer.current as HTMLDivElement;
-        if (!oCont) {
+        const cntRef = this._refContainer.current as HTMLDivElement;
+        if (!cntRef) {
             return;
         }
 
-        const nWidth = oCont.clientWidth;
+        const width = cntRef.clientWidth;
         const { dispatchUpdate } = this.props;
         dispatchUpdate({
-            drawCntWidth: nWidth,
+            drawCntWidth: width,
         });
     }
 }
