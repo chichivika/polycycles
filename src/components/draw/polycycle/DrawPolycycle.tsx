@@ -50,11 +50,11 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
         const { charNums } = this.props;
 
         return charNums.map((num, i) => {
-            const position = this._getCharNumTextPosition(i, num);
+            const { x, y, textAnchor, value } = this._getCharNumTextPosition(i, num);
             return (
                 // eslint-disable-next-line react/no-array-index-key
-                <text key={i} x={position.x} y={position.y}>
-                    {position.value}
+                <text key={i} x={x} y={y} textAnchor={textAnchor}>
+                    {value}
                 </text>
             );
         });
@@ -65,12 +65,10 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
         const { size } = this.props;
         let numValue = String(charNum);
         let numValueLength = numValue.length;
-        let dotsCount = 0;
 
         if (numValueLength > 4) {
             numValue = numValue.slice(0, 4);
             numValueLength = numValue.length;
-            dotsCount = 1;
             if (numValue.at(-1) === '.') {
                 numValue = `${numValue}..`;
             } else {
@@ -81,21 +79,24 @@ class DrawPolycycle extends React.Component<MyProps, MyState> {
         switch (i) {
             case 0:
                 return {
-                    x: size - 80 - numValueLength * 5 - dotsCount * 5,
+                    x: size - 65,
                     y: size - 90,
                     value: numValue,
+                    textAnchor: 'end',
                 };
             case 1:
                 return {
-                    x: 65,
+                    x: 60,
                     y: size - 90,
                     value: numValue,
+                    textAnchor: 'start',
                 };
             default:
                 return {
-                    x: size / 2 - numValueLength * 5 - dotsCount * 6,
+                    x: size / 2,
                     y: 45,
                     value: numValue,
+                    textAnchor: 'middle',
                 };
         }
     }
