@@ -9,7 +9,7 @@ import {
 } from '../../../utils/simplex/simplexUtils';
 import { getDeltaPoints, getOrtDeltaPoints, Points } from '../../../utils/drawUtils';
 import { renderClosedPath, renderPolygon, renderLine } from '../../../utils/svgUtils';
-import svgColors, { fontFamily } from '../../../styles/svgStyles';
+import svgColors, { fontFamily, fillOpacity, strokeWidth } from '../../../styles/svgStyles';
 
 // ===========================
 // Рисунок симплекса полицикла
@@ -71,7 +71,8 @@ class DrawSimplex extends React.Component<MyProps, {}> {
                 kSetArea,
                 {
                     className: 'draw-k-area',
-                    fill: svgColors.drawkArea,
+                    fill: svgColors.drawKArea,
+                    fillOpacity,
                     stroke: 'none',
                 },
                 `${iIndex}`,
@@ -92,7 +93,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
     // Отрисовка симплекса без дополнительной информации
     _renderSimpleTriangle() {
         const { verts } = this.props;
-        return renderClosedPath(verts, { stroke: svgColors.drawBase, strokeWidth: 2 });
+        return renderClosedPath(verts, { stroke: svgColors.drawBase, strokeWidth });
     }
 
     // Отрисовка подписи для одной стороны симплекса
@@ -167,7 +168,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         const { tripleSegment } = this.props;
         return renderLine(
             tripleSegment,
-            { className: 'draw-triple-set', stroke: svgColors.drawTripleSet, strokeWidth: 2 },
+            { className: 'draw-triple-set', stroke: svgColors.drawTripleSet, strokeWidth },
             'triple-line',
         );
     }
@@ -186,7 +187,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
         const verts = edgeInfo.points;
         const className = edgeInfo.inKSet ? 'draw-k-set' : 'draw-simplex';
         const stroke = edgeInfo.inKSet ? svgColors.drawKSet : svgColors.drawBase;
-        return renderLine(verts, { className, stroke, strokeWidth: 2 }, `${i}`);
+        return renderLine(verts, { className, stroke, strokeWidth }, `${i}`);
     }
 }
 

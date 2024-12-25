@@ -2,7 +2,7 @@ import React from 'react';
 import { renderPolygon, renderClosedPath, renderLines } from '../../../utils/svgUtils';
 import { Points, Segments } from '../../../utils/drawUtils';
 import { SetInfo } from '../../../utils/unfold/unfoldUtils';
-import svgColors from '../../../styles/svgStyles';
+import svgColors, { fillOpacity, strokeWidth } from '../../../styles/svgStyles';
 
 // ===========================
 // Рисунок развертки полицикла
@@ -72,7 +72,7 @@ class Unfold extends React.Component<MyProps, MyState> {
         const { outerVerts } = this.props;
         return (
             <g key='outer-triangle'>
-                {renderClosedPath(outerVerts, { stroke: svgColors.drawBase, strokeWidth: 2 })}
+                {renderClosedPath(outerVerts, { stroke: svgColors.drawBase, strokeWidth })}
             </g>
         );
     }
@@ -82,7 +82,7 @@ class Unfold extends React.Component<MyProps, MyState> {
         const { innerLines } = this.props;
         return (
             <g key='inner-triangle'>
-                {renderLines(innerLines, { stroke: svgColors.drawBase, strokeWidth: 2 })}
+                {renderLines(innerLines, { stroke: svgColors.drawBase, strokeWidth })}
             </g>
         );
     }
@@ -92,11 +92,11 @@ class Unfold extends React.Component<MyProps, MyState> {
         const { kSet, tripleSet } = this.props;
         const { areas: kAreas } = kSet;
         const kPolygons = kAreas.map((polygon) =>
-            renderPolygon(polygon, { fill: svgColors.drawkArea }),
+            renderPolygon(polygon, { fill: svgColors.drawKArea, fillOpacity }),
         );
         const { areas: tripleAreas } = tripleSet;
         const triplePolygons = tripleAreas.map((polygon) =>
-            renderPolygon(polygon, { fill: svgColors.drawTripleArea }),
+            renderPolygon(polygon, { fill: svgColors.drawTripleArea, fillOpacity }),
         );
 
         return (
@@ -119,12 +119,12 @@ class Unfold extends React.Component<MyProps, MyState> {
         return (
             <g key='special-lines'>
                 <g key='k-line' className='draw-k-set'>
-                    {renderLines(kSegments, { stroke: svgColors.drawKSet, strokeWidth: 2 })}
+                    {renderLines(kSegments, { stroke: svgColors.drawKSet, strokeWidth })}
                 </g>
                 <g key='triple-line' className='draw-triple-set'>
                     {renderLines(tripleSegments, {
                         stroke: svgColors.drawTripleSet,
-                        strokeWidth: 2,
+                        strokeWidth,
                     })}
                 </g>
             </g>

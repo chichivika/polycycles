@@ -1,10 +1,12 @@
 const svgColors = {
     drawBase: 'black',
     drawKSet: 'blue',
-    drawkArea: '#2586f957',
+    drawKArea: '#2586f9',
     drawTripleSet: '#00ae00',
-    drawTripleArea: '#00ae005e',
+    drawTripleArea: '#00ae00',
 };
 export default svgColors;
 
 export const fontFamily = 'Helvetica, Arial, sans-serif';
+export const fillOpacity = 0.35;
+export const strokeWidth = 5;

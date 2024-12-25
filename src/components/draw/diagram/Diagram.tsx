@@ -5,7 +5,7 @@ import ClassDiagram from '../../../utils/diagram/ClassDiagram';
 import { EdgesPath } from '../../../utils/unfold/unfoldUtils';
 import './DiagramStyle.scss';
 import { getNumsMul } from '../../../utils/jsUtils';
-import svgColors, { fontFamily } from '../../../styles/svgStyles';
+import svgColors, { fontFamily, strokeWidth } from '../../../styles/svgStyles';
 
 // ==================================
 // Бифуркационная диаграмма полицикла
@@ -87,7 +87,12 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
         const arcs = diagram.getPathArcs();
 
         return (
-            <g className='draw-k-set' stroke={svgColors.drawKSet} strokeWidth={2} fill='none'>
+            <g
+                className='draw-k-set'
+                stroke={svgColors.drawKSet}
+                strokeWidth={strokeWidth}
+                fill='none'
+            >
                 {DrawDiagram._renderArcs(arcs)}
             </g>
         );
@@ -121,7 +126,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
                 cy={diagram.cy}
                 r={diagram.radius}
                 stroke={svgColors.drawBase}
-                strokeWidth={2}
+                strokeWidth={strokeWidth}
                 fill='none'
             />
         );
