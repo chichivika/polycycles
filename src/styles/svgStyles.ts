@@ -6,3 +6,5 @@ const svgColors = {
     drawTripleArea: '#00ae005e',
 };
 export default svgColors;
+
+export const fontFamily = 'Helvetica, Arial, sans-serif';

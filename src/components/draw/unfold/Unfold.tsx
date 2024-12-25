@@ -2,7 +2,7 @@ import React from 'react';
 import { renderPolygon, renderClosedPath, renderLines } from '../../../utils/svgUtils';
 import { Points, Segments } from '../../../utils/drawUtils';
 import { SetInfo } from '../../../utils/unfold/unfoldUtils';
-import svgColors from '../../../styles/svgColors';
+import svgColors from '../../../styles/svgStyles';
 
 // ===========================
 // Рисунок развертки полицикла

@@ -9,7 +9,7 @@ import {
 } from '../../../utils/simplex/simplexUtils';
 import { getDeltaPoints, getOrtDeltaPoints, Points } from '../../../utils/drawUtils';
 import { renderClosedPath, renderPolygon, renderLine } from '../../../utils/svgUtils';
-import svgColors from '../../../styles/svgColors';
+import svgColors, { fontFamily } from '../../../styles/svgStyles';
 
 // ===========================
 // Рисунок симплекса полицикла
@@ -131,7 +131,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
                 x={x}
                 y={y}
                 fontSize='1.2rem'
-                fontFamily='"Roboto", "Helvetica", "Arial", sans-serif;'
+                fontFamily={fontFamily}
                 transform={`rotate(${angle} ${x}, ${y})`}
                 textLength='38px'
             >

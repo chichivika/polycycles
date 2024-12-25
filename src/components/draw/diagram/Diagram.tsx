@@ -5,7 +5,7 @@ import ClassDiagram from '../../../utils/diagram/ClassDiagram';
 import { EdgesPath } from '../../../utils/unfold/unfoldUtils';
 import './DiagramStyle.scss';
 import { getNumsMul } from '../../../utils/jsUtils';
-import svgColors from '../../../styles/svgColors';
+import svgColors, { fontFamily } from '../../../styles/svgStyles';
 
 // ==================================
 // Бифуркационная диаграмма полицикла
@@ -169,6 +169,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
                 className='draw-diagram-text draw-diagram-SL-text'
                 color={svgColors.drawBase}
                 fontSize='1.2rem'
+                fontFamily={fontFamily}
                 x={dot[0] + coeff * tangent[0] * ratio - length / 2}
                 y={dot[1] + coeff * tangent[1] * ratio + height / 2}
             >
@@ -227,6 +228,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
                     className='draw-diagram-text draw-diagram-L-text'
                     fontWeight='bold'
                     fontSize='1.2rem'
+                    fontFamily={fontFamily}
                     textLength={length}
                     color={svgColors.drawBase}
                     x={dot[0] + coeff * tangent[0] * ratio - length / 2}
