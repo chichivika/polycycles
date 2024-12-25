@@ -9,4 +9,4 @@ export default svgColors;
 
 export const fontFamily = 'Helvetica, Arial, sans-serif';
 export const fillOpacity = 0.35;
-export const strokeWidth = 5;
+export const strokeWidth = 2;
