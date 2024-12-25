@@ -8,30 +8,6 @@
 
     .draw-graph {
         border: 3px solid colors.$header-color;
-        stroke-width: 2;
-        stroke: colors.$draw-base;
-
-        .draw-k-set {
-            stroke: colors.$draw-k-set;
-        }
-
-        .draw-k-area {
-            stroke: none;
-            fill: colors.$draw-k-area;
-        }
-        .draw-triple-area{
-            stroke: none;
-            fill: colors.$draw-triple-area;
-        }
-
-        .draw-triple-set {
-            stroke: colors.$draw-triple-set;
-        }
-
-        text,
-        circle {
-            stroke: none;
-        }
     }
 
     .draw-polycycle {

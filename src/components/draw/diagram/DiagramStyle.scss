@@ -1,39 +1,6 @@
 @use 'src/styles/colors';
 
-.draw-graph.draw-diagram{
-    .draw-k-set{
-        path{
-            fill: none;
-        }
-    }
-    .draw-diagram-circle{
-        fill: none;
-        stroke: colors.$draw-base;
-    }
-    .draw-diagram-dot{
-        fill: colors.$draw-base;
-        stroke: none;
-    }
-    .draw-diagram-text{
-        font-size: 1.2rem;
-        &.draw-diagram-L-text{
-            font-weight: bold;
-        }
-        tspan{
-            font-size: 0.8rem;
-        }
-    }
-}
 .draw-graph.draw-diagram.draw-diagram-not-typical{
-    .draw-diagram-circle{
-        stroke: colors.$header-color;
-    }
-    .draw-diagram-dot{
-        fill: colors.$header-color;
-    }
-    .draw-diagram-text{
-        fill: colors.$header-color;
-    }
     .text-not-typical{
         fill: colors.$header-color;
         font-size: 1.3rem;

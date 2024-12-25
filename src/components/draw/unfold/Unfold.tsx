@@ -2,8 +2,7 @@ import React from 'react';
 import { renderPolygon, renderClosedPath, renderLines } from '../../../utils/svgUtils';
 import { Points, Segments } from '../../../utils/drawUtils';
 import { SetInfo } from '../../../utils/unfold/unfoldUtils';
-
-import './UnfoldStyle.scss';
+import svgColors from '../../../styles/svgColors';
 
 // ===========================
 // Рисунок развертки полицикла
@@ -27,7 +26,7 @@ type MyState = {};
 class Unfold extends React.Component<MyProps, MyState> {
     render() {
         const { size, isFormError } = this.props;
-        // сли размер  рисунка еще не установлен,
+        // если размер  рисунка еще не установлен,
         // ничего не рисуем
         if (size === 0) {
             return null;
@@ -71,22 +70,34 @@ class Unfold extends React.Component<MyProps, MyState> {
     // Отрисовать внешний симплекс
     _renderOuterTriangle() {
         const { outerVerts } = this.props;
-        return <g key='outer-triangle'>{renderClosedPath(outerVerts)}</g>;
+        return (
+            <g key='outer-triangle'>
+                {renderClosedPath(outerVerts, { stroke: svgColors.drawBase, strokeWidth: 2 })}
+            </g>
+        );
     }
 
     // Отрисовать сегменты линий внутри внешнего симплекса
     _renderInnerLines() {
         const { innerLines } = this.props;
-        return <g key='inner-triangle'>{renderLines(innerLines)}</g>;
+        return (
+            <g key='inner-triangle'>
+                {renderLines(innerLines, { stroke: svgColors.drawBase, strokeWidth: 2 })}
+            </g>
+        );
     }
 
     // Отрисовать закрашенные области
     _renderAreas() {
         const { kSet, tripleSet } = this.props;
         const { areas: kAreas } = kSet;
-        const kPolygons = kAreas.map((polygon) => renderPolygon(polygon));
+        const kPolygons = kAreas.map((polygon) =>
+            renderPolygon(polygon, { fill: svgColors.drawkArea }),
+        );
         const { areas: tripleAreas } = tripleSet;
-        const triplePolygons = tripleAreas.map((polygon) => renderPolygon(polygon));
+        const triplePolygons = tripleAreas.map((polygon) =>
+            renderPolygon(polygon, { fill: svgColors.drawTripleArea }),
+        );
 
         return (
             <g key='areas'>
@@ -108,10 +119,13 @@ class Unfold extends React.Component<MyProps, MyState> {
         return (
             <g key='special-lines'>
                 <g key='k-line' className='draw-k-set'>
-                    {renderLines(kSegments)}
+                    {renderLines(kSegments, { stroke: svgColors.drawKSet, strokeWidth: 2 })}
                 </g>
                 <g key='triple-line' className='draw-triple-set'>
-                    {renderLines(tripleSegments)}
+                    {renderLines(tripleSegments, {
+                        stroke: svgColors.drawTripleSet,
+                        strokeWidth: 2,
+                    })}
                 </g>
             </g>
         );

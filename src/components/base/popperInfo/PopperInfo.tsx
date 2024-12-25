@@ -2,10 +2,9 @@ import React, { ReactElement } from 'react';
 
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Popper from '@mui/material/Popper';
-import IconButton from '@mui/material/IconButton';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-
 import { Translation } from 'react-i18next';
+import IconButton from '../iconButton/IconButton';
 import './PopperInfoStyle.scss';
 
 // ===============================
@@ -37,7 +36,7 @@ class PopperInfo extends React.Component<MyProps, MyState> {
         const { open, anchorEl } = this.state;
 
         const oIcon = (
-            <IconButton className='popper-info-icon' size='small' onClick={this.onClick.bind(this)}>
+            <IconButton size='small' onClick={this.onClick.bind(this)}>
                 <HelpOutlineIcon />
             </IconButton>
         );

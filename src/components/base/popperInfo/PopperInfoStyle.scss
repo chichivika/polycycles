@@ -4,16 +4,13 @@
     display: inline-block;
     color: colors.$text-color-dark;
 
-    &>* {
+    & > * {
         vertical-align: middle;
     }
 
-    .popper-info-icon {
-        margin: 0px 0.3rem;
-
-        .MuiSvgIcon-root {
-            font-size: 1.2rem;
-        }
+    .app-icon-button {
+        margin-left: 0.3rem;
+        vertical-align: middle;
     }
 }
 

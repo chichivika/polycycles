@@ -5,6 +5,7 @@ import ClassDiagram from '../../../utils/diagram/ClassDiagram';
 import { EdgesPath } from '../../../utils/unfold/unfoldUtils';
 import './DiagramStyle.scss';
 import { getNumsMul } from '../../../utils/jsUtils';
+import svgColors from '../../../styles/svgColors';
 
 // ==================================
 // Бифуркационная диаграмма полицикла
@@ -85,7 +86,11 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
 
         const arcs = diagram.getPathArcs();
 
-        return <g className='draw-k-set'>{DrawDiagram._renderArcs(arcs)}</g>;
+        return (
+            <g className='draw-k-set' stroke={svgColors.drawKSet} strokeWidth={2} fill='none'>
+                {DrawDiagram._renderArcs(arcs)}
+            </g>
+        );
     }
 
     // Нужно ли рисовать K-линия внутри круга
@@ -115,6 +120,9 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
                 cx={diagram.cx}
                 cy={diagram.cy}
                 r={diagram.radius}
+                stroke={svgColors.drawBase}
+                strokeWidth={2}
+                fill='none'
             />
         );
     }
@@ -159,11 +167,15 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
             <text
                 key={i}
                 className='draw-diagram-text draw-diagram-SL-text'
+                color={svgColors.drawBase}
+                fontSize='1.2rem'
                 x={dot[0] + coeff * tangent[0] * ratio - length / 2}
                 y={dot[1] + coeff * tangent[1] * ratio + height / 2}
             >
                 SL
-                <tspan baselineShift='sub'>{i + 1}</tspan>
+                <tspan baselineShift='sub' fontSize='0.8rem'>
+                    {i + 1}
+                </tspan>
             </text>
         );
     }
@@ -203,14 +215,27 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
         const coeff = this._isInnerPath ? -1 : 1;
         return (
             <g key={i}>
-                <circle className='draw-diagram-dot' cx={dot[0]} cy={dot[1]} r={5} />
+                <circle
+                    className='draw-diagram-dot'
+                    cx={dot[0]}
+                    cy={dot[1]}
+                    r={5}
+                    fill={svgColors.drawBase}
+                    stroke='none'
+                />
                 <text
                     className='draw-diagram-text draw-diagram-L-text'
+                    fontWeight='bold'
+                    fontSize='1.2rem'
                     textLength={length}
+                    color={svgColors.drawBase}
                     x={dot[0] + coeff * tangent[0] * ratio - length / 2}
                     y={dot[1] + coeff * tangent[1] * ratio + height / 2}
                 >
-                    L<tspan baselineShift='sub'>{subText}</tspan>
+                    L
+                    <tspan baselineShift='sub' fontSize='0.8rem'>
+                        {subText}
+                    </tspan>
                 </text>
             </g>
         );

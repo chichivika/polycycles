@@ -1,11 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { update } from '../../appRedux/drawSlice';
+import { update, selectIsTypicalCase, selectIsFormError } from '../../appRedux/drawSlice';
 import PolycycleWrapper from './drawWrapper/PolycycleWrapper';
 import DrawSimplex from './simplex/ConnectedDrawSimplex';
 import DrawUnfold from './unfold/ConnectedUnfold';
 import Diagram from './diagram/ConnectedDiagram';
 import DrawWrapper from './drawWrapper/DrawWrapper';
+import { StateType } from '../../appRedux/store';
+
 import './DrawCntStyle.scss';
 
 // =====================
@@ -18,6 +20,8 @@ type MyProps = {
     windowWidth: number | null;
     // Обновление глобального хранилища
     dispatchUpdate: typeof update;
+    isTypicalCase: boolean;
+    isFormError: boolean;
 };
 
 class DrawCnt extends React.Component<MyProps, MyState> {
@@ -25,19 +29,38 @@ class DrawCnt extends React.Component<MyProps, MyState> {
     _refContainer = React.createRef<HTMLDivElement>();
 
     render() {
+        const { isTypicalCase, isFormError } = this.props;
         return (
             <div ref={this._refContainer} className='draw-container'>
                 <PolycycleWrapper />
 
-                <DrawWrapper labelKey='drawInfo.simplex.label' hoverKey='drawInfo.simplex.hover'>
+                <DrawWrapper
+                    labelKey='drawInfo.simplex.label'
+                    hoverKey='drawInfo.simplex.hover'
+                    showDownload
+                    downloadFileName='Simplex'
+                    disabledDownload={isFormError}
+                >
                     <DrawSimplex />
                 </DrawWrapper>
 
-                <DrawWrapper labelKey='drawInfo.unfold.label' hoverKey='drawInfo.unfold.hover'>
+                <DrawWrapper
+                    labelKey='drawInfo.unfold.label'
+                    hoverKey='drawInfo.unfold.hover'
+                    showDownload
+                    downloadFileName='Unfold'
+                    disabledDownload={isFormError}
+                >
                     <DrawUnfold />
                 </DrawWrapper>
 
-                <DrawWrapper labelKey='drawInfo.diagram.label' hoverKey='drawInfo.diagram.hover'>
+                <DrawWrapper
+                    labelKey='drawInfo.diagram.label'
+                    hoverKey='drawInfo.diagram.hover'
+                    showDownload
+                    disabledDownload={isFormError || !isTypicalCase}
+                    downloadFileName='Diagram'
+                >
                     <Diagram />
                 </DrawWrapper>
             </div>
@@ -71,7 +94,14 @@ class DrawCnt extends React.Component<MyProps, MyState> {
     }
 }
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state: StateType) => {
+    const { draw: drawState } = state;
+
+    return {
+        isTypicalCase: selectIsTypicalCase(drawState),
+        isFormError: selectIsFormError(drawState),
+    };
+};
 const mapDispatchToProps = {
     dispatchUpdate: update,
 };

@@ -9,6 +9,7 @@ import {
 } from '../../../utils/simplex/simplexUtils';
 import { getDeltaPoints, getOrtDeltaPoints, Points } from '../../../utils/drawUtils';
 import { renderClosedPath, renderPolygon, renderLine } from '../../../utils/svgUtils';
+import svgColors from '../../../styles/svgColors';
 
 // ===========================
 // Рисунок симплекса полицикла
@@ -70,6 +71,8 @@ class DrawSimplex extends React.Component<MyProps, {}> {
                 kSetArea,
                 {
                     className: 'draw-k-area',
+                    fill: svgColors.drawkArea,
+                    stroke: 'none',
                 },
                 `${iIndex}`,
             ),
@@ -89,7 +92,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
     // Отрисовка симплекса без дополнительной информации
     _renderSimpleTriangle() {
         const { verts } = this.props;
-        return renderClosedPath(verts);
+        return renderClosedPath(verts, { stroke: svgColors.drawBase, strokeWidth: 2 });
     }
 
     // Отрисовка подписи для одной стороны симплекса
@@ -128,6 +131,7 @@ class DrawSimplex extends React.Component<MyProps, {}> {
                 x={x}
                 y={y}
                 fontSize='1.2rem'
+                fontFamily='"Roboto", "Helvetica", "Arial", sans-serif;'
                 transform={`rotate(${angle} ${x}, ${y})`}
                 textLength='38px'
             >
@@ -161,7 +165,11 @@ class DrawSimplex extends React.Component<MyProps, {}> {
     // Отрисовка сегмента прямой трехкратных циклов
     _renderTripleLine() {
         const { tripleSegment } = this.props;
-        return renderLine(tripleSegment, { className: 'draw-triple-set' }, 'triple-line');
+        return renderLine(
+            tripleSegment,
+            { className: 'draw-triple-set', stroke: svgColors.drawTripleSet, strokeWidth: 2 },
+            'triple-line',
+        );
     }
 
     // Отрисовка одной вершины симплекса
@@ -177,7 +185,8 @@ class DrawSimplex extends React.Component<MyProps, {}> {
     static _drawTriangleEdge(edgeInfo: SimplexEdgeInfo, i: number) {
         const verts = edgeInfo.points;
         const className = edgeInfo.inKSet ? 'draw-k-set' : 'draw-simplex';
-        return renderLine(verts, { className }, `${i}`);
+        const stroke = edgeInfo.inKSet ? svgColors.drawKSet : svgColors.drawBase;
+        return renderLine(verts, { className, stroke, strokeWidth: 2 }, `${i}`);
     }
 }
 
