@@ -1,22 +1,18 @@
 import { connect } from 'react-redux';
 import DrawSimplex from './DrawSimplex';
 import { StateType } from '../../../appRedux/store';
-import {
-    selectIsFormError,
-    selectSimplexWidth,
-    selectSimplexData,
-} from '../../../appRedux/drawSlice';
+import { selectIsFormError, selectSimplexData } from '../../../appRedux/drawSelectors';
+import { getSimplexWidth } from '../../../appRedux/storeUtils';
 
 // =======================================
 // Привязанный рисунок симплекса полицикла
 // =======================================
 
 const mapStateToProps = (state: StateType) => {
-    const { draw: drawState } = state;
-    const oSimplexData = selectSimplexData(drawState);
+    const oSimplexData = selectSimplexData(state);
     return {
-        isFormError: selectIsFormError(drawState),
-        size: selectSimplexWidth(),
+        isFormError: selectIsFormError(state),
+        size: getSimplexWidth(),
         vertsInfo: oSimplexData.vertsInfo,
         verts: oSimplexData.verts,
         edgesInfo: oSimplexData.edgesInfo,

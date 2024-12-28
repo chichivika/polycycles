@@ -39,7 +39,7 @@ export const initialDrawSettings = {
 export function getDrawInitialState() {
     return {
         isMonodromic: true,
-        charNums: initialCharNums.map((sNum) => {
+        charNumsData: initialCharNums.map((sNum) => {
             return {
                 value: sNum,
                 error: false,
@@ -61,4 +61,14 @@ export function boundWidth(width: number, settings: DrawSettings) {
         return settings.maxWidth;
     }
     return width;
+}
+
+// Получить ширину рисунка "Полицикл"
+export function getPolycycleWidth() {
+    return initialDrawSettings.polycycle.width;
+}
+
+// Получить ширину рисунка "Симплекс"
+export function getSimplexWidth() {
+    return initialDrawSettings.simplex.width;
 }

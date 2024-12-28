@@ -5,7 +5,8 @@ import { Translation } from 'react-i18next';
 import { connect } from 'react-redux';
 import Input from '../base/input/Input';
 import { StateType } from '../../appRedux/store';
-import { selectInputSetting, updateCharNumber } from '../../appRedux/drawSlice';
+import { updateCharNumber } from '../../appRedux/drawSlice';
+import { selectInputSetting, selectIsMonodromic } from '../../appRedux/drawSelectors';
 import { CharNumInputState } from './utils';
 import { charNumberIsValid } from '../../utils/appUtils';
 
@@ -219,10 +220,9 @@ class CharNumInput extends React.Component<MyProps, MyState> {
 }
 
 const mapStateToProps = (state: StateType, props: OwnProps) => {
-    const { draw: drawState } = state;
-    const charNumSettings = selectInputSetting(drawState, props.i);
+    const charNumSettings = selectInputSetting(state, props.i);
     return {
-        isMonodromic: drawState.isMonodromic,
+        isMonodromic: selectIsMonodromic(state),
         error: charNumSettings.error,
         value: charNumSettings.value,
     };

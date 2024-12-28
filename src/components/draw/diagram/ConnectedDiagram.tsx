@@ -7,22 +7,22 @@ import {
     selectIsFormError,
     selectIsTypicalCase,
     selectUnfoldSpecialInfo,
-} from '../../../appRedux/drawSlice';
+    selectIsMonodromic,
+} from '../../../appRedux/drawSelectors';
 
 // ==============================================
 // Привязанная бифуркационная диаграмма полицикла
 // ==============================================
 
 const mapStateToProps = (state: StateType) => {
-    const { draw: drawState } = state;
-    const oSpecialInfo = selectUnfoldSpecialInfo(drawState);
+    const oSpecialInfo = selectUnfoldSpecialInfo(state);
     return {
-        charNums: selectCharNumbers(drawState),
-        isMonodromic: drawState.isMonodromic,
-        isFormError: selectIsFormError(drawState),
-        size: selectDiagramWidth(drawState),
+        charNums: selectCharNumbers(state),
+        isMonodromic: selectIsMonodromic(state),
+        isFormError: selectIsFormError(state),
+        size: selectDiagramWidth(state),
         edgesPath: oSpecialInfo.edgesPath,
-        isTypicalCase: selectIsTypicalCase(drawState),
+        isTypicalCase: selectIsTypicalCase(state),
     };
 };
 const mapDispatchToProps = {};

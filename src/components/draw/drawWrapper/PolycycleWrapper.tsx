@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { StateType } from '../../../appRedux/store';
 import DrawWrapper from './DrawWrapper';
 import DrawPolycycle from '../polycycle/ConnectedDrawPolycycle';
+import { selectIsMonodromic } from '../../../appRedux/drawSelectors';
 
 // ==============================================================
 // Обёртка с дополнительными инструментами для рисунка "Полицикл"
@@ -34,7 +35,7 @@ class PolycycleWrapper extends React.Component<MyProps, MyState> {
 }
 
 const mapStateToProps = (state: StateType) => ({
-    isMonodromic: state.draw.isMonodromic,
+    isMonodromic: selectIsMonodromic(state),
 });
 const mapDispatchToProps = {};
 

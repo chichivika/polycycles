@@ -3,7 +3,6 @@ import { Translation } from 'react-i18next';
 import { Point, getDeltaPoints } from '../../../utils/drawUtils';
 import ClassDiagram from '../../../utils/diagram/ClassDiagram';
 import { EdgesPath } from '../../../utils/unfold/unfoldUtils';
-import './DiagramStyle.scss';
 import { getNumsMul } from '../../../utils/jsUtils';
 import svgColors, { fontFamily, strokeWidth } from '../../../styles/svgStyles';
 
@@ -125,7 +124,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
                 cx={diagram.cx}
                 cy={diagram.cy}
                 r={diagram.radius}
-                stroke={svgColors.drawBase}
+                stroke={this._getStrokeColor()}
                 strokeWidth={strokeWidth}
                 fill='none'
             />
@@ -172,7 +171,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
             <text
                 key={i}
                 className='draw-diagram-text draw-diagram-SL-text'
-                color={svgColors.drawBase}
+                fill={this._getStrokeColor()}
                 fontSize='1.2rem'
                 fontFamily={fontFamily}
                 x={dot[0] + coeff * tangent[0] * ratio - length / 2}
@@ -226,7 +225,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
                     cx={dot[0]}
                     cy={dot[1]}
                     r={5}
-                    fill={svgColors.drawBase}
+                    fill={this._getStrokeColor()}
                     stroke='none'
                 />
                 <text
@@ -235,7 +234,7 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
                     fontSize='1.2rem'
                     fontFamily={fontFamily}
                     textLength={length}
-                    color={svgColors.drawBase}
+                    fill={this._getStrokeColor()}
                     x={dot[0] + coeff * tangent[0] * ratio - length / 2}
                     y={dot[1] + coeff * tangent[1] * ratio + height / 2}
                 >
@@ -260,12 +259,23 @@ class DrawDiagram extends React.Component<MyProps, MyState> {
         );
     }
 
+    protected _getStrokeColor() {
+        const { isTypicalCase } = this.props;
+        return isTypicalCase ? svgColors.drawBase : svgColors.drawBasePale;
+    }
+
     // Отрисовать подпись в случае нетипичности
     static _renderNotTypicalText() {
         return (
             <Translation>
                 {(t) => (
-                    <text className='text-not-typical' x={40} y={40}>
+                    <text
+                        className='text-not-typical'
+                        x={40}
+                        y={40}
+                        fontSize='1.3rem'
+                        fill={svgColors.drawBasePale}
+                    >
                         {t('drawDiagram.notTypicalCase')}
                     </text>
                 )}

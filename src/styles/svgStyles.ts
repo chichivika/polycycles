@@ -1,5 +1,6 @@
 const svgColors = {
     drawBase: 'black',
+    drawBasePale: 'grey',
     drawKSet: 'blue',
     drawKArea: '#2586f9',
     drawTripleSet: '#00ae00',

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Checkbox from '../base/checkbox/Checkbox';
 import { update as drawingUpdate } from '../../appRedux/drawSlice';
 import { StateType } from '../../appRedux/store';
+import { selectIsMonodromic } from '../../appRedux/drawSelectors';
 
 import './IsMonodromicStyle.scss';
 
@@ -43,7 +44,7 @@ class Toolbar extends React.Component<MyProps, MyState> {
 }
 
 const mapStateToProps = (state: StateType) => ({
-    isMonodromic: state.draw.isMonodromic,
+    isMonodromic: selectIsMonodromic(state),
 });
 
 const mapDispatchToProps = { dispatchUpdate: drawingUpdate };

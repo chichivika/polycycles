@@ -7,21 +7,20 @@ import {
     selectUnfoldInnerLines,
     selectUnfoldOuterVerts,
     selectUnfoldSpecialInfo,
-} from '../../../appRedux/drawSlice';
+} from '../../../appRedux/drawSelectors';
 
 // ======================================
 // Привязанный рисунок развертки полицикла
 // ======================================
 
 const mapStateToProps = (state: StateType) => {
-    const { draw: drawState } = state;
-    const specialInfo = selectUnfoldSpecialInfo(drawState);
+    const specialInfo = selectUnfoldSpecialInfo(state);
 
     return {
-        isFormError: selectIsFormError(drawState),
-        size: selectUnfoldWidth(drawState),
-        outerVerts: selectUnfoldOuterVerts(drawState),
-        innerLines: selectUnfoldInnerLines(drawState),
+        isFormError: selectIsFormError(state),
+        size: selectUnfoldWidth(state),
+        outerVerts: selectUnfoldOuterVerts(state),
+        innerLines: selectUnfoldInnerLines(state),
         kSet: specialInfo.kSet,
         tripleSet: specialInfo.tripleSet,
     };

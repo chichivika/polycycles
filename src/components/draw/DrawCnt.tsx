@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { update, selectIsTypicalCase, selectIsFormError } from '../../appRedux/drawSlice';
+import { update } from '../../appRedux/drawSlice';
+import { selectIsTypicalCase, selectIsFormError } from '../../appRedux/drawSelectors';
 import PolycycleWrapper from './drawWrapper/PolycycleWrapper';
 import DrawSimplex from './simplex/ConnectedDrawSimplex';
 import DrawUnfold from './unfold/ConnectedUnfold';
@@ -95,11 +96,9 @@ class DrawCnt extends React.Component<MyProps, MyState> {
 }
 
 const mapStateToProps = (state: StateType) => {
-    const { draw: drawState } = state;
-
     return {
-        isTypicalCase: selectIsTypicalCase(drawState),
-        isFormError: selectIsFormError(drawState),
+        isTypicalCase: selectIsTypicalCase(state),
+        isFormError: selectIsFormError(state),
     };
 };
 const mapDispatchToProps = {

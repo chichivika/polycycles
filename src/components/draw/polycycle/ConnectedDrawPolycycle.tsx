@@ -4,20 +4,20 @@ import { StateType } from '../../../appRedux/store';
 import {
     selectCharNumbers,
     selectIsFormError,
-    selectPolycycleWidth,
-} from '../../../appRedux/drawSlice';
+    selectIsMonodromic,
+} from '../../../appRedux/drawSelectors';
+import { getPolycycleWidth } from '../../../appRedux/storeUtils';
 
 // =========================================
 // Привязанный схематичный рисунок полицикла
 // =========================================
 
 const mapStateToProps = (state: StateType) => {
-    const { draw: drawState } = state;
     return {
-        charNums: selectCharNumbers(drawState),
-        isMonodromic: drawState.isMonodromic,
-        isFormError: selectIsFormError(drawState),
-        size: selectPolycycleWidth(),
+        charNums: selectCharNumbers(state),
+        isMonodromic: selectIsMonodromic(state),
+        isFormError: selectIsFormError(state),
+        size: getPolycycleWidth(),
     };
 };
 const mapDispatchToProps = {};
