@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/polycycles/static/css/main.74ec5bb3.css",
-    "main.js": "/polycycles/static/js/main.52a75492.js",
+    "main.css": "/polycycles/static/css/main.b3adc064.css",
+    "main.js": "/polycycles/static/js/main.9c099c13.js",
     "index.html": "/polycycles/index.html",
-    "main.74ec5bb3.css.map": "/polycycles/static/css/main.74ec5bb3.css.map",
-    "main.52a75492.js.map": "/polycycles/static/js/main.52a75492.js.map"
+    "main.b3adc064.css.map": "/polycycles/static/css/main.b3adc064.css.map",
+    "main.9c099c13.js.map": "/polycycles/static/js/main.9c099c13.js.map"
   },
   "entrypoints": [
-    "static/css/main.74ec5bb3.css",
-    "static/js/main.52a75492.js"
+    "static/css/main.b3adc064.css",
+    "static/js/main.9c099c13.js"
   ]
 }
