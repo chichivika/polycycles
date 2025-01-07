@@ -1,9 +1,5 @@
 .is-monodromic-wrapper{
-    display: inline-block;
-    .is-monodromic-tool{
-        margin: 0px 0.8rem;
-    }
-    img{
-        vertical-align: middle;
-    }
+    display: flex;
+    justify-content: center;
+    margin-right: 1rem;
 }
