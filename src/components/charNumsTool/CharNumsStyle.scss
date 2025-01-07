@@ -19,7 +19,7 @@
     }
 
     .char-nums-cnt {
-        margin: 0px 0.8rem;
+        margin: 0px 0.5rem;
         position: relative;
 
         .char-nums-help-text {
@@ -32,8 +32,8 @@
         }
 
         .char-nums-inputs-cnt {
-            &>:nth-child(2) {
-                margin: 0px 0.5rem;
+            &>*{
+                margin: 0.5rem 0.25rem;
             }
             .MuiTextField-root {
                 input {
