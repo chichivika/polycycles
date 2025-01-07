@@ -10,6 +10,8 @@
 .char-nums-tool {
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
 
     .char-nums-rools-icon {
         margin-right: 0.4rem;

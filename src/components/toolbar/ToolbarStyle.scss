@@ -6,6 +6,7 @@
     padding: 0.5rem 0px;
     background-color: #ffebee99;
     color: colors.$header-color;
+    flex-wrap: wrap;
     & > *{
         margin: 0px 4rem;
     }
