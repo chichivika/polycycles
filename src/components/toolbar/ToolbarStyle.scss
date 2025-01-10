@@ -2,11 +2,17 @@
 
 .toolbar {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     padding: 0.5rem 0px;
     background-color: #ffebee99;
     color: colors.$header-color;
-    flex-wrap: wrap;
+
+    .toolbar-center {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        column-gap: 3rem;
+    }
 }
 
 .is-monodromic-tool .MuiFormControlLabel-label,

@@ -11,8 +11,10 @@ import './ToolbarStyle.scss';
 function Toolbar() {
     return (
         <div className='toolbar'>
-            <IsMonodromicTool />
-            <CharNumsTool />
+            <div className='toolbar-center'>
+                <IsMonodromicTool />
+                <CharNumsTool />
+            </div>
         </div>
     );
 }
