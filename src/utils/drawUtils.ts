@@ -49,6 +49,23 @@ export function getSummPointsWithCoeffs(
     ];
 }
 
+export function getLinesIntersection(
+    firstPoint: Point,
+    secondPoint: Point,
+    firstVector: Point,
+    secondVector: Point,
+): Point | null {
+    const vectorPoroduct = firstVector[1] * secondVector[0] - secondVector[1] * firstVector[0];
+    if (vectorPoroduct < 0.000001 && vectorPoroduct > -0.000001) {
+        return null;
+    }
+    const coeff =
+        ((secondPoint[1] - firstPoint[1]) * firstVector[0] -
+            (secondPoint[0] - firstPoint[0]) * firstVector[1]) /
+        vectorPoroduct;
+    return getSummPointsWithCoeffs(secondPoint, secondVector, 1, coeff);
+}
+
 // Рассчитать единичный вектор, сонаправленный с разницей двух векторов
 export function getOrtDeltaPoints(firstPoint: Point, secondPoint: Point): Point {
     const delta = getDeltaPoints(firstPoint, secondPoint);
@@ -58,6 +75,14 @@ export function getOrtDeltaPoints(firstPoint: Point, secondPoint: Point): Point 
     }
 
     return [delta[0] / vectorLength, delta[1] / vectorLength];
+}
+
+export function getVectorPerpendicular(
+    vector: Point,
+    isPositiveOrientation: boolean = true,
+): Point {
+    const coeff = isPositiveOrientation ? 1 : -1;
+    return [coeff * vector[1], -1 * coeff * vector[0]];
 }
 
 // Преобразовать вершины многоугольника в массив отрезков его сторон
