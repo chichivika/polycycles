@@ -6,6 +6,7 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { Translation } from 'react-i18next';
 import IconButton from '../iconButton/IconButton';
 import './PopperInfoStyle.scss';
+import { getClassName } from '../../../utils/appUtils';
 
 // ===============================
 // Иконка с подсказкой при нажатии
@@ -16,6 +17,8 @@ type MyProps = {
     textKey?: string;
     // Дочерние компоненты (используются вместо текстовой подсказки)
     children?: ReactElement;
+    icon?: ReactElement;
+    className?: string;
 };
 type MyState = {
     // Открыто ли окно с подсказкой
@@ -34,16 +37,17 @@ class PopperInfo extends React.Component<MyProps, MyState> {
 
     render() {
         const { open, anchorEl } = this.state;
+        const { icon, className } = this.props;
 
-        const oIcon = (
+        const infoIcon = (
             <IconButton size='small' onClick={this.onClick.bind(this)}>
-                <HelpOutlineIcon />
+                {icon || <HelpOutlineIcon />}
             </IconButton>
         );
         return (
             <ClickAwayListener onClickAway={this.onClosePopper.bind(this)}>
-                <div className='popper-info-cnt'>
-                    {oIcon}
+                <div className={getClassName('popper-info-cnt', className)}>
+                    {infoIcon}
                     <Popper
                         className='popper-info'
                         placement='bottom-start'

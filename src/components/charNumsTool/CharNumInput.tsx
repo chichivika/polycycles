@@ -1,7 +1,5 @@
 import React from 'react';
 import HelpIcon from '@mui/icons-material/InfoTwoTone';
-import Tooltip from '@mui/material/Tooltip';
-import { Translation } from 'react-i18next';
 import { connect } from 'react-redux';
 import Input from '../base/input/Input';
 import { StateType } from '../../appRedux/store';
@@ -9,6 +7,7 @@ import { updateCharNumber } from '../../appRedux/drawSlice';
 import { selectInputSetting, selectIsMonodromic } from '../../appRedux/drawSelectors';
 import { CharNumInputState } from './utils';
 import { charNumberIsValid } from '../../utils/appUtils';
+import PopperInfo from '../base/popperInfo/PopperInfo';
 
 // ========================================
 // Поле ввода для характеристического числа
@@ -91,13 +90,11 @@ class CharNumInput extends React.Component<MyProps, MyState> {
     // Отрисовка подсказки у поля ввода
     static _renderInputHelpInfo() {
         return (
-            <Translation>
-                {(t) => (
-                    <Tooltip title={t('toolbar.charNumInputInfo')}>
-                        <HelpIcon className='char-num-input-help' />
-                    </Tooltip>
-                )}
-            </Translation>
+            <PopperInfo
+                className='char-num-input-help'
+                textKey='toolbar.charNumInputInfo'
+                icon={<HelpIcon />}
+            />
         );
     }
 
