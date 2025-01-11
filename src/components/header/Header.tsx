@@ -5,7 +5,7 @@ import { Translation } from 'react-i18next';
 import LangSelect from './LangSelect';
 
 // ===================================
-// Заглавная панель приложения (хидер)
+// Заглавная панель приложения
 // ===================================
 
 function Header() {

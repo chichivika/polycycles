@@ -11,6 +11,7 @@ import {
     calcTriangleVertsBySizeAndPadding,
     getDeltaPoints,
     mapVertsToPolygonEdges,
+    checkSegmentsHasIntersection,
 } from '../drawUtils';
 import { productNumsFromTo } from '../jsUtils';
 import { numsAreDegenerated, numsMulIsUnit, numsAreAlmostEqual, getThirdIndex } from '../appUtils';
@@ -97,6 +98,31 @@ class ClassUnfoldBase {
     }
 
     // ============================= PUBLIC =============================
+
+    // Найти количество точек пересечения K-сегментов и Triple-сегментов
+    public static getKAndTripleSegmentsIntersectionCount({
+        kSegments,
+        tripleSegments,
+    }: {
+        kSegments: Segments;
+        tripleSegments: Segments;
+    }): number {
+        let intersectionCount = 0;
+        kSegments.forEach((kSegment) => {
+            tripleSegments.forEach((tripleSegment) => {
+                const hasIntersection = checkSegmentsHasIntersection(
+                    kSegment[0],
+                    kSegment[1],
+                    tripleSegment[0],
+                    tripleSegment[1],
+                );
+                if (hasIntersection) {
+                    intersectionCount += 1;
+                }
+            });
+        });
+        return intersectionCount;
+    }
 
     // Получить координаты вершин внешнего симплекса
     public getOuterVerts() {

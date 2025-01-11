@@ -5,6 +5,7 @@
     width: 100%;
     flex-wrap: wrap;
     justify-content: space-evenly;
+    margin-top: 0.5rem;
 
     .draw-graph {
         border: 3px solid colors.$header-color;
@@ -20,14 +21,9 @@
     .draw-form-error-lid {
         fill: colors.$draw-error-lid-bg-color;
     }
-
-    &>* {
-        margin-top: 1rem;
-    }
 }
 
 .draw-info {
     padding: 1rem 2rem;
-    color: colors.$text-color-dark;
     background-color: #ffffffba;
 }

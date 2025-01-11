@@ -2,10 +2,22 @@
 const ruResources = {
     translation: {
         title: 'Добро пожаловать в Polycycles!',
+        results: {
+            exist: 'Есть',
+            notExist: 'Нет',
+            limitCyclesMultiplicityTwo: {
+                label: 'Кратность два',
+            },
+            limitCyclesMultiplicityThree: {
+                label: 'Кратность три',
+            },
+            limitCyclesCount: {
+                label: 'Количество предельных циклов',
+            },
+        },
         toolbar: {
             isMonodromic: 'Монодромный',
             characterNumbers: 'Характеристические числа',
-            drawMe: 'Нарисуй!',
             charNumHelpText: 'Введите положительное число',
             charNumInputInfo:
                 'Характеристическое число соответствует седлу, ориентация которого отличается от двух других седел.',
@@ -53,10 +65,22 @@ const ruResources = {
 const enResources = {
     translation: {
         title: 'Welcome to Polycycles!',
+        results: {
+            exist: 'Yes',
+            notExist: 'No',
+            limitCyclesMultiplicityTwo: {
+                label: 'Multiplicity two',
+            },
+            limitCyclesMultiplicityThree: {
+                label: 'Multiplicity three',
+            },
+            limitCyclesCount: {
+                label: 'Limit cycles count',
+            },
+        },
         toolbar: {
             isMonodromic: 'Is monodromic',
             characterNumbers: 'Characteristic numbers',
-            drawMe: 'Draw!',
             charNumHelpText: 'Input positive number',
             charNumInputInfo:
                 'This characteristic number corresponds to the saddle with orientation that differs from the others.',

@@ -3,6 +3,7 @@ import './AppStyle.scss';
 import Header from '../header/Header';
 import Toolbar from '../toolbar/Toolbar';
 import DrawCnt from '../draw/DrawCnt';
+import ResultsBar from '../results/ResultsBar';
 
 // =============================
 // Основной компонент приложения
@@ -27,6 +28,7 @@ class App extends React.Component<MyProps, MyState> {
             <div className='App'>
                 <Header />
                 <Toolbar />
+                <ResultsBar />
                 <DrawCnt windowWidth={windowWidth} />
             </div>
         );

@@ -150,3 +150,32 @@ export const selectIsTypicalCase = createSelector([selectUnfoldObject], (unfoldO
     }
     return unfoldObject.getIsTypicalCase();
 });
+
+export type UnfoldResult = {
+    isKSetEmpty: boolean;
+    intersectionCount: number;
+} | null;
+export const selectResults = createSelector([selectUnfoldObject], (unfoldObject): UnfoldResult => {
+    if (unfoldObject === null) {
+        return null;
+    }
+    const oInfo = unfoldObject.getSpecialInfo();
+
+    const { kSet, tripleSet } = oInfo;
+    const { segments: kSegments, areas: kAreas } = kSet;
+    const { segments: tripleSegments, areas: tripleAreas } = tripleSet;
+
+    if (kAreas.length || tripleAreas.length) {
+        return null;
+    }
+
+    const intersectionCount = ClassUnfoldBase.getKAndTripleSegmentsIntersectionCount({
+        kSegments,
+        tripleSegments,
+    });
+
+    return {
+        isKSetEmpty: kSegments.length === 0,
+        intersectionCount,
+    };
+});

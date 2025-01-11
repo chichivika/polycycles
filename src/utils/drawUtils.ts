@@ -49,6 +49,7 @@ export function getSummPointsWithCoeffs(
     ];
 }
 
+// Найти точку пересечения прямых, заданных начальной точкой и направляющим вектором
 export function getLinesIntersection(
     firstPoint: Point,
     secondPoint: Point,
@@ -66,6 +67,84 @@ export function getLinesIntersection(
     return getSummPointsWithCoeffs(secondPoint, secondVector, 1, coeff);
 }
 
+// Найти точку пересечения прямых, заданных двумя точками
+export function getLinesIntersectionByPoints(
+    firstStartPoint: Point,
+    firstEndPoint: Point,
+    secondStartPoint: Point,
+    secondEndPoint: Point,
+): Point | null {
+    const firstVector = getDeltaPoints(firstStartPoint, firstEndPoint);
+    const secondVector = getDeltaPoints(secondStartPoint, secondEndPoint);
+
+    return getLinesIntersection(firstStartPoint, secondStartPoint, firstVector, secondVector);
+}
+
+// Проверить, находится ли точка внутри треугольника
+export function checkPointIsInTriangle(point: Point, verts: Points): boolean {
+    if (verts.length < 3) {
+        return false;
+    }
+    const [fVert, sVert, thVert] = verts;
+    const firstProduct = getLineEquationOf(fVert, sVert)(point[0], point[1]);
+    const secondProduct = getLineEquationOf(sVert, thVert)(point[0], point[1]);
+    const thirdProduct = getLineEquationOf(thVert, fVert)(point[0], point[1]);
+
+    return (
+        firstProduct * secondProduct >= 0 &&
+        secondProduct * thirdProduct >= 0 &&
+        thirdProduct * firstProduct >= 0
+    );
+}
+
+// Получить уравнение прямой по двум точкам
+export function getLineEquationOf(firstVert: Point, secondVert: Point) {
+    return (x: number, y: number): number =>
+        x * (secondVert[1] - firstVert[1]) +
+        y * (firstVert[0] - secondVert[0]) +
+        (firstVert[1] * secondVert[0] - secondVert[1] * firstVert[0]);
+}
+
+// Проверить, пересекаются ли два отрезка, заданных двумя точками
+export function checkSegmentsHasIntersection(
+    firstStartPoint: Point,
+    firstEndPoint: Point,
+    secondStartPoint: Point,
+    secondEndPoint: Point,
+): boolean {
+    const firstVector = getDeltaPoints(firstStartPoint, firstEndPoint);
+    const secondVector = getDeltaPoints(secondStartPoint, secondEndPoint);
+    const vectorProduct = getVectorProduct(firstVector, secondVector);
+
+    // Если векторы параллельны
+    if (numsAreAlmostEqual(vectorProduct, 0)) {
+        const firstLineEquation = getLineEquationOf(firstStartPoint, firstEndPoint);
+        return numsAreAlmostEqual(firstLineEquation(secondStartPoint[0], secondStartPoint[1]), 0);
+    }
+
+    const firstCoeff =
+        getVectorProduct(getDeltaPoints(firstStartPoint, secondStartPoint), secondVector) /
+        vectorProduct;
+    const secondCoeff =
+        getVectorProduct(getDeltaPoints(firstStartPoint, secondStartPoint), firstVector) /
+        vectorProduct;
+
+    return firstCoeff >= 0 && firstCoeff <= 1 && secondCoeff >= 0 && secondCoeff <= 1;
+}
+
+// Проверить, равны ли две точки
+export function pointsAreAlmostEqual(firstPoint: Point, secondPoint: Point) {
+    return (
+        numsAreAlmostEqual(firstPoint[0], secondPoint[0]) &&
+        numsAreAlmostEqual(firstPoint[1], secondPoint[1])
+    );
+}
+
+// Получить векторное произведение двух векторов на плоскости
+export function getVectorProduct(firstVector: Point, secondVector: Point): number {
+    return firstVector[0] * secondVector[1] - firstVector[1] * secondVector[0];
+}
+
 // Рассчитать единичный вектор, сонаправленный с разницей двух векторов
 export function getOrtDeltaPoints(firstPoint: Point, secondPoint: Point): Point {
     const delta = getDeltaPoints(firstPoint, secondPoint);
@@ -77,6 +156,7 @@ export function getOrtDeltaPoints(firstPoint: Point, secondPoint: Point): Point 
     return [delta[0] / vectorLength, delta[1] / vectorLength];
 }
 
+// Получить вектор, перпендикулярный данному
 export function getVectorPerpendicular(
     vector: Point,
     isPositiveOrientation: boolean = true,

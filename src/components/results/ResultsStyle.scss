@@ -1,0 +1,24 @@
+@use 'src/styles/colors.scss';
+.results-bar {
+    min-height: 19px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding-bottom: 1rem;
+    color: colors.$header-color;
+    background-color: colors.$toolbar-background-color;
+
+    .results-bar-not-typical-text {
+        color: #9eadb2;
+    }
+
+    .result-cnt {
+        .result-label {
+            margin-right: 0.5rem;
+        }
+        .result-text {
+            font-weight: bold;
+        }
+    }
+}

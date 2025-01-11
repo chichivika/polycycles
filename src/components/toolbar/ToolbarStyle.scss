@@ -4,8 +4,8 @@
     display: flex;
     justify-content: center;
     padding: 0.5rem 0px;
-    background-color: #ffebee99;
     color: colors.$header-color;
+    background-color: colors.$toolbar-background-color;
 
     .toolbar-center {
         display: flex;
@@ -13,9 +13,4 @@
         flex-wrap: wrap;
         column-gap: 3rem;
     }
-}
-
-.is-monodromic-tool .MuiFormControlLabel-label,
-.character-numbers-tool .label-for-character-numbers {
-    font-weight: 600;
 }
