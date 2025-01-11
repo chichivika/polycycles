@@ -6,7 +6,7 @@ import {
     selectIsTypicalCase,
     selectResults,
     selectIsFormError,
-    UnfoldResult,
+    PolycycleResult,
 } from '../../appRedux/drawSelectors';
 import { StateType } from '../../appRedux/store';
 
@@ -19,7 +19,7 @@ import './ResultsStyle.scss';
 type MyProps = {
     isError: boolean;
     isTypicalCase: boolean;
-    results: UnfoldResult;
+    results: PolycycleResult;
 };
 type MyState = {};
 class ResultsBar extends React.Component<MyProps, MyState> {
@@ -102,13 +102,15 @@ class ResultsBar extends React.Component<MyProps, MyState> {
         }
 
         const { intersectionCount } = results;
+
         const textKey = intersectionCount > 0 ? 'exist' : 'notExist';
+        const countText = intersectionCount > 0 ? ` (${intersectionCount})` : '';
         return (
             <Translation key='multiplicityThree'>
                 {(t) => (
                     <ResultCnt
                         label={t('results.limitCyclesMultiplicityThree.label')}
-                        text={`${t(`results.${textKey}`)} (${intersectionCount})`}
+                        text={`${t(`results.${textKey}`)}${countText}`}
                     />
                 )}
             </Translation>

@@ -58,7 +58,7 @@ const ruResources = {
             },
         },
         drawDiagram: {
-            notTypicalCase: 'Нетипичный случай.',
+            notTypicalCase: 'Нетипичный случай',
         },
     },
 };
@@ -123,7 +123,7 @@ const enResources = {
             },
         },
         drawDiagram: {
-            notTypicalCase: 'Non-generic case.',
+            notTypicalCase: 'Non-generic case',
         },
     },
 };

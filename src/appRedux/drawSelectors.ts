@@ -4,6 +4,7 @@ import { charNumberIsValid } from '../utils/appUtils';
 import { initialDrawSettings, boundWidth, getPolycycleWidth, getSimplexWidth } from './storeUtils';
 import ClassSimplexBase from '../utils/simplex/ClassSimplexBase';
 import ClassUnfoldBase from '../utils/unfold/ClassUnfoldBase';
+import { getTripleLineIntersectSidePoint } from '../utils/drawUtils';
 
 // Получить узел состояния с данными по картинкам
 function selectDrawState(state: StateType) {
@@ -151,31 +152,47 @@ export const selectIsTypicalCase = createSelector([selectUnfoldObject], (unfoldO
     return unfoldObject.getIsTypicalCase();
 });
 
-export type UnfoldResult = {
+export type PolycycleResult = {
     isKSetEmpty: boolean;
     intersectionCount: number;
 } | null;
-export const selectResults = createSelector([selectUnfoldObject], (unfoldObject): UnfoldResult => {
-    if (unfoldObject === null) {
-        return null;
-    }
-    const oInfo = unfoldObject.getSpecialInfo();
+export const selectResults = createSelector(
+    [selectSimplexObject, selectCharNumbers, selectIsMonodromic],
+    (simplexObject, charNumber, isMonodromic): PolycycleResult => {
+        if (simplexObject === null) {
+            return null;
+        }
+        const kSetAreas = simplexObject.getKSetAreas();
 
-    const { kSet, tripleSet } = oInfo;
-    const { segments: kSegments, areas: kAreas } = kSet;
-    const { segments: tripleSegments, areas: tripleAreas } = tripleSet;
+        if (kSetAreas.length) {
+            return null;
+        }
 
-    if (kAreas.length || tripleAreas.length) {
-        return null;
-    }
+        let intersectionCount = 0;
+        const verts = simplexObject.getVertices();
+        const edgesInfo = simplexObject.getEdgesInfo();
+        let kSetEdgesCount = 0;
 
-    const intersectionCount = ClassUnfoldBase.getKAndTripleSegmentsIntersectionCount({
-        kSegments,
-        tripleSegments,
-    });
+        edgesInfo.forEach((edgeData, sideIndex) => {
+            if (!edgeData.inKSet) {
+                return;
+            }
 
-    return {
-        isKSetEmpty: kSegments.length === 0,
-        intersectionCount,
-    };
-});
+            kSetEdgesCount += 1;
+            const intersection = getTripleLineIntersectSidePoint(
+                sideIndex,
+                verts,
+                charNumber,
+                isMonodromic,
+            );
+            if (intersection !== null) {
+                intersectionCount += 1;
+            }
+        });
+
+        return {
+            isKSetEmpty: kSetEdgesCount === 0,
+            intersectionCount,
+        };
+    },
+);

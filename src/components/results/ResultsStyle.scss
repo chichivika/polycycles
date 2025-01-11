@@ -4,7 +4,8 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 2rem;
+    column-gap: 2rem;
+    row-gap: 1rem;
     padding-bottom: 1rem;
     color: colors.$header-color;
     background-color: colors.$toolbar-background-color;
